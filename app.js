@@ -8,8 +8,15 @@ var hbs = require('hbs');
 hbs.registerPartials(__dirname + '/views/partials');
 
 var viewsController = require('./controllers/views');
-app.get('/assembly' , viewsController.openAssemblyPage);
-app.get('/', viewsController.openHomePage);
 
+/*********************   VIEWS   *********************/
+{
+    app.get('/assembly', viewsController.openAssemblyPage);
+    app.get('/', viewsController.openHomePage);
+    app.get('/buildfull', viewsController.openBuildPage);
+    app.get('/dashboard', viewsController.openDashboardPage);
+    app.get('/controlFull', viewsController.openControlPage);
 
-app.listen(80);
+}
+
+app.listen(3000);

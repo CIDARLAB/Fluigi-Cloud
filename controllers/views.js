@@ -9,3 +9,15 @@ exports.openHomePage = function(req, res) {
 exports.openAssemblyPage = function (req, res){
     res.render('assembly', {title: 'Assembly'});
 };
+
+exports.openBuildPage = function (req, res){
+    res.render('newbuild', {title: 'Build'});
+};
+
+exports.openDashboardPage = function(req, res) {
+    res.render('dashboard', {title: 'Dashboard'});
+};
+
+exports.openControlPage = function(req, res) {
+    res.render('controlFull', {title: 'ControlFull'});
+};
