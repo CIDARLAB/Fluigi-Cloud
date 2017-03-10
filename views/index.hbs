@@ -8,7 +8,7 @@
     {{> favicon }}
     <link rel="stylesheet" type="text/css" href="../stylesheets/main.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script type="text/javascript" src="../javascripts/handlebars-v4.0.5.js"></script>
+    <script type="text/javascript" src="../javascripts/index/handlebars-v4.0.5.js"></script>
 
     <!--Walkthrough tour-->c
 
@@ -17,10 +17,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/js/bootstrap-tour.js"></script>
-    <script src="../javascripts/tour.js"></script>
+    <script src="../javascripts/index/tour.js"></script>
 
     <link href="../stylesheets/toastr.css" rel="stylesheet"/>
-    <script src="../javascripts/toastr.js"></script>
+    <script src="../javascripts/index/toastr.js"></script>
     <script type="text/javascript">
         toastr.options = {
             "closeButton": false,
@@ -41,7 +41,6 @@
         }
     </script>
 
-    <script type="text/javascript" src="../javascripts/editor_support.js"></script>
     <script type="text/javascript">
 
         if (localStorage.firstUse == undefined)
@@ -70,10 +69,10 @@
         /* add any number of images here */
 
         preload(
-                '../images/NeptuneHome.png',
-                '../images/CNCpic.png',
-                '../images/UltimakerPic.png',
-                '../images/WiresPic.png'
+                '../images/index/NeptuneHome.png',
+                '../images/index/CNCpic.png',
+                '../images/index/UltimakerPic.png',
+                '../images/index/WiresPic.png'
         );
 
         function preload(){
@@ -110,7 +109,7 @@
 
     <style>
         body {
-            background: url(../images/CNCpic.png) no-repeat center center fixed;
+            background: url(../images/index/CNCpic.png) no-repeat center center fixed;
             background-color: black;
             -webkit-background-size: cover;
             -moz-background-size: cover;
@@ -192,9 +191,10 @@
         <br><br><br>
         <p id="instructions">To create a new design or open a previous one, start by selecting a project. Then get started working on your microfluidic system. </p>
         <br>
-        <button class="selectProject" data-toggle="modal" data-target="#setWorkspace">Get Started</button>
+        <a href="../dashboard"><button class="getStarted" >Get Started</button></a>
+        <!--<button class="selectProject" data-toggle="modal" data-target="#setWorkspace">Get Started</button>-->
         <br><br>
-        <a href="../dashboard"><button class="getStarted" >Documentation</button></a>
+        <a href="https://github.com/CIDARLAB/Neptune/blob/master/README.md"><button class="getStarted" >Documentation</button></a>
     </div>
 
 </body>
@@ -250,7 +250,7 @@
 <script type="text/javascript">
     function render_projects(json)
     {
-        $.get('../javascripts/project_select_template.hbs', function (data)
+        $.get('../javascripts/index/project_select_template.hbs', function (data)
         {
             var template = Handlebars.compile(data);
             var myhtml = template(json);
@@ -470,17 +470,17 @@
 <!-- LEAVE JS FOR LAST - faster loading time -->
 <!-- Latest compiled and minified JavaScript -->
 <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>-->
-<script src="/javascripts/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/javascripts/styles/jquery.min.js"></script>
 <!-- Bootstrap Core JavaScript -->
-<script src="/javascripts/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/styles/bootstrap.min.js"></script>
 <!-- Metis Menu Plugin JavaScript -->
-<script src="/javascripts/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<script src="/javascripts/styles/metisMenu.min.js"></script>
 <!-- Morris Charts JavaScript -->
-<script src="/javascripts/bower_components/raphael/raphael-min.js"></script>
-<script src="/javascripts/bower_components/morrisjs/morris.min.js"></script>
+<script src="/javascripts/styles/raphael-min.js"></script>
+<script src="/javascripts/styles/morris.min.js"></script>
 <!--<script src="/javascripts/js/morris-data.js"></script>-->
 <!-- Custom Theme JavaScript -->
-<script src="/javascripts/dist/js/sb-admin-2.js"></script>
+<script src="/javascripts/styles/sb-admin-2.js"></script>
 <!-- *** END: DEPENDENCIES *** -->
 
 </html>

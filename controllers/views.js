@@ -11,7 +11,7 @@ exports.openAssemblyPage = function (req, res){
 };
 
 exports.openBuildPage = function (req, res){
-    res.render('newbuild', {title: 'Build'});
+    res.render('build', {title: 'Build'});
 };
 
 exports.openDashboardPage = function(req, res) {
@@ -19,5 +19,13 @@ exports.openDashboardPage = function(req, res) {
 };
 
 exports.openControlPage = function(req, res) {
-    res.render('controlFull', {title: 'ControlFull'});
+    res.render('control', {title: 'Control'});
+};
+
+exports.openSpecifyPage = function(req, res) {
+    res.render('specify', {title: 'Specify'});
+};
+
+exports.openDesignPage = function(req, res) {
+    res.render('design', {title: 'Design'});
 };

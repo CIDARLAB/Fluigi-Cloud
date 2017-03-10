@@ -10,13 +10,17 @@ hbs.registerPartials(__dirname + '/views/partials');
 var viewsController = require('./controllers/views');
 
 /*********************   VIEWS   *********************/
+
 {
     app.get('/assembly', viewsController.openAssemblyPage);
     app.get('/', viewsController.openHomePage);
-    app.get('/buildfull', viewsController.openBuildPage);
+    app.get('/build', viewsController.openBuildPage);
     app.get('/dashboard', viewsController.openDashboardPage);
-    app.get('/controlFull', viewsController.openControlPage);
-
+    app.get('/control', viewsController.openControlPage);
+    app.get('/specify', viewsController.openSpecifyPage);
+    app.get('/design', viewsController.openDesignPage);
 }
 
-app.listen(3000);
+/*******************************************************/
+
+app.listen(8080, function(){console.log("Starting application")});

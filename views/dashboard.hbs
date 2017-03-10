@@ -3,11 +3,14 @@
 
 <head>
     <title> {{title}} </title>
+    {{> favicon }}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
     <link rel="apple-touch-icon" sizes="180x180" href="../images/favicons/apple-touch-icon.png">
     <link rel="icon" type="image/png" href="../images/favicons/favicon-32x32.png" sizes="32x32">
@@ -17,9 +20,6 @@
     <link rel="shortcut icon" href="../images/favicons/favicon.ico">
     <meta name="msapplication-config" content="../images/favicons/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
-
-    <script type="text/javascript" src="../javascripts/editor_support.js"></script>
-    <script type="text/javascript" src="../javascripts/workflow_tracker.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <script type="text/javascript">
         if (localStorage.firstVisit_dashboard == undefined) {
@@ -70,7 +70,7 @@
                         });
                         break;
                     case 'MINT':
-                        $('#preview_title').text('Microfluidic Netlist File')
+                        $('#preview_title').text('Microfluidic Netlist File');
                         document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../uploads/Design/designMINT.uf" download="designMINT.uf"><button type="button" class="btn btn-primary"> Download MINT </button></a>';
                         $.get('../uploads/Design/designMINT.uf', function (data)
                         {
@@ -119,114 +119,30 @@
                 $('#preview_dashboard_img').modal("show");
                 switch (file_type)
                 {
-//                case 'SVG_boundary':
-//                    document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../uploads/Build_Verify/buildSVG_boundary.svg" download="buildSVG_boundary.svg"><button type="button" class="btn btn-primary"> Download Boundary SVG </button></a>';
-//                    document.getElementById('previewModalFooter').innerHTML = '<img src='../../output/testDevice_device_' '
-//                    $.get('../uploads/Build_Verify/buildSVG_boundary.svg',function(data)
-//                    {
-//                        editor_preview.getSession().setMode("ace/mode/svg");
-//                        $('#preview_title').text('Design Schematic: Boundary Layer');
-//                        var content = data.split("\n");
-//                        var file_size = content.length;
-//                        editor_preview.session.setValue('');
-//                        for (var i = 0; i < file_size; i++)
-//                        {
-//                            editor_preview.session.replace({
-//                                start: {row: i, column: 0},
-//                                end: {row: i, column: Number.MAX_VALUE}
-//                            }, content[i] + '\n')
-//                        }
-//                    });
-//                    break;
                 case'SVG_cell':
                     document.getElementById('previewModalFooter_img').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../../output/testDevice_device_cell.svg" download="buildSVG_cell.svg"><button type="button" class="btn btn-primary"> Download Cell SVG </button></a>';
                     document.getElementById('img_here').innerHTML = '<img class="img-fluid" src="../output/testDevice_device_cell.svg" style="margin-left: 28%" width=300px;>';
                     $('#preview_title_img').text('Design Schematic: Cell Layer');
-//                            $.get('../uploads/Build_Verify/buildSVG_cell.svg', function (data) {
-//                                editor_preview.getSession().setMode("ace/mode/svg");
-//                                $('#preview_title_img').text('Design Schematic: Cell Layer');
-//                                var content = data.split("\n");
-//                                var file_size = content.length;
-//                                editor_preview.session.setValue('');
-//                                for (var i = 0; i < file_size; i++) {
-//                                    editor_preview.session.replace({
-//                                        start: {row: i, column: 0},
-//                                        end: {row: i, column: Number.MAX_VALUE}
-//                                    }, content[i] + '\n')
-//                                }
-//                            });
                     break;
                 case'SVG_control':
                     document.getElementById('previewModalFooter_img').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../../output/testDevice_device_control.svg" download="buildSVG_control.svg"><button type="button" class="btn btn-primary"> Download Control SVG </button></a>';
                     document.getElementById('img_here').innerHTML = '<img class="img-fluid" src="../output/testDevice_device_control.svg" style="margin-left: 28%" width=300px;>';
                     $('#preview_title_img').text('Design Schematic: Control Layer');
-//                    $.get('../uploads/Build_Verify/buildSVG_control.svg', function (data) {
-//                        editor_preview.getSession().setMode("ace/mode/svg");
-//                        $('#preview_title').text('Design Schematic: Control Layer');
-//                        var content = data.split("\n");
-//                        var file_size = content.length;
-//                        editor_preview.session.setValue('');
-//                        for (var i = 0; i < file_size; i++) {
-//                            editor_preview.session.replace({
-//                                start: {row: i, column: 0},
-//                                end: {row: i, column: Number.MAX_VALUE}
-//                            }, content[i] + '\n')
-//                        }
-//                    });
                     break;
                 case'SVG_flow':
                     document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../../output/testDevice_device_flow.svg" download="buildSVG_flow.svg"><button type="button" class="btn btn-primary"> Download Flow SVG </button></a>';
                     document.getElementById('img_here').innerHTML = '<img class="img-fluid" src="../output/testDevice_device_flow.svg" style="margin-left: 28%" width=300px;>';
                     $('#preview_title').text('Design Schematic: FlowLayer');
-//                    $.get('../uploads/Build_Verify/buildSVG_flow.svg', function (data) {
-//                        editor_preview.getSession().setMode("ace/mode/svg");
-//                        $('#preview_title').text('Design Schematic: FlowLayer');
-//                        var content = data.split("\n");
-//                        var file_size = content.length;
-//                        editor_preview.session.setValue('');
-//                        for (var i = 0; i < file_size; i++) {
-//                            editor_preview.session.replace({
-//                                start: {row: i, column: 0},
-//                                end: {row: i, column: Number.MAX_VALUE}
-//                            }, content[i] + '\n')
-//                        }
-//                    });
                     break;
                 case'EPS_device':
                     document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../../output/testDevice_device.eps" download="buildEPS_device.eps"><button type="button" class="btn btn-primary"> Download Device EPS </button></a>';
                     document.getElementById('img_here').innerHTML = '<img class="img-fluid" src="../output/testDevice_device.eps" style="margin-left: 28%" width=300px;>';
                     $('#preview_title').text('Design Schematic: FlowLayer');
-//                    $.get('../uploads/Build_Verify/buildEPS_device.eps', function (data) {
-//                        editor_preview.getSession().setMode("ace/mode/eps");
-//                        $('#preview_title').text('Design Schematic: EPS Device');
-//                        var content = data.split("\n");
-//                        var file_size = content.length;
-//                        editor_preview.session.setValue('');
-//                        for (var i = 0; i < file_size; i++) {
-//                            editor_preview.session.replace({
-//                                start: {row: i, column: 0},
-//                                end: {row: i, column: Number.MAX_VALUE}
-//                            }, content[i] + '\n')
-//                        }
-//                    });
                     break;
                 case'EPS_photo':
                     document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../../output/testDevice_photomask.eps" download="buildEPS_photo.eps"><button type="button" class="btn btn-primary"> Download Photolithography EPS </button></a>';
                     document.getElementById('img_here').innerHTML = '<img class="img-fluid" src="../output/testDevice_device.eps" style="margin-left: 28%" width=300px;>';
                     $('#preview_title').text('Design Schematic: FlowLayer');
-//                    $.get('../uploads/Build_Verify/buildEPS_photo.eps', function (data) {
-//                        editor_preview.getSession().setMode("ace/mode/eps");
-//                        $('#preview_title').text('Design Schematic: EPS Photolithography');
-//                        var content = data.split("\n");
-//                        var file_size = content.length;
-//                        editor_preview.session.setValue('');
-//                        for (var i = 0; i < file_size; i++) {
-//                            editor_preview.session.replace({
-//                                start: {row: i, column: 0},
-//                                end: {row: i, column: Number.MAX_VALUE}
-//                            }, content[i] + '\n')
-//                        }
-//                    });
                     break;
                 }
             }
@@ -234,46 +150,24 @@
     </script>
     <!-- FILE PREVIEW SCRIPTS END -->
 
-    <!-- Bootstrap Core CSS -->
-    <link href="/javascripts/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
-    <!-- MetisMenu CSS -->
-    <link href="/javascripts/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
-
-    <!-- Timeline CSS -->
-    <link href="/javascripts/dist/css/timeline.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <link href="/javascripts/dist/css/sb-admin-2.css" rel="stylesheet">
-
-    <!-- Toastr CDN -->
+    <!--Stylesheets-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link href="/stylesheets/metisMenu.min.css" rel="stylesheet">
+    <link href="/stylesheets/timeline.css" rel="stylesheet">
+    <link href="/stylesheets/sb-admin-2.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"/>
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
-    <!-- Morris Charts CSS -->
-    <!--<link href="/javascripts/bower_components/morrisjs/morris.css" rel="stylesheet">-->
-
-    <!-- Custom Fonts -->
-    <link href="/javascripts/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
 
     <!--Walkthrough tour-->
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/css/bootstrap-tour.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/js/bootstrap-tour.js"></script>
-    <script src="../javascripts/tour.js"></script>
-    <script type="text/javascript" src="../javascripts/editor_support.js"></script>
-
+    <script src="/javascripts/index/tour.js"></script>
     <style>
         body {  padding: 0 !important;  }
     </style>
@@ -310,23 +204,6 @@
         <!-- START: TOP RIGHT HALF OF NAVIGATION BAR; WE CAN PUT OUR LOGOUT, SETTINGS, ECT HERE -->
         <ul class="nav navbar-top-links navbar-right">
 
-            <!-- START: SETTINGS DROP DOWN MENU -->
-            <!--<li class="dropdown">-->
-            <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">-->
-            <!--<i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>-->
-            <!--</a>-->
-            <!--<ul class="dropdown-menu dropdown-user">-->
-            <!--<li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>-->
-            <!--</li>-->
-            <!--<li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>-->
-            <!--</li>-->
-            <!--<li class="divider"></li>-->
-            <!--<li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>-->
-            <!--</li>-->
-            <!--</ul>-->
-            <!--</li>-->
-            <!-- END: SETTINGS DROP DOWN MENU -->
-
         </ul>
         <!-- END: TOP RIGHT HALF OF NAVIGATION BAR; WE CAN PUT OUR LOGOUT, SETTINGS, ECT HERE -->
 
@@ -334,20 +211,6 @@
         <div class="navbar-default sidebar" role="navigation">
             <div class="sidebar-nav navbar-collapse">
                 <ul class="nav" id="side-menu">
-
-                    <!-- *** NOTE: THIS CODE IS FOR A "SEARCH" INPUT BOX *** -->
-                    <!--<li class="sidebar-search">-->
-                    <!--<div class="input-group custom-search-form">-->
-                    <!--<input type="text" class="form-control" placeholder="Search...">-->
-                    <!--<span class="input-group-btn">-->
-                    <!--<button class="btn btn-default" type="button">-->
-                    <!--<i class="fa fa-search"></i>-->
-                    <!--</button>-->
-                    <!--</span>-->
-                    <!--</div>-->
-                    <!--&lt;!&ndash; /input-group &ndash;&gt;-->
-                    <!--</li>-->
-
                     <!-- THIS LINKS TO HOME -->
                     <li>
                         <a href="../"><i class="fa fa-home fa-fw"></i> Home </a>
@@ -369,86 +232,17 @@
                                 <a href="../design"><i class="fa fa-cogs" aria-hidden="true"></i> Design </a>
                             </li>
                             <li>
-                                <a href="../buildfull"><i class="fa fa-wrench" aria-hidden="true"></i> Build</a>
+                                <a href="../build"><i class="fa fa-wrench" aria-hidden="true"></i> Build</a>
                             </li>
                             <li>
                                 <a href="../assembly"><i class="fa fa-briefcase" aria-hidden="true"></i> Assembly</a>
                             </li>
                             <li>
-                                <a href="../controlFull"><i class="fa fa-bars" aria-hidden="true"></i> Control</a>
+                                <a href="../control"><i class="fa fa-bars" aria-hidden="true"></i> Control</a>
                             </li>
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>
-
-                    <!--<li>-->
-                        <!--<a href="#"><i class="fa fa-sitemap fa-fw"></i> Project Files <span class="fa arrow"></span></a>-->
-                        <!--<ul class="nav nav-second-level">-->
-                            <!--<li>-->
-                                <!--<a href="#"> Specify Files <span class="fa arrow"></span></a>-->
-                                <!--<ul class="nav nav-third-level">-->
-                                    <!--<li>-->
-                                        <!--<a href="#" onclick="openEditorPreview('LFR')"> LFR File </a>-->
-                                    <!--</li>-->
-                                    <!--<li>-->
-                                        <!--<a href="#" onclick="openEditorPreview('UCF')"> UCF File </a>-->
-                                    <!--</li>-->
-                                <!--</ul>-->
-                            <!--</li>-->
-                            <!--<li>-->
-                                <!--<a href="#"> Design Files <span class="fa arrow"></span></a>-->
-                                <!--<ul class="nav nav-third-level">-->
-                                    <!--<li>-->
-                                        <!--<a href="#" onclick="openEditorPreview('MINT')"> MINT File </a>-->
-                                    <!--</li>-->
-                                    <!--<li>-->
-                                        <!--<a href="#" onclick="openEditorPreview('INI')"> INI File </a>-->
-                                    <!--</li>-->
-                                <!--</ul>-->
-                            <!--</li>-->
-                            <!--<li>-->
-                                <!--<a href="#"> Build Files <span class="fa arrow"></span></a>-->
-                                <!--<ul class="nav nav-third-level">-->
-                                    <!--<li>-->
-                                        <!--<a href="#" onclick="openEditorPreview('JSON')"> JSON File </a>-->
-                                    <!--</li>-->
-                                    <!--<li>-->
-                                        <!--<a href="#" onclick="openEditorPreview('SVG_cell')"> SVG Cell </a>-->
-                                    <!--</li>-->
-                                    <!--<li>-->
-                                        <!--<a href="#" onclick="openEditorPreview('SVG_control')"> SVG Control </a>-->
-                                    <!--</li>-->
-                                    <!--<li>-->
-                                        <!--<a href="#" onclick="openEditorPreview('SVG_flow')"> SVG Flow </a>-->
-                                    <!--</li>-->
-                                    <!--<li>-->
-                                        <!--<a href="#" onclick="openEditorPreview('EPS_device')"> EPS Device </a>-->
-                                    <!--</li>-->
-                                    <!--<li>-->
-                                        <!--<a href="#" onclick="openEditorPreview('EPS_photo')"> EPS Photolithography </a>-->
-                                    <!--</li>-->
-                                <!--</ul>-->
-                                <!--&lt;!&ndash; /.nav-third-level &ndash;&gt;-->
-                            <!--</li>-->
-                            <!--<li>-->
-                                <!--<a data-toggle="modal" href="#myModal_zip" onclick="downloadZip()" data-target="#myModal_zip"> Download Project Zip </a>-->
-                            <!--</li>-->
-                        <!--</ul>-->
-                        <!--&lt;!&ndash; /.nav-second-level &ndash;&gt;-->
-                    <!--</li>-->
-
-                    <!--<li>-->
-                    <!--<a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>-->
-                    <!--<ul class="nav nav-second-level">-->
-                    <!--<li>-->
-                    <!--<a href="blank.html">Blank Page</a>-->
-                    <!--</li>-->
-                    <!--<li>-->
-                    <!--<a href="login.html">Login Page</a>-->
-                    <!--</li>-->
-                    <!--</ul>-->
-                    <!--&lt;!&ndash; /.nav-second-level &ndash;&gt;-->
-                    <!--</li>-->
 
                 </ul>
             </div>
@@ -543,7 +337,7 @@
 
                             <!-- Build -->
                             <li class="timeline-inverted">
-                                <div class="timeline-badge build"><a href="../buildfull"><i class="fa fa-wrench" aria-hidden="true" style="color: white; cursor:pointer;"></i></a> <!-- class: draws circle; i: adds image to circle -->
+                                <div class="timeline-badge build"><a href="../build"><i class="fa fa-wrench" aria-hidden="true" style="color: white; cursor:pointer;"></i></a> <!-- class: draws circle; i: adds image to circle -->
                                 </div>
                                 <div class="timeline-panel" id="build_box">
                                     <div class="timeline-heading">
@@ -571,7 +365,7 @@
 
                             <!--Control-->
                             <li class="timeline-inverted">
-                                <div class="timeline-badge control"><a href="../controlFull"><i class="fa fa-bars" aria-hidden="true" style="color: white; cursor:pointer;"></i></a> <!-- class: draws circle; i: adds image to circle -->
+                                <div class="timeline-badge control"><a href="../control"><i class="fa fa-bars" aria-hidden="true" style="color: white; cursor:pointer;"></i></a> <!-- class: draws circle; i: adds image to circle -->
                                 </div>
                                 <div class="timeline-panel" id="control_box">
                                     <div class="timeline-heading">
@@ -626,12 +420,12 @@
                     </div>
                 </div>
             </div>
-            <script src="/javascripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-            <script> var editor_preview = ace.edit("editor_preview"); editor_preview.setTheme("ace/theme/crimson_editor");
-            editor_preview.setOptions({
-                fontFamily: "monospace",
-                fontSize: "12pt"
-            });</script>
+            <!--<script src="/javascripts/dashboard/ace.js" type="text/javascript" charset="utf-8"></script>-->
+            <!--<script> var editor_preview = ace.edit("editor_preview"); editor_preview.setTheme("ace/theme/crimson_editor");-->
+            <!--editor_preview.setOptions({-->
+                <!--fontFamily: "monospace",-->
+                <!--fontSize: "12pt"-->
+            <!--});</script>-->
 
             <div class="modal fade" id="preview_dashboard_img" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
                 <div class="modal-dialog" role="document">
@@ -688,23 +482,23 @@
 </div>
 <!-- *** END: THIS DIVISION WRAPS EVERYTHING *** -->
 
-<script>
-    workflow_tracker(localStorage.WORKFLOW_STAGE);
-</script>
+<!--<script>-->
+    <!--workflow_tracker(localStorage.WORKFLOW_STAGE);-->
+<!--</script>-->
 
 <!-- *** START: DEPENDENCIES *** -->
 <!-- jQuery -->
-<script src="/javascripts/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/javascripts/styles/jquery.min.js"></script>
 <!-- Bootstrap Core JavaScript -->
-<script src="/javascripts/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/styles/bootstrap.min.js"></script>
 <!-- Metis Menu Plugin JavaScript -->
-<script src="/javascripts/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<script src="/javascripts/styles/metisMenu.min.js"></script>
 <!-- Morris Charts JavaScript -->
-<script src="/javascripts/bower_components/raphael/raphael-min.js"></script>
-<script src="/javascripts/bower_components/morrisjs/morris.min.js"></script>
+<script src="/javascripts/styles/raphael-min.js"></script>
+<script src="/javascripts/styles/morris.min.js"></script>
 <!--<script src="/javascripts/js/morris-data.js"></script>-->
 <!-- Custom Theme JavaScript -->
-<script src="/javascripts/dist/js/sb-admin-2.js"></script>
+<script src="/javascripts/styles/sb-admin-2.js"></script>
 <!-- *** END: DEPENDENCIES *** -->
 
 <script type="text/javascript">
@@ -714,405 +508,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-<!--//    function fileTrayIndicators()-->
-<!--//    {-->
-<!--//        if (localStorage.FILE_specifyLFR != '') {-->
-<!--//            document.getElementById('lfrPreview').style.color = 'SeaGreen';-->
-<!--//            //document.getElementById('lfrPreview').style.opacity =  '.7';-->
-<!--//            document.getElementById('lfrPreview').style.cursor = 'pointer';-->
-<!--//        }-->
-<!--//        if (localStorage.FILE_specifyUCF != '') {-->
-<!--//            document.getElementById('ucfPreview').style.color = 'SeaGreen';-->
-<!--//            //document.getElementById('ucfPreview').style.opacity =  '.7';-->
-<!--//            document.getElementById('ucfPreview').style.cursor = 'pointer';-->
-<!--//        }-->
-<!--//        if (localStorage.FILE_designINI != '') {-->
-<!--//            document.getElementById('iniPreview').style.color = 'SeaGreen';-->
-<!--//            //document.getElementById('iniPreview').style.opacity =  '.7';-->
-<!--//            document.getElementById('iniPreview').style.cursor = 'pointer';-->
-<!--//        }-->
-<!--//        if (localStorage.FILE_designMINT != '') {-->
-<!--//            document.getElementById('mintPreview').style.color = 'SeaGreen';-->
-<!--//            //document.getElementById('mintPreview').style.opacity =  '.7';-->
-<!--//            document.getElementById('mintPreview').style.cursor = 'pointer';-->
-<!--//        }-->
-<!--//        if (localStorage.FILE_buildJSON != '') {-->
-<!--//            document.getElementById('jsonPreview').style.color = 'SeaGreen';-->
-<!--//            //document.getElementById('jsonPreview').style.opacity =  '.7';-->
-<!--//            document.getElementById('jsonPreview').style.cursor = 'pointer';-->
-<!--//        }-->
-<!--//        if (localStorage.FILE_buildSVG != '') {-->
-<!--//            document.getElementById('svgPreview').style.color = 'SeaGreen';-->
-<!--//            //document.getElementById('svgPreview').style.opacity =  '.7';-->
-<!--//            document.getElementById('svgPreview').style.cursor = 'pointer';-->
-<!--//        }-->
-<!--//    }-->
-<!--//      fileTrayIndicators();-->
-
-<!-- 3 PANEL DIV START: FILE TRAY AND OTHER CONTENT -->
-<!--<div class="col-lg-4">-->
-
-
-<!-- NOTIFICATION PANEL; WE WILL USE THIS AS A FILE LIST PANEL -->
-<!--<div class="panel panel-default">-->
-<!--<div class="panel-heading">-->
-<!--<i class="fa fa-list-alt fa-fw"></i> File Tray-->
-<!--</div>-->
-
-<!--<div class="panel-body">-->
-<!--<div class="list-group">-->
-
-<!--Specify Files: <br>-->
-<!--<a id='ucfPreview' type="button" class="list-group-item" data-toggle="modal" data-target="#myUcfPreviewModal" onclick="displayFileContent('specifyUCF')">-->
-<!--<i class="fa fa-file-text-o fa-fw"></i> User Constraint File (UCF)-->
-<!--<span class="pull-right text-muted small"> <em> Click to preview </em>-->
-<!--</span>-->
-<!--</a>-->
-<!--<a id='lfrPreview' type="button" class="list-group-item" data-toggle="modal" data-target="#myLfrPreviewModal" onclick="displayFileContent('specifyLFR')">-->
-<!--<i class="fa fa-file-text-o fa-fw"></i> Liquid Flow Relations File (LFR)-->
-<!--<span class="pull-right text-muted small"> <em> Click to preview </em>-->
-<!--</span>-->
-<!--</a>-->
-<!--<br>-->
-
-<!--Design Files: <br>-->
-<!--<a id='mintPreview' type="button" class="list-group-item" data-toggle="modal" data-target="#myMintPreviewModal" onclick="displayFileContent('designMINT')">-->
-<!--<i class="fa fa-file-text fa-fw"></i> Microfluidic Netlist File (MINT)-->
-<!--<span class="pull-right text-muted small"> <em> Click to preview </em>-->
-<!--</span>-->
-<!--</a>-->
-<!--<a id='iniPreview' type="button" class="list-group-item" data-toggle="modal" data-target="#myIniPreviewModal" onclick="displayFileContent('designINI')">-->
-<!--<i class="fa fa-file-text fa-fw"></i> Configuration File (INI)-->
-<!--<span class="pull-right text-muted small"> <em> Click to preview </em>-->
-<!--</span>-->
-<!--</a>-->
-<!--<br>-->
-
-<!--Build Files: <br>-->
-<!--<a id='jsonPreview' type="button" class="list-group-item" data-toggle="modal" data-target="#myJsonPreviewModal" onclick="displayFileContent('buildJSON')">-->
-<!--<i class="fa fa-file-code-o fa-fw"></i> Design Schematic (JSON)-->
-<!--<span class="pull-right text-muted small"> <em> Click to preview </em>-->
-<!--</span>-->
-<!--</a>-->
-<!--<a id='svgPreview' type="button" class="list-group-item" data-toggle="modal" data-target="#mySvgPreviewModal" onclick="displayFileContent('buildSVG')">-->
-<!--<i class="fa fa-file-code-o fa-fw"></i> Design Schematic (SVG)-->
-<!--<span class="pull-right text-muted small"> <em> Click to preview </em>-->
-<!--</span>-->
-<!--</a>-->
-
-<!--&lt;!&ndash;<a href="#" class="list-group-item">&ndash;&gt;-->
-<!--&lt;!&ndash;<i class="fa fa-bolt fa-fw"></i> Server Crashed!&ndash;&gt;-->
-<!--&lt;!&ndash;<span class="pull-right text-muted small"><em>11:13 AM</em>&ndash;&gt;-->
-<!--&lt;!&ndash;</span>&ndash;&gt;-->
-<!--&lt;!&ndash;</a>&ndash;&gt;-->
-<!--&lt;!&ndash;<a href="#" class="list-group-item">&ndash;&gt;-->
-<!--&lt;!&ndash;<i class="fa fa-warning fa-fw"></i> Server Not Responding&ndash;&gt;-->
-<!--&lt;!&ndash;<span class="pull-right text-muted small"><em>10:57 AM</em>&ndash;&gt;-->
-<!--&lt;!&ndash;</span>&ndash;&gt;-->
-<!--&lt;!&ndash;</a>&ndash;&gt;-->
-<!--&lt;!&ndash;<a href="#" class="list-group-item">&ndash;&gt;-->
-<!--&lt;!&ndash;<i class="fa fa-shopping-cart fa-fw"></i> New Order Placed&ndash;&gt;-->
-<!--&lt;!&ndash;<span class="pull-right text-muted small"><em>9:49 AM</em>&ndash;&gt;-->
-<!--&lt;!&ndash;</span>&ndash;&gt;-->
-<!--&lt;!&ndash;</a>&ndash;&gt;-->
-<!--&lt;!&ndash;<a href="#" class="list-group-item">&ndash;&gt;-->
-<!--&lt;!&ndash;<i class="fa fa-money fa-fw"></i> Payment Received&ndash;&gt;-->
-<!--&lt;!&ndash;<span class="pull-right text-muted small"><em>Yesterday</em>&ndash;&gt;-->
-<!--&lt;!&ndash;</span>&ndash;&gt;-->
-<!--&lt;!&ndash;</a>&ndash;&gt;-->
-
-<!--</div>-->
-<!--&lt;!&ndash; /.list-group &ndash;&gt;-->
-<!--&lt;!&ndash;<a href="#" class="btn btn-default btn-block">View All Files</a>&ndash;&gt;-->
-<!--</div>-->
-<!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
-<!--</div>-->
-<!-- /.panel -->
-
-<!-- *** DOUGNUT PANEL ? *** -->
-<!--<div class="panel panel-default">-->
-<!--<div class="panel-heading">-->
-<!--<i class="fa fa-bar-chart-o fa-fw"></i> Donut Chart Example-->
-<!--</div>-->
-<!--<div class="panel-body">-->
-<!--<div id="morris-donut-chart"></div>-->
-<!--<a href="#" class="btn btn-default btn-block">View Details</a>-->
-<!--</div>-->
-<!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
-<!--</div>-->
-<!-- /.panel -->
-
-<!-- *** CHAT PANEL *** -->
-<!--<div class="chat-panel panel panel-default">-->
-<!--<div class="panel-heading">-->
-<!--<i class="fa fa-comments fa-fw"></i>-->
-<!--Chat-->
-<!--<div class="btn-group pull-right">-->
-<!--<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">-->
-<!--<i class="fa fa-chevron-down"></i>-->
-<!--</button>-->
-<!--<ul class="dropdown-menu slidedown">-->
-<!--<li>-->
-<!--<a href="#">-->
-<!--<i class="fa fa-refresh fa-fw"></i> Refresh-->
-<!--</a>-->
-<!--</li>-->
-<!--<li>-->
-<!--<a href="#">-->
-<!--<i class="fa fa-check-circle fa-fw"></i> Available-->
-<!--</a>-->
-<!--</li>-->
-<!--<li>-->
-<!--<a href="#">-->
-<!--<i class="fa fa-times fa-fw"></i> Busy-->
-<!--</a>-->
-<!--</li>-->
-<!--<li>-->
-<!--<a href="#">-->
-<!--<i class="fa fa-clock-o fa-fw"></i> Away-->
-<!--</a>-->
-<!--</li>-->
-<!--<li class="divider"></li>-->
-<!--<li>-->
-<!--<a href="#">-->
-<!--<i class="fa fa-sign-out fa-fw"></i> Sign Out-->
-<!--</a>-->
-<!--</li>-->
-<!--</ul>-->
-<!--</div>-->
-<!--</div>-->
-<!--&lt;!&ndash; /.panel-heading &ndash;&gt;-->
-<!--<div class="panel-body">-->
-<!--<ul class="chat">-->
-<!--<li class="left clearfix">-->
-<!--<span class="chat-img pull-left">-->
-<!--<img src="http://placehold.it/50/55C1E7/fff" alt="User Avatar" class="img-circle" />-->
-<!--</span>-->
-<!--<div class="chat-body clearfix">-->
-<!--<div class="header">-->
-<!--<strong class="primary-font">Jack Sparrow</strong>-->
-<!--<small class="pull-right text-muted">-->
-<!--<i class="fa fa-clock-o fa-fw"></i> 12 mins ago-->
-<!--</small>-->
-<!--</div>-->
-<!--<p>-->
-<!--Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.-->
-<!--</p>-->
-<!--</div>-->
-<!--</li>-->
-<!--<li class="right clearfix">-->
-<!--<span class="chat-img pull-right">-->
-<!--<img src="http://placehold.it/50/FA6F57/fff" alt="User Avatar" class="img-circle" />-->
-<!--</span>-->
-<!--<div class="chat-body clearfix">-->
-<!--<div class="header">-->
-<!--<small class=" text-muted">-->
-<!--<i class="fa fa-clock-o fa-fw"></i> 13 mins ago</small>-->
-<!--<strong class="pull-right primary-font">Bhaumik Patel</strong>-->
-<!--</div>-->
-<!--<p>-->
-<!--Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.-->
-<!--</p>-->
-<!--</div>-->
-<!--</li>-->
-<!--<li class="left clearfix">-->
-<!--<span class="chat-img pull-left">-->
-<!--<img src="http://placehold.it/50/55C1E7/fff" alt="User Avatar" class="img-circle" />-->
-<!--</span>-->
-<!--<div class="chat-body clearfix">-->
-<!--<div class="header">-->
-<!--<strong class="primary-font">Jack Sparrow</strong>-->
-<!--<small class="pull-right text-muted">-->
-<!--<i class="fa fa-clock-o fa-fw"></i> 14 mins ago</small>-->
-<!--</div>-->
-<!--<p>-->
-<!--Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.-->
-<!--</p>-->
-<!--</div>-->
-<!--</li>-->
-<!--<li class="right clearfix">-->
-<!--<span class="chat-img pull-right">-->
-<!--<img src="http://placehold.it/50/FA6F57/fff" alt="User Avatar" class="img-circle" />-->
-<!--</span>-->
-<!--<div class="chat-body clearfix">-->
-<!--<div class="header">-->
-<!--<small class=" text-muted">-->
-<!--<i class="fa fa-clock-o fa-fw"></i> 15 mins ago</small>-->
-<!--<strong class="pull-right primary-font">Bhaumik Patel</strong>-->
-<!--</div>-->
-<!--<p>-->
-<!--Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.-->
-<!--</p>-->
-<!--</div>-->
-<!--</li>-->
-<!--</ul>-->
-<!--</div>-->
-<!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
-<!--<div class="panel-footer">-->
-<!--<div class="input-group">-->
-<!--<input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />-->
-<!--<span class="input-group-btn">-->
-<!--<button class="btn btn-warning btn-sm" id="btn-chat">-->
-<!--Send-->
-<!--</button>-->
-<!--</span>-->
-<!--</div>-->
-<!--</div>-->
-<!--&lt;!&ndash; /.panel-footer &ndash;&gt;-->
-<!--</div>-->
-<!-- /.panel .chat-panel -->
-
-<!--</div>-->
-<!-- 3 PANEL DIV END: FILE TRAY AND OTHER CONTENT -->
-
-<!-- Preview Modals -->
-<!--<div class="modal fade" id="myUcfPreviewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >-->
-<!--<div class="modal-dialog" role="document">-->
-<!--<div class="modal-content">-->
-<!--<div class="modal-header">-->
-<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--<span aria-hidden="true">&times;</span>-->
-<!--</button>-->
-<!--<h4 class="modal-title-prev modal-title" id="myModalLabel"></h4>-->
-<!--</div>-->
-<!--<div class="modal-body-prev modal-body" id="fileGoesHere">-->
-
-<!--</div>-->
-<!--<div class="modal-footer">-->
-<!--<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button>-->
-<!--<a href="download/../uploads/Specify/specifyUCF.json" download="myUCF.uf">-->
-<!--<button type="button" class="btn btn-primary">-->
-<!--Download-->
-<!--</button>-->
-<!--</a>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-
-<!--<div class="modal fade" id="myLfrPreviewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >-->
-<!--<div class="modal-dialog" role="document">-->
-<!--<div class="modal-content">-->
-<!--<div class="modal-header">-->
-<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--<span aria-hidden="true">&times;</span>-->
-<!--</button>-->
-<!--<h4 class="modal-title-prev modal-title" id="myModalLabel"></h4>-->
-<!--</div>-->
-<!--<div class="modal-body-prev modal-body" id="fileGoesHere">-->
-
-<!--</div>-->
-<!--<div class="modal-footer">-->
-<!--<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button>-->
-<!--<a href="download/../uploads/Specify/specifyLFR.v" download="myLFR.lfr">-->
-<!--<button type="button" class="btn btn-primary">-->
-<!--Download-->
-<!--</button>-->
-<!--</a>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-
-<!--<div class="modal fade" id="myMintPreviewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >-->
-<!--<div class="modal-dialog" role="document">-->
-<!--<div class="modal-content">-->
-<!--<div class="modal-header">-->
-<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--<span aria-hidden="true">&times;</span>-->
-<!--</button>-->
-<!--<h4 class="modal-title-prev modal-title" id="myModalLabel"></h4>-->
-<!--</div>-->
-<!--<div class="modal-body-prev modal-body" id="fileGoesHere">-->
-
-<!--</div>-->
-<!--<div class="modal-footer">-->
-<!--<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button>-->
-<!--<a href="download/../uploads/Design/designMINT.uf" download="myMINT.uf">-->
-<!--<button type="button" class="btn btn-primary">-->
-<!--Download-->
-<!--</button>-->
-<!--</a>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-
-<!--<div class="modal fade" id="myIniPreviewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >-->
-<!--<div class="modal-dialog" role="document">-->
-<!--<div class="modal-content">-->
-<!--<div class="modal-header">-->
-<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--<span aria-hidden="true">&times;</span>-->
-<!--</button>-->
-<!--<h4 class="modal-title-prev modal-title" id="myModalLabel"></h4>-->
-<!--</div>-->
-<!--<div class="modal-body-prev modal-body" id="fileGoesHere">-->
-
-<!--</div>-->
-<!--<div class="modal-footer">-->
-<!--<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button>-->
-<!--<a href="download/../uploads/Design/designINI.txt" download="myIni.txt">-->
-<!--<button type="button" class="btn btn-primary">-->
-<!--Download-->
-<!--</button>-->
-<!--</a>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-
-<!--<div class="modal fade" id="myJsonPreviewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >-->
-<!--<div class="modal-dialog" role="document">-->
-<!--<div class="modal-content">-->
-<!--<div class="modal-header">-->
-<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--<span aria-hidden="true">&times;</span>-->
-<!--</button>-->
-<!--<h4 class="modal-title-prev modal-title" id="myModalLabel"></h4>-->
-<!--</div>-->
-<!--<div class="modal-body-prev modal-body" id="fileGoesHere">-->
-
-<!--</div>-->
-<!--<div class="modal-footer">-->
-<!--<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button>-->
-<!--<a href="download/../uploads/Build_Verify/buildJSON.json" download="myJSON.json">-->
-<!--<button type="button" class="btn btn-primary">-->
-<!--Download-->
-<!--</button>-->
-<!--</a>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-
-<!--<div class="modal fade" id="mySvgPreviewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >-->
-<!--<div class="modal-dialog" role="document">-->
-<!--<div class="modal-content">-->
-<!--<div class="modal-header">-->
-<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--<span aria-hidden="true">&times;</span>-->
-<!--</button>-->
-<!--<h4 class="modal-title-prev modal-title" id="myModalLabel"></h4>-->
-<!--</div>-->
-<!--<div class="modal-body-prev modal-body" id="fileGoesHere">-->
-
-<!--</div>-->
-<!--<div class="modal-footer">-->
-<!--<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button>-->
-<!--<a href="download/../uploads/Build_Verify/buildSVG.svg" download="mySvg.svg">-->
-<!--<button type="button" class="btn btn-primary">-->
-<!--Download-->
-<!--</button>-->
-<!--</a>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
