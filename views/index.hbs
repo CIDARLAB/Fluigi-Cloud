@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" href="../stylesheets/main.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script type="text/javascript" src="../javascripts/index/handlebars-v4.0.5.js"></script>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
 
     <!--Walkthrough tour-->c
 
@@ -191,8 +193,8 @@
         <br><br><br>
         <p id="instructions">To create a new design or open a previous one, start by selecting a project. Then get started working on your microfluidic system. </p>
         <br>
-        <a href="../dashboard"><button class="getStarted" >Get Started</button></a>
-        <!--<button class="selectProject" data-toggle="modal" data-target="#setWorkspace">Get Started</button>-->
+        <!--<a href="../dashboard"><button class="getStarted" >Get Started</button></a>-->
+        <button class="selectProject" data-toggle="modal" data-target="#login">Get Started</button>
         <br><br>
         <a href="https://github.com/CIDARLAB/Neptune/blob/master/README.md"><button class="getStarted" >Documentation</button></a>
     </div>
@@ -268,19 +270,22 @@
 </script>
 
 <!-- Select Project Modal -->
-<div id="setProject" class="modal fade" role="dialog">
+<div id="login" class="modal fade" role="dialog">
     <div class="modal-dialog prj_select_dialog">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header modal-header-primary">
-                <h4 class="modal-title">Choose your project, or start a new project.</h4>
+                <h4 class="modal-title"><span class="fa fa-lock"></span> Fluigi Cloud</h4>
             </div>
 
-            <div class="modal-body" id="project_select"> </div>
-
+            <div class="modal-body" align="center">
+            <a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Login</a>
+            <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Register</a>
+                <a href="/dashboard" class="btn btn-default"><span class="fa fa-play"></span> Proceed As Guest</a>
+            </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="nameProject();" data-target=".bd-example-modal-sm"> New Project </button>
-                <!--<button type="button" class="btn btn-default" data-dismiss="modal" "> Load Project</button>-->
+                <!--<button type="button" class="btn btn-default" data-dismiss="modal" href="../" data-target=".bd-example-modal-sm"> Exit </button>-->
+                <!--&lt;!&ndash;<button type="button" class="btn btn-default" data-dismiss="modal" "> Load Project</button>&ndash;&gt;-->
             </div>
         </div>
     </div>

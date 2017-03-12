@@ -4,7 +4,19 @@
   "description": "Neptune on the cloud",
 	"dependencies":{
         "hbs": "~3.1.0",
-		"express": "^4.12.3"
+		"express": "^4.12.3",
+        "mongoose" : "~3.8.23",
+        "passport" : "~0.1.17",
+        "mongodb": "2.2.19",
+        "passport-local" : "~0.1.6",
+        "connect-flash" : "~0.1.1",
+        "bcrypt-nodejs" : "latest",
+        "morgan": "~1.0.0",
+        "body-parser": "~1.0.0",
+        "method-override": "~1.0.0",
+        "cookie-parser": "~1.0.0",
+        "express-session": "~1.0.0",
+         "ejs": "2.5.6"
 	},
   "scripts":{
     "start": "node app.js"
