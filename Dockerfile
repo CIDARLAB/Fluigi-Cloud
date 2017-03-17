@@ -6,9 +6,6 @@ MAINTAINER Priya Kapadia <priyak@bu.edu>
 ADD package.json package.json
 RUN npm install
 
-#Clone GitHub repo if not cached
-RUN git clone https://github.com/CIDARLAB/Fluigi-Cloud
-
 #Add to working directory
 ADD . .
 

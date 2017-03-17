@@ -1,6 +1,8 @@
 var express = require("express");
 var path = require('path');
 var app = express();
+var dotenv = require('dotenv');
+dotenv.load();
 
 //User Authentication Requirements
 var mongoose = require('mongoose');
@@ -10,8 +12,10 @@ var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
-var configDB = require('./controllers/database.js');
-mongoose.connect(configDB.url); // connect to our database
+
+//var configDB = require('./controllers/database.js');
+var configDB = process.env['MONGOURL'];
+mongoose.connect(configDB); // connect to our database
 
 // set up our cookies and html information for login
 app.use(morgan('dev')); // log every request to the console
@@ -130,5 +134,4 @@ var viewsController = require('./controllers/views');
 
 
 /*******************************************************/
-
 app.listen(8080, function(){console.log("Starting application")});
