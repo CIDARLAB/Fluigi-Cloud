@@ -4,16 +4,17 @@ var app = express();
 var dotenv = require('dotenv');
 dotenv.load();
 
-//User Authentication Requirements
-var mongoose = require('mongoose');
-var passport = require('passport');
-var flash    = require('connect-flash');
-var morgan       = require('morgan');
-var cookieParser = require('cookie-parser');
+var mongoose     = require('mongoose');             //MongoDB object modeling tool
+var passport     = require('passport');             //Handles users and login
+var flash        = require('connect-flash');
+var cookieParser = require('cookie-parser');        //Parses cookies
 var bodyParser   = require('body-parser');
-var session      = require('express-session');
+var session      = require('express-session');      //Handles user sessions
+var fs           = require('fs');
+var morgan       = require('morgan');
 
-//var configDB = require('./controllers/database.js');
+global.Neptune_ROOT_DIR = __dirname;
+
 var configDB = process.env['MONGOURL'];
 mongoose.connect(configDB); // connect to our database
 
@@ -37,49 +38,29 @@ require('./controllers/passport.js')(passport); // pass passport for configurati
 //Express app itself
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'hbs');
-app.set('view engine', 'ejs'); // set up ejs for templating
 var hbs = require('hbs');
 hbs.registerPartials(__dirname + '/views/partials');
 
-var viewsController = require('./controllers/views');
+/**************** CONTROLLERS ****************/
+{
+    var viewsController = require('./controllers/views');
+    var writeController = require('./controllers/fileWrite');
+    var workspaceController = require('./controllers/workspace');
+    var compileMintController = require('./controllers/compileMint');
+    var translateLFRController = require('./controllers/translateLFR');
+    var AWS_S3_Controller = require('./controllers/AWS_S3');
+}
 
 /*********************   VIEWS   *********************/
 
 {
-    // app.get('/assembly', viewsController.openAssemblyPage);
-    // app.get('/', viewsController.openHomePage);
-    // app.get('/build', viewsController.openBuildPage);
-    // app.get('/dashboard', viewsController.openDashboardPage);
-    // app.get('/control', viewsController.openControlPage);
-    // app.get('/specify', viewsController.openSpecifyPage);
-    // app.get('/design', viewsController.openDesignPage);
-
-        // show the home page (will also have our login links)
-        app.get('/', function(req, res) {
-            res.render('index.hbs');
-        });
-
-    //Comment out section once you figure out why views.js is not rendering
-    {
-        app.get('/assembly', function (req, res) {
-            res.render('assembly.hbs');
-        });
-        app.get('/dashboard', function (req, res) {
-            res.render('dashboard.hbs');
-        });
-        app.get('/control', function (req, res) {
-            res.render('control.hbs');
-        });
-        app.get('/build', function (req, res) {
-            res.render('build.hbs');
-        });
-        app.get('/specify', function (req, res) {
-            res.render('specify.hbs');
-        });
-        app.get('/design', function (req, res) {
-            res.render('design.hbs');
-        });
-    }
+    app.get('/assembly', viewsController.openAssemblyPage);
+    app.get('/', viewsController.openHomePage);
+    app.get('/build', viewsController.openBuildPage);
+    app.get('/dashboard', viewsController.openDashboardPage);
+    app.get('/control', viewsController.openControlPage);
+    app.get('/specify', viewsController.openSpecifyPage);
+    app.get('/design', viewsController.openDesignPage);
 
         // PROFILE SECTION =========================
         app.get('/profile', isLoggedIn, function(req, res) {
@@ -131,7 +112,66 @@ var viewsController = require('./controllers/views');
         res.redirect('/');
     }
 
+/*************************** FILE WRITE ********************/
+{
+    app.post('/api/writeToFile',writeController.writeToFile);
+}
+
+/************** AMAZON WEB SERVICES S3 FILE STORAGE  ***************/
+{
+    app.post('/api/Create_Unique_Bucket', AWS_S3_Controller.Create_Unique_Bucket);
+    app.post('/api/Delete_Unique_Bucket', AWS_S3_Controller.Delete_Unique_Bucket);
+    app.post('/api/Delete_Bucket_Object', AWS_S3_Controller.Delete_Bucket_Object);
+    app.post('/api/Create_Bucket_Object', AWS_S3_Controller.Create_Bucket_Object);
+    app.post('/api/Get_Bucket_Object'   , AWS_S3_Controller.Get_Bucket_Object);
+    app.post('/api/Read_S3_Link'        , AWS_S3_Controller.read_link);
+    //app.post('/api/sendToAWS'           , AWS_S3_Controller.sendToAWS);
+}
+
+/************** Mongoose DataBase Calls **************/
+{
+    app.post('/api/Create_User', AWS_S3_Controller.Create_User);
+    app.post('/api/Update_User',AWS_S3_Controller.Update_User);
+    app.post('/api/Query_User', AWS_S3_Controller.Query_User);
+    app.post('/api/Delete_User',AWS_S3_Controller.Delete_User);
+
+    app.post('/api/Create_Workspace', AWS_S3_Controller.Create_Workspace);
+    app.post('/api/Update_Workspace',AWS_S3_Controller.Update_Workspace);
+    app.post('/api/Query_Workspace', AWS_S3_Controller.Query_Workspace);
+    app.post('/api/Delete_Workspace',AWS_S3_Controller.Delete_Workspace);
+
+    app.post('/api/Create_File', AWS_S3_Controller.Create_File);
+    //app.post('/api/Update_File',AWS_S3_Controller.Update_File);
+    //app.post('/api/Query_File', AWS_S3_Controller.Query_File);
+    //app.post('/api/Delete_File',AWS_S3_Controller.Delete_File);
+}
+
+/************** Redirects **************/
+{
+    app.post('/api/redirectToSpecify', AWS_S3_Controller.redirectToSpecify);
+}
+
+/**************** USHROOM MAPPER & FLUIGI ****************/
+{
+    app.post('/api/compileMint', compileMintController.compileMint);
+    app.post('/api/translateLFR', translateLFRController.translateLFR);
+}
+
+/**************** WORKSPACE INITIATION AND MAINTAINENCE ****************/
+{
+    app.post('/api/clearFiles', workspaceController.clearFiles);
+    app.post('/api/generateUCF', workspaceController.generateUCF);
+    app.post('/api/getFile', workspaceController.getFile);
+    app.post('/api/download', workspaceController.download);
+    app.post('/api/parseDir', workspaceController.parseDir);
+    app.post('/api/getProjects', workspaceController.getProjects);
+    app.post('/api/makeProject', workspaceController.makeProject);
+    app.post('/api/scanFiles', workspaceController.scanFiles);
+    app.post('/api/findHome', workspaceController.findHome);
+}
 
 
 /*******************************************************/
+
+
 app.listen(8080, function(){console.log("Starting application")});

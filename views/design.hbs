@@ -12,17 +12,19 @@
     <meta name="author" content="">
 
     <!-- START: ALL PERSONAL JAVASCRIPTS HERE -->
+
     <script type="text/javascript">
         function terminalLog(string){
-            DesignTerminal.echo(string);
+            SpecifyTerminal.echo(string);
         }
     </script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <script>
-        var DesignTerminal = null;
+        var SpecifyTerminal = null;
         var socket = io();
-        socket.on('compile_console_readout', function(data){
-            //$('.compile_readout').append(data + '<br><br>');
+        socket.on('translate_console_readout', function(data){
+            //$('.translate_readout').append(data + '<br><br>');
             terminalLog(data);
         });
     </script>
@@ -30,11 +32,10 @@
     <script type="text/javascript" src="../javascripts/handlebars-v4.0.5.js"></script>
     <script type="text/javascript" src="../javascripts/workflow_tracker.js"></script>
     <script type="text/javascript" src="../javascripts/actionCenter_support.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <script>
-        localStorage.design_editor_state = 'designMINT';
-        localStorage.mint_state = 'write';
-        localStorage.ini_state = 'write';
+        localStorage.specify_editor_state = 'specifyLFR';
+        localStorage.lfr_state = 'write';
+        localStorage.ucf_state = 'write';
     </script>
 
     <!-- JAVASCRIPT DEPENDENCIES -->
@@ -47,28 +48,27 @@
 
     <!-- FILE PREVIEW SCRIPTS START -->
     <style type="text/css" media="screen">
-        #editor_design {
+        #editor_specify {
             height: 300px;
         }
     </style>
     <style type="text/css" media="screen">
         #editor_preview {
-            height: 300px;
+            height: 800px;
         }
     </style>
     <style type="text/css" media="screen">
-        #editor_previewFFOutput {
+        #editor_previewMMOutput {
             height: 600px;
         }
     </style>
     <style type="text/css">
-        #myModal_compileComplete .modal-body
+        #myModal_translateCompleteComplete .modal-body
         {
             max-height: 1200px;
         }
     </style>
 
-    <!-- FILE PREVIEW SCRIPTS END -->
 
     <!-- Bootstrap Core CSS -->
     <link href="/javascripts/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -95,7 +95,6 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
     <!--Walkthrough tour-->
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.css" />
@@ -105,7 +104,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/js/bootstrap-tour.js"></script>
     <script src="../javascripts/tour.js"></script>
     <script type="text/javascript" src="../javascripts/editor_support.js"></script>
-    <script type="text/javascript" src="../javascripts/svg-pan-zoom.min.js"></script>
+    <script type="text/javascript" src="../javascripts/file_navigator.js"></script>
+    <script src="../javascripts/BootstrapMenu.js"></script>
 
     <link href="../stylesheets/toastr.css" rel="stylesheet"/>
     <script src="../javascripts/toastr.js"></script>
@@ -128,17 +128,14 @@
             "hideMethod": "fadeOut"
         }</script>
 
-
-
-
     <style>
         body {  padding: 0 !important;  }
     </style>
 
 </head>
 
-
 <body>
+
 
 <!-- *** START: THIS DIVISION WRAPS EVERYTHING *** -->
 <div id="wrapper">
@@ -156,8 +153,6 @@
             </button>
             <img class="pull-left" height="40" width="40" style="margin-top: 5px; margin-left: 5px;" src="../images/NeptuneLogo.png">
             <a class="navbar-brand" style="font-family: 'Open Sans'"> NEPTUNE </a>
-            <!--<img height="50" src="../images/index/cidar-backgbround-no-js.png">-->
-
         </div>
         <!-- END: TOP LEFT HALF OF NAVIGATION BAR; WE CAN PUT OUR FLUIGI LOGOS HERE -->
 
@@ -172,7 +167,6 @@
         <div class="navbar-default sidebar" role="navigation">
             <div class="sidebar-nav navbar-collapse" id="file_tree">
 
-                <!--</ul>-->
             </div>
             <!-- /.sidebar-collapse -->
         </div>
@@ -193,8 +187,10 @@
         </div>
         <!-- PAGE TITLE END -->
 
+
         <!--PAGE CONTENT WRAP START: ALL PAGE CONTENT IS EMBEDDED BELOW -->
         <div class="row">
+
 
             <!-- START: LFR EDITOR & 2 other panels-->
             <div class="col-lg-8">
@@ -204,40 +200,25 @@
                     <div class="panel-heading">
                         <!--<i class="fa fa-bar-chart-o fa-fw"></i>-->
 
-                        <ul class="nav nav-tabs">
+                        <ul class="nav nav-tabs" id='tabs_drpdwn'>
                             <div class="well well-sm project_title">
                                 <h4 class="prj"> <em id="pj_t"> Project: </em> </h4><span class="pull-right project_title" id="project_title"> </span>
                             </div>
-                            <li id="MINTtab" class="active"><a id="MINTtab_t" onclick="changeDesignTabs(editor_design,'MINTtab',[MINT_tab,INI_tab])"></a></li>
-                            <li id="INItab"><a id="INItab_t" onclick="changeDesignTabs(editor_design,'INItab',[MINT_tab,INI_tab])"></a></li>
+                            <li id="LFRtab" class="active"><a id="LFRtab_t" onclick="changeSpecifyTabs(editor_specify,'LFRtab',[LFR_tab,UCF_tab])"></a></li>
+                            <li id="UCFtab"><a id="UCFtab_t" onclick="changeSpecifyTabs(editor_specify,'UCFtab',[LFR_tab,UCF_tab])"></a></li>
                             <li> &nbsp &nbsp </li>
                             <style>
                                 .prj {  text-align: center  }
                             </style>
-
-                            <!--<div class="btn-group" role="group" aria-label="Button group with nested dropdown">-->
-                            <!--<button type="button" id="select_lfr" class="btn btn-warning">LFR</button>-->
-                            <!--<button type="button" id="select_ucf" class="btn btn-warning">UCF</button>-->
-                            <!--<button type="button" id="select_translate" class="btn btn-secondary">UCF</button>-->
-                            <!--</div>-->
-
                             <div class="pull-right">
-                                <!--<div class="btn-group">-->
-                                <!--<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">-->
-                                <!--Actions-->
-                                <!--<span class="caret"></span>-->
-                                <!--</button>-->
-                                <!--<ul class="dropdown-menu pull-right" role="menu">-->
-                                <button class="btn btn-default" onclick="saveEditorContent(editor_design,localStorage.design_editor_state)"> <i class="fa fa-floppy-o  fa-fw"></i></button>
-                                <button class="btn btn-default" data-toggle="modal" data-target="#name_outputSchematic"> <i class="fa fa-play-circle-o  fa-fw"></i></button>
-                                <!--</ul>-->
-                                <!--</div>-->
+                                <button class="btn btn-default" onclick="saveEditorContent(editor_specify,localStorage.specify_editor_state)"> <i class="fa fa-floppy-o  fa-fw"></i></button>
+                                <button class="btn btn-default" data-toggle="modal" data-target="#name_outputMINT"> <i class="fa fa-play-circle-o  fa-fw"></i></button>
                             </div>
                         </ul>
                     </div>
 
                     <div class="panel-body" >
-                        <div id="editor_design" style="height:690px"></div>
+                        <div id="editor_specify" style="height:690px"></div>
                     </div>
 
                 </div>
@@ -250,123 +231,87 @@
                     font-size:large;
                 }
             </style>
+
+
             <script src="/javascripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-            <script> var editor_design = ace.edit("editor_design"); editor_design.setTheme("ace/theme/crimson_editor");
-            editor_design.setOptions({
+            <script> var editor_specify = ace.edit("editor_specify"); editor_specify.setTheme("ace/theme/crimson_editor");
+            editor_specify.setOptions({
                 fontFamily: "monospace",
                 fontSize: "12pt"
             });</script>
             <script>
-                var MINT_tab = ace.createEditSession('MINT_tab',"ace/mode/mint");
-                var INI_tab = ace.createEditSession('INI_tab',"ace/mode/ini");
-                editor_design.setSession(MINT_tab);
+                var LFR_tab = ace.createEditSession('LFR_tab',"ace/mode/verilog");
+                var UCF_tab = ace.createEditSession('UCF_tab',"ace/mode/json");
+                editor_specify.setSession(LFR_tab);
             </script>
             <!-- END: LFR EDITOR & 2 other panels-->
 
             <!-- START: UPLOAD FORM, UCF SUMMARY, INI SUMMARY -->
-            <div class="col-lg-4" >
-
-                <div class="panel panel-default text-center" hidden = 'true' id="design_preview">
-                    <div class="panel-heading">
-                        <i class="fa fa-fw"></i> Schematic Preview
-                    </div>
-
-                    <div class="panel-body" id="schematic_preview_flow" hidden = 'true'>
-                        <!--<div id="schematic_preview">-->
-                        <!--<embed type="image/svg+xml" id="schematic_preview"/>-->
-
-                        <!--</div>-->
-                        <object id="svg_flow"> </object>
-
-                    </div>
-                    <div class="panel-body" id="schematic_preview_control" hidden = 'true'>
-                        <!--<div id="schematic_preview">-->
-                        <!--<embed type="image/svg+xml" id="schematic_preview"/>-->
-
-                        <!--</div>-->
-                        <object id="svg_control"> </object>
-
-                    </div>
-                    <div class="panel-body" id="schematic_preview_cell" hidden = 'true'>
-                        <!--<div id="schematic_preview">-->
-                        <!--<embed type="image/svg+xml" id="schematic_preview"/>-->
-
-                        <!--</div>-->
-                        <object id="svg_cell"> </object>
-
-                    </div>
-                    <div class="panel-footer">
-
-                        <nav aria-label="..." >
-                            <ul class="pagination pagination-lg">
-                                <!--<li class="page-item">-->
-                                <!--<a class="page-link" href="#" aria-label="Previous">-->
-                                <!--<span aria-hidden="true">&laquo;</span>-->
-                                <!--<span class="sr-only">Previous</span>-->
-                                <!--</a>-->
-                                <!--</li>-->
-                                <li class="page-item" id="flow_btn"><a class="page-link" onclick="changeDiv('flow')">Flow</a></li>
-                                <li class="page-item" id="control_btn"><a class="page-link" onclick="changeDiv('control')">Control</a></li>
-                                <li class="page-item" id="cell_btn"><a class="page-link" onclick="changeDiv('cell')">Cell</a></li>
-                            </ul>
-                        </nav>
-
-                    </div>
-                </div>
-                <script type="text/javascript">
-                    function changeDiv(type)
-                    {
-                        if (type == 'flow')
-                        {
-                            (document.getElementById('schematic_preview_control')).hidden = true;
-                            (document.getElementById('schematic_preview_cell')).hidden = true;
-                            (document.getElementById('schematic_preview_flow')).hidden = false;
-
-                            (document.getElementById('control_btn')).className = 'page-item';
-                            (document.getElementById('cell_btn')).className = 'page-item';
-                            (document.getElementById('flow_btn')).className = 'page-item active';
-
-                            svgPanZoom(document.getElementById('svg_flow_id'));
-                        }
-                        if (type == 'control')
-                        {
-                            (document.getElementById('schematic_preview_flow')).hidden = true;
-                            (document.getElementById('schematic_preview_cell')).hidden = true;
-                            (document.getElementById('schematic_preview_control')).hidden = false;
-
-                            (document.getElementById('flow_btn')).className = 'page-item';
-                            (document.getElementById('cell_btn')).className = 'page-item';
-                            (document.getElementById('control_btn')).className = 'page-item active';
-
-                            svgPanZoom(document.getElementById('svg_control_id'));
-                        }
-                        if (type == 'cell')
-                        {
-                            (document.getElementById('schematic_preview_flow')).hidden = true;
-                            (document.getElementById('schematic_preview_control')).hidden = true;
-                            (document.getElementById('schematic_preview_cell')).hidden = false;
-
-                            (document.getElementById('control_btn')).className = 'page-item';
-                            (document.getElementById('flow_btn')).className = 'page-item';
-                            (document.getElementById('cell_btn')).className = 'page-item active';
-
-                            svgPanZoom(document.getElementById('svg_cell_id'));
-                        }
-                    }
-                </script>
+            <div class="col-lg-4">
 
                 <!-- START: TERMINAL -->
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <i class="fa fa-fw"></i> Terminal
+                        <i class="fa fa-play fa-fw"></i> Terminal
                     </div>
                     <div class="panel-body">
-                        <div id="terminal_design"></div>
+                        <div id="terminal_specify"></div>
                     </div>
                 </div>
                 <!-- END: TERMINAL -->
 
+                <div class="panel panel-default">
+
+                    <div class="panel-heading">
+                        Actions
+                    </div>
+
+                    <div class="panel-body" id="ucf_maker" >
+                        <div class="col-sm-6">
+                            <button class="btn btn-primary" onclick="newFile('LFR')" >New LFR</button>
+
+                            <div class="col-sm-12">
+
+                            </div>
+
+                            <span class="pull-left top-buffer">
+                                <form class="form-inline" id="ucf_form">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="new_file_name" placeholder="file name">
+                                    </div>
+                                </form>
+                            </span>
+
+                        </div>
+
+                        <div class="col-sm-6">
+                            <button class="btn btn-primary" onclick="newFile('UCF')" >New UCF</button>
+                        </div>
+
+
+                    </div>
+
+                    <div class="panel-footer" id="footer">
+
+                    </div>
+
+                </div>
+
+                <script type="text/javascript">
+                    $("#ucf_form").submit(function(e){
+                        e.preventDefault();
+                    });
+                    function deleteOp(op)
+                    {
+                        var oops = '#' + op;
+                        $(oops).remove();
+                    }
+                </script>
+                <!-- END: ACTION CENTER -->
+
             </div>
+
+
             <!-- END: UPLOAD FORM, UCF SUMMARY, INI SUMMARY -->
 
             <!-- ALL MODALS BELOW HERE -->
@@ -396,15 +341,6 @@
                 fontSize: "12pt"
             });</script>
 
-
-            <script src="/javascripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-            <script> var editor_previewFFOutput = ace.edit("editor_previewFFOutput"); editor_previewFFOutput.setTheme("ace/theme/crimson_editor");
-            editor_previewFFOutput.setOptions({
-                fontFamily: "monospace",
-                fontSize: "12pt"
-            });</script>
-
-
             <div class="modal fade" id="preview_dashboard_img" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -425,22 +361,7 @@
                     </div>
                 </div>
             </div>
-
-            <!--<div id='name_outputSchematic' class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">-->
-            <!--<div class="modal-dialog modal-sm">-->
-
-            <!--<div class="modal-content">-->
-            <!--<div class="input-group">-->
-            <!--<span class="input-group-btn">-->
-            <!--<button class="btn btn-secondary" data-dismiss="modal" type="button" onclick="compileMINT(document.getElementById('folderIn').value,document.getElementById('nameIn').value)">Compile MINT</button>-->
-            <!--</span>-->
-            <!--<input id='folderIn' type="text" class="form-control" placeholder="Enter Output Folder Name">-->
-            <!--<input id='nameIn' type="text" class="form-control" placeholder="Enter Microfluidic Name">-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <div id='name_outputSchematic' class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+            <div id='name_outputMINT' class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
 
                     <div class="modal-content">
@@ -452,16 +373,15 @@
                         <div class="modal-body" id="project_select">
                             <div class="input-group">
                     <span class="input-group-btn">
-                        <button class="btn btn-primary" type="button" data-dismiss="modal" onclick="compileMINT(document.getElementById('folderIn').value,document.getElementById('nameIn').value)">Compile MINT</button>
+                        <button class="btn btn-primary" type="button" onclick="translateLFR(document.getElementById('outputMINTname').value)">Translate LFR</button>
                     </span>
-                                <input id='folderIn' type="text" class="form-control" placeholder="Enter Output Folder Name">
-                                <input id='nameIn' type="text" class="form-control" placeholder="Enter Microfluidic Name">
+                                <input id='outputMINTname' type="text" class="form-control" placeholder="MINT_result">
                             </div>
                         </div>
 
                         <div class="modal-footer">
-                            <p>You are about to compile a design schematic.</p>
-                            <p>Please enter the name of your microfluidic design schematic folder, and a name for your chip design.</p>
+                            <p>You are about to compile your LFR into a MINT file.</p>
+                            <p>Please enter the name of your output MINT file.</p>
                         </div>
 
                     </div>
@@ -470,49 +390,90 @@
 
 
 
-            <!--PAGE CONTENT WRAP END: ALL PAGE CONTENT IS EMBEDDED ABOVE -->
+
+            <!-- Modal: Translate Actions -->
+            <div class="modal fade" id="myModal_translateComplete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header modal-header-primary">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="hideProceed()">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel"> Translation successful: MINT Output Preview </h4>
+                        </div>
+
+                        <div class="modal-body" id="editor_previewMMOutput">
+
+                        </div>
+                        <div class="modal-footer">
+                            <a>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="hideProceed()">
+                                    Close
+                                </button>
+                            </a>
+                            <div class="row"><br>
+                                <a href="../design">
+                                    <button type="button" class="btn btn-primary btn-lg center-block" id="proceedDesign" onclick="hideProceed()">
+                                        Proceed to Design Stage
+                                    </button>
+                                </a>
+                            </div>
+                            <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="/javascripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+            <script> var editor_previewMMOutput = ace.edit("editor_previewMMOutput"); editor_previewMMOutput.setTheme("ace/theme/crimson_editor");
+            editor_previewMMOutput.setOptions({
+                fontFamily: "monospace",
+                fontSize: "12pt"
+            });</script>
 
         </div>
-        <!-- END: PAGE WRAPER -->
 
+        <!--PAGE CONTENT WRAP END: ALL PAGE CONTENT IS EMBEDDED ABOVE -->
     </div>
-    <!-- *** END: THIS DIVISION WRAPS EVERYTHING *** -->
+    <!-- END: PAGE WRAPER -->
+</div>
+<!-- *** END: THIS DIVISION WRAPS EVERYTHING *** -->
 
-    <!-- *** START: DEPENDENCIES *** -->
-    <!-- jQuery -->
-    <script src="/javascripts/bower_components/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap Core JavaScript -->
-    <script src="/javascripts/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="/javascripts/bower_components/metisMenu/dist/metisMenu.min.js"></script>
-    <!-- Morris Charts JavaScript -->
-    <script src="/javascripts/bower_components/raphael/raphael-min.js"></script>
-    <script src="/javascripts/bower_components/morrisjs/morris.min.js"></script>
-    <!--<script src="/javascripts/js/morris-data.js"></script>-->
-    <!-- Custom Theme JavaScript -->
-    <script src="/javascripts/dist/js/sb-admin-2.js"></script>
-    <!-- *** END: DEPENDENCIES *** -->
+<!-- *** START: DEPENDENCIES *** -->
+<!-- jQuery -->
+<script src="/javascripts/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap Core JavaScript -->
+<script src="/javascripts/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Metis Menu Plugin JavaScript -->
+<script src="/javascripts/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<!-- Morris Charts JavaScript -->
+<script src="/javascripts/bower_components/raphael/raphael-min.js"></script>
+<script src="/javascripts/bower_components/morrisjs/morris.min.js"></script>
+<!--<script src="/javascripts/js/morris-data.js"></script>-->
+<!-- Custom Theme JavaScript -->
+<script src="/javascripts/dist/js/sb-admin-2.js"></script>
+<!-- *** END: DEPENDENCIES *** -->
 
-    <script src="../javascripts/uploadBar.js" type="application/javascript"></script>
 
-    <script type="text/javascript">
-        function hideProceed() {$("#proceedVerify").hide();}
-        hideProceed();
-    </script>
+<script type="text/javascript">
+    function hideProceed() {$("#proceedDesign").hide();}
+    //hideProceed();
+</script>
+
 
 </body>
-<!--<script type="text/javascript" src="../javascripts/initiate_lfr_start_editor.js"></script>-->
 
-<script src="../javascripts/uploads2.js" type="application/javascript"></script>
+<!--<script type="text/javascript" src="../javascripts/initiate_lfr_start_editor.js"></script>-->
+<script src="../javascripts/uploads.js" type="application/javascript"></script>
 <script type="text/javascript" src="../javascripts/editor_support.js"></script>
-<script> (document.getElementById('compile_btnn')).disabled = true; </script>
+<!--<script> (document.getElementById('translate_btnn')).disabled = true; </script>-->
 
 <script src="/javascripts/jquery.terminal-0.10.12.min.js"></script>
 <script src="/javascripts/jquery.mousewheel.min.js"></script>
 <link href="/stylesheets/jquery.terminal-0.10.12.css" rel="stylesheet"/>
+
 <script type="text/javascript">
     $(document).ready(function() {
-        DesignTerminal = $('#terminal_design').terminal(function(command, term) {
+        SpecifyTerminal = $('#terminal_specify').terminal(function(command, term) {
             if (command !== '') {
                 try {
                     var result = window.eval(command);
@@ -523,11 +484,10 @@
                     term.error(new String(e));
                 }
             } else {
-                term.echo('');
             }
         }, {
-            greetings: 'Fluigi Compiler',
-            name: 'terminal_design',
+            greetings: 'Fluigi Translator',
+            name: 'terminal_specify',
             height: 400,
             prompt: 'μF> '
         });
@@ -535,23 +495,32 @@
 </script>
 
 <script type="text/javascript">
+    function template_UCF_UI()
+    {
+        $.get('../javascripts/ucf_template.hbs', function (data) {
+            var template = Handlebars.compile(data);
+            $.post('/api/getFile', {path: localStorage.UCF}, function (data) {
+                var myhtml = template(JSON.parse(data));
+                $("#ucf_maker").html(myhtml);
+            });
+        }, 'html');
+    }
+    $(document).ready(template_UCF_UI);
+    //template_UCF_UI();
+</script>
 
-    $.when($.ajax(scanFiles())).then(function () {
-        templateTree();
+<script type="text/javascript">
+
+    $.post('/api/Query_Workspace',{workspace_id: localStorage.workspace},function(workspace){
+        console.log(workspace);
     });
 
-    function file_sync()
+    $.get('../Templates/workspace_files.hbs', function (data)
     {
-        var prj = localStorage.PROJECT;
-        var projectName = prj.replace(/^.*[\\\/]/, '');
-        projectName = 'Project: ' + projectName;
-        document.getElementById('pj_t').innerText = projectName;
-
-        var file_tree_raw = scanFiles();
-    }
-
-
-    $( document ).ready( file_sync );
+        var template = Handlebars.compile(data);
+        var myhtml = template(file_tree);
+        $("#file_tree").html(myhtml);
+    },'html');
 
 </script>
 
@@ -603,6 +572,20 @@
         </div>
     </div>
 </div>
+<div id='name_operator' class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+
+        <div class="modal-content">
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <button class="btn btn-secondary" data-dismiss="modal" type="button" onclick="generateUCF_UI()">Create Operator</button>
+                </span>
+                <input id='operator_symbol_in' type="text" class="form-control" placeholder="Enter Operator Symbol">
+                <input id='operator_name_in' type="text" class="form-control" placeholder="Enter Operator Name">
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
     function renameFile(selected_file)
     {
@@ -617,62 +600,16 @@
             case 'ini':
                 break
         }
-//        $.post('/api/renameFile',{fileToRename: localStorage.LFR, newName: 'x'},function(data)
-//        {
-//            toastr.info('','')
-//        })
     }
 
 </script>
 
 </html>
 
-
-
 <style type="text/css">
-    #myCarousel
-    {
-        border-radius: 8px;
-        border: none;
-        align: center;
-    }
 
-    .carousel
-    {
-        float: center;
-        display: block;
-        white-space: nowrap;
-    }
+    .top-buffer { margin-top:20px; }
 
-    #myCarousel .picture
-    {
-        margin-left:10px;
-        float: left;
-        display: inline-block;
-        margin: 14px;
-        word-wrap: normal;
-        word-break: normal;
-        white-space: normal;
-        overflow: hidden;
-    }
-
-    #myCarousel .texts
-    {
-        margin-left:10px;
-        /*width: 500px;*/
-        /*height: 500px;*/
-        float: left;
-        display: inline-block;
-        margin: 14px;
-        word-wrap: normal;
-        word-break: normal;
-        white-space: normal;
-        overflow: hidden;
-    }
-</style>
-
-
-<style type="text/css">
     .modal-header-success {
         color:#fff;
         padding:9px 15px;
@@ -746,202 +683,3 @@
     }
 
 </style>
-
-
-<script type="text/javascript">
-    function openEditorPreview(file_type)
-    {
-        if (file_type == 'LFR' || file_type == 'UCF' || file_type == 'MINT' || file_type == 'INI' || file_type ==  'JSON') {
-            $('#preview_dashboard').modal("show");
-            switch (file_type) {
-                case 'LFR':
-                    document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../uploads/Specify/specifyLFR.v" download="specifyLFR.v"><button type="button" class="btn btn-primary"> Download LFR </button></a>';
-                    $('#preview_title').text('Liquid Flow Relations File');
-                    $.get('../uploads/Specify/specifyLFR.v', function (data)
-                    {
-                        editor_preview.getSession().setMode("ace/mode/verilog");
-                        var content = data.split("\n");
-                        var file_size = content.length;
-                        editor_preview.session.setValue('');
-                        for (var i = 0; i < file_size; i++) {
-                            editor_preview.session.replace({
-                                start: {row: i, column: 0},
-                                end: {row: i, column: Number.MAX_VALUE}
-                            }, content[i] + '\n')
-                        }
-                    });
-                    break;
-                case 'UCF':
-                    $('#preview_title').text('User Constrain File');
-                    document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../uploads/Specify/specifyUCF.json" download="specifyJSON.json"><button type="button" class="btn btn-primary"> Download UCF </button></a>';
-                    $.get('../uploads/Specify/specifyUCF.json', function (data)
-                    {
-                        editor_preview.getSession().setMode("ace/mode/json");
-                        var file_size = content.length;
-                        editor_preview.session.setValue('');
-                        editor_preview.session.setValue(JSON.stringify(data, null, '\t'));
-                    });
-                    break;
-                case 'MINT':
-                    $('#preview_title').text('Microfluidic Netlist File')
-                    document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../uploads/Design/designMINT.uf" download="designMINT.uf"><button type="button" class="btn btn-primary"> Download MINT </button></a>';
-                    $.get('../uploads/Design/designMINT.uf', function (data)
-                    {
-                        editor_preview.getSession().setMode("ace/mode/mint");
-                        var content = data.split("\n");
-                        var file_size = content.length;
-                        editor_preview.session.setValue('');
-                        for (var i = 0; i < file_size; i++) {
-                            editor_preview.session.replace({
-                                start: {row: i, column: 0},
-                                end: {row: i, column: Number.MAX_VALUE}
-                            }, content[i] + '\n')
-                        }
-                    });
-                    break;
-                case 'INI':
-                    $('#preview_title').text('Configuration File');
-                    document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../uploads/Design/designINI.txt" download="designINI.txt"><button type="button" class="btn btn-primary"> Download INI </button></a>';
-                    $.get('../uploads/Design/designINI.txt', function (data) {
-                        editor_preview.getSession().setMode("ace/mode/ini");
-                        var content = data.split("\n");
-                        var file_size = content.length;
-                        editor_preview.session.setValue('');
-                        for (var i = 0; i < file_size; i++) {
-                            editor_preview.session.replace({
-                                start: {row: i, column: 0},
-                                end: {row: i, column: Number.MAX_VALUE}
-                            }, content[i] + '\n')
-                        }
-                    });
-                    break;
-                case 'JSON':
-                    document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../../output/testDevice.json" download="buildJSON.json"><button type="button" class="btn btn-primary"> Download JSON </button></a>';
-                    $('#preview_title').text('JSON Design Schematic');
-                    $.get('../uploads/Build_Verify/buildJSON.json', function (data) {
-                        editor_preview.getSession().setMode("ace/mode/json");
-                        var file_size = content.length;
-                        editor_preview.session.setValue('');
-                        editor_preview.session.setValue(JSON.stringify(data, null, '\t'));
-                    });
-                    break;
-            }
-        }
-        else
-        {
-            $('#preview_dashboard_img').modal("show");
-            switch (file_type)
-            {
-//                case 'SVG_boundary':
-//                    document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../uploads/Build_Verify/buildSVG_boundary.svg" download="buildSVG_boundary.svg"><button type="button" class="btn btn-primary"> Download Boundary SVG </button></a>';
-//                    document.getElementById('previewModalFooter').innerHTML = '<img src='../../output/testDevice_device_' '
-//                    $.get('../uploads/Build_Verify/buildSVG_boundary.svg',function(data)
-//                    {
-//                        editor_preview.getSession().setMode("ace/mode/svg");
-//                        $('#preview_title').text('Design Schematic: Boundary Layer');
-//                        var content = data.split("\n");
-//                        var file_size = content.length;
-//                        editor_preview.session.setValue('');
-//                        for (var i = 0; i < file_size; i++)
-//                        {
-//                            editor_preview.session.replace({
-//                                start: {row: i, column: 0},
-//                                end: {row: i, column: Number.MAX_VALUE}
-//                            }, content[i] + '\n')
-//                        }
-//                    });
-//                    break;
-                case'SVG_cell':
-                    document.getElementById('previewModalFooter_img').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../../output/testDevice_device_cell.svg" download="buildSVG_cell.svg"><button type="button" class="btn btn-primary"> Download Cell SVG </button></a>';
-                    document.getElementById('img_here').innerHTML = '<img src="../output/testDevice_device_cell.svg" style="margin-left: 28%" width=300px;>';
-                    $('#preview_title_img').text('Design Schematic: Cell Layer');
-//                            $.get('../uploads/Build_Verify/buildSVG_cell.svg', function (data) {
-//                                editor_preview.getSession().setMode("ace/mode/svg");
-//                                $('#preview_title_img').text('Design Schematic: Cell Layer');
-//                                var content = data.split("\n");
-//                                var file_size = content.length;
-//                                editor_preview.session.setValue('');
-//                                for (var i = 0; i < file_size; i++) {
-//                                    editor_preview.session.replace({
-//                                        start: {row: i, column: 0},
-//                                        end: {row: i, column: Number.MAX_VALUE}
-//                                    }, content[i] + '\n')
-//                                }
-//                            });
-                    break;
-                case'SVG_control':
-                    document.getElementById('previewModalFooter_img').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../../output/testDevice_device_control.svg" download="buildSVG_control.svg"><button type="button" class="btn btn-primary"> Download Control SVG </button></a>';
-                    document.getElementById('img_here').innerHTML = '<img src="../output/testDevice_device_control.svg" style="margin-left: 28%" width=300px;>';
-                    $('#preview_title_img').text('Design Schematic: Control Layer');
-//                    $.get('../uploads/Build_Verify/buildSVG_control.svg', function (data) {
-//                        editor_preview.getSession().setMode("ace/mode/svg");
-//                        $('#preview_title').text('Design Schematic: Control Layer');
-//                        var content = data.split("\n");
-//                        var file_size = content.length;
-//                        editor_preview.session.setValue('');
-//                        for (var i = 0; i < file_size; i++) {
-//                            editor_preview.session.replace({
-//                                start: {row: i, column: 0},
-//                                end: {row: i, column: Number.MAX_VALUE}
-//                            }, content[i] + '\n')
-//                        }
-//                    });
-                    break;
-                case'SVG_flow':
-                    document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../../output/testDevice_device_flow.svg" download="buildSVG_flow.svg"><button type="button" class="btn btn-primary"> Download Flow SVG </button></a>';
-                    document.getElementById('img_here').innerHTML = '<img src="../output/testDevice_device_flow.svg" style="margin-left: 28%" width=300px;>';
-                    $('#preview_title').text('Design Schematic: FlowLayer');
-//                    $.get('../uploads/Build_Verify/buildSVG_flow.svg', function (data) {
-//                        editor_preview.getSession().setMode("ace/mode/svg");
-//                        $('#preview_title').text('Design Schematic: FlowLayer');
-//                        var content = data.split("\n");
-//                        var file_size = content.length;
-//                        editor_preview.session.setValue('');
-//                        for (var i = 0; i < file_size; i++) {
-//                            editor_preview.session.replace({
-//                                start: {row: i, column: 0},
-//                                end: {row: i, column: Number.MAX_VALUE}
-//                            }, content[i] + '\n')
-//                        }
-//                    });
-                    break;
-                case'EPS_device':
-                    document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../../output/testDevice_device.eps" download="buildEPS_device.eps"><button type="button" class="btn btn-primary"> Download Device EPS </button></a>';
-                    document.getElementById('img_here').innerHTML = '<img src="../output/testDevice_device.eps" style="margin-left: 28%" width=300px;>';
-                    $('#preview_title').text('Design Schematic: FlowLayer');
-//                    $.get('../uploads/Build_Verify/buildEPS_device.eps', function (data) {
-//                        editor_preview.getSession().setMode("ace/mode/eps");
-//                        $('#preview_title').text('Design Schematic: EPS Device');
-//                        var content = data.split("\n");
-//                        var file_size = content.length;
-//                        editor_preview.session.setValue('');
-//                        for (var i = 0; i < file_size; i++) {
-//                            editor_preview.session.replace({
-//                                start: {row: i, column: 0},
-//                                end: {row: i, column: Number.MAX_VALUE}
-//                            }, content[i] + '\n')
-//                        }
-//                    });
-                    break;
-                case'EPS_photo':
-                    document.getElementById('previewModalFooter').innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearPreviewModalContent()"> Close </button><a href="download/../../output/testDevice_photomask.eps" download="buildEPS_photo.eps"><button type="button" class="btn btn-primary"> Download Photolithography EPS </button></a>';
-                    document.getElementById('img_here').innerHTML = '<img src="../output/testDevice_device.eps" style="margin-left: 28%" width=300px;>';
-                    $('#preview_title').text('Design Schematic: FlowLayer');
-//                    $.get('../uploads/Build_Verify/buildEPS_photo.eps', function (data) {
-//                        editor_preview.getSession().setMode("ace/mode/eps");
-//                        $('#preview_title').text('Design Schematic: EPS Photolithography');
-//                        var content = data.split("\n");
-//                        var file_size = content.length;
-//                        editor_preview.session.setValue('');
-//                        for (var i = 0; i < file_size; i++) {
-//                            editor_preview.session.replace({
-//                                start: {row: i, column: 0},
-//                                end: {row: i, column: Number.MAX_VALUE}
-//                            }, content[i] + '\n')
-//                        }
-//                    });
-                    break;
-            }
-        }
-    }
-</script>

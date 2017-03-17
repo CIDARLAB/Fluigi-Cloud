@@ -1,5 +1,5 @@
 /**
- * Created by priya on 09/02/2017.
+ * Render html pages
  */
 
 exports.openHomePage = function(req, res) {
