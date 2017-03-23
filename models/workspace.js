@@ -39,23 +39,6 @@ workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_
         this.specify_files.push(file_id);
     });
 
-    // $.post('/api/Create_File',{file_name:'myLFR.v',file_ext:'.v'},function(file_id)
-    // {
-    //     this.specify_files.push(file_id);
-    // });
-    // $.post('/api/Create_File',{file_name:'defaultUCF.JSON',file_ext:'.JSON'},function(file_id)
-    // {
-    //     this.specify_files.push(file_id);
-    // });
-    // $.post('/api/Create_File',{file_name:'myMINT.mint',file_ext:'.mint'},function(file_id)
-    // {
-    //     this.design_files.push(file_id);
-    // });
-    // $.post('/api/Create_File',{file_name:'defaultConfig.ini',file_ext:'.ini'},function(file_id)
-    // {
-    //     this.design_files.push(file_id);
-    // });
-
 };
 
 workspaceSchema.pre('save', function(next)

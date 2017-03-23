@@ -1,7 +1,3 @@
-/**
- * File models within a workspace
- */
-
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
@@ -17,7 +13,7 @@ var fileSchema = new Schema
 fileSchema.methods.createS3File_and_linkToMongoDB = function createS3File_and_linkToMongoDB()
 {
     var AWS_S3 = require('../controllers/AWS_S3');
-    var body ={body:{Target_Bucket_ID:'neptune.primary.fs', Target_Object_KEY: this.id, Target_Object_BODY:'edit me :)\n\nexample body'}};
+    var body = {body:{Target_Bucket_ID:'neptune.primary.fs', Target_Object_KEY: this.id, Target_Object_BODY:'edit me :)\n\nexample body'}};
     AWS_S3.Create_Bucket_Object(body,function(S3_path){
         this.S3_path = S3_path.ETag;
     });
@@ -25,6 +21,15 @@ fileSchema.methods.createS3File_and_linkToMongoDB = function createS3File_and_li
     // $.post('/api/Create_Bucket_Object',{Target_Bucket_ID:'neptune.primary.fs', Target_Object_Key:this.name, Target_Object_Body:'edit me :)\n\nexample body'},function(S3_path){
     //     this.S3_path = S3_path;
     // });
+};
+
+fileSchema.methods.updateS3File = function updateS3File()
+{
+    var AWS_S3 = require('../controllers/AWS_S3');
+    var body ={body:{Target_Bucket_ID:'neptune.primary.fs', Target_Object_KEY: this.id, Target_Object_BODY:'edit me :)\n\nexample body'}};
+    AWS_S3.Create_Bucket_Object(body,function(S3_path){
+        this.S3_path = S3_path.ETag;
+    });
 };
 
 fileSchema.pre('save', function(next)
@@ -39,7 +44,6 @@ fileSchema.pre('save', function(next)
 
     next();                             // Execute next function.
 });
-
 
 var File = mongoose.model('File', fileSchema);
 module.exports = File;

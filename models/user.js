@@ -1,8 +1,3 @@
-/**
- * User models
- */
-
-
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 //mongodb://localhost/myTestDB
@@ -26,15 +21,7 @@ userSchema.methods.generateWorkspaces_and_updateSchema = function generateWorksp
     var body ={body:{name:'Microfluidic Examples'}};
     AWS_S3.Create_Workspace(body,function(workspace_id){
         this.workspaces.push(workspace_id);
-    })
-
-    // $.post('/api/Create_Workspace',{name:'Playground'},function(workspace_id){
-    //     this.workspaces.push(workspace_id);
-    // });
-    // $.post('/api/Create_Workspace',{name:'Microfluidic Examples'},function(workspace_id){
-    //     this.workspaces.push(workspace_id);
-    // });
-
+    });
 };
 
 // Upon creation of a new user schema, generate and save the following content:
@@ -53,3 +40,9 @@ userSchema.pre('save', function(next)
 
 var User = mongoose.model('User', userSchema);
 module.exports = User;
+
+
+
+
+
+

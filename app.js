@@ -59,6 +59,8 @@ hbs.registerPartials(__dirname + '/views/partials');
     var compileMintController = require('./controllers/compileMint');
     var translateLFRController = require('./controllers/translateLFR');
     var AWS_S3_Controller = require('./controllers/AWS_S3');
+    var databaseController = require('./controllers/databaseInterface');
+    var partialController = require('./controllers/partialController');
 }
 
 /*********************   VIEWS   *********************/
@@ -128,32 +130,34 @@ hbs.registerPartials(__dirname + '/views/partials');
 
 /************** AMAZON WEB SERVICES S3 FILE STORAGE  ***************/
 {
-    app.post('/api/Create_Unique_Bucket', AWS_S3_Controller.Create_Unique_Bucket);
-    app.post('/api/Delete_Unique_Bucket', AWS_S3_Controller.Delete_Unique_Bucket);
-    app.post('/api/Delete_Bucket_Object', AWS_S3_Controller.Delete_Bucket_Object);
-    app.post('/api/Create_Bucket_Object', AWS_S3_Controller.Create_Bucket_Object);
-    app.post('/api/Get_Bucket_Object'   , AWS_S3_Controller.Get_Bucket_Object);
-    app.post('/api/Read_S3_Link'        , AWS_S3_Controller.read_link);
-    //app.post('/api/sendToAWS'           , AWS_S3_Controller.sendToAWS);
+    app.post('/api/Create_Bucket_Object',AWS_S3_Controller.Create_Bucket_Object);
+    app.post('/api/Read_Bucket_Object'  ,AWS_S3_Controller.Read_Bucket_Object);
+    app.post('/api/Update_Bucket_Object',AWS_S3_Controller.Update_Bucket_Object);
+    app.post('/api.Delete_Bucket_Object',AWS_S3_Controller.Delete_Bucket_Object)
 }
 
 /************** Mongoose DataBase Calls **************/
 {
-    app.post('/api/Create_User', AWS_S3_Controller.Create_User);
-    app.post('/api/Update_User',AWS_S3_Controller.Update_User);
-    app.post('/api/Query_User', AWS_S3_Controller.Query_User);
-    app.post('/api/Delete_User',AWS_S3_Controller.Delete_User);
+    app.post('/api/Create_User', databaseController.Create_User);
+    app.post('/api/Update_User',databaseController.Update_User);
+    app.post('/api/Query_User', databaseController.Query_User);
+    app.post('/api/Delete_User',databaseController.Delete_User);
 
-    app.post('/api/Create_Workspace', AWS_S3_Controller.Create_Workspace);
-    app.post('/api/Update_Workspace',AWS_S3_Controller.Update_Workspace);
-    app.post('/api/Query_Workspace', AWS_S3_Controller.Query_Workspace);
-    app.post('/api/Delete_Workspace',AWS_S3_Controller.Delete_Workspace);
+    app.post('/api/Create_Workspace', databaseController.Create_Workspace);
+    app.post('/api/Update_Workspace',databaseController.Update_Workspace);
+    app.post('/api/Query_Workspace', databaseController.Query_Workspace);
+    app.post('/api/Delete_Workspace',databaseController.Delete_Workspace);
 
-    app.post('/api/Create_File', AWS_S3_Controller.Create_File);
-    //app.post('/api/Update_File',AWS_S3_Controller.Update_File);
-    //app.post('/api/Query_File', AWS_S3_Controller.Query_File);
-    //app.post('/api/Delete_File',AWS_S3_Controller.Delete_File);
+    app.post('/api/Create_File', databaseController.Create_File);
+    app.post('/api/Update_File',databaseController.Update_File);
+    app.post('/api/Query_File', databaseController.Query_File);
+    app.post('/api/Delete_File',databaseController.Delete_File);
 }
+/* Partials */
+{
+    app.post('/api/FileNavigationBar_Partial',partialController.FileNavigationBar);
+}
+
 
 /************** Redirects **************/
 {
