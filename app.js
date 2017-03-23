@@ -9,9 +9,10 @@ var passport     = require('passport');             //Handles users and login
 var flash        = require('connect-flash');
 var cookieParser = require('cookie-parser');        //Parses cookies
 var bodyParser   = require('body-parser');
-var session      = require('express-session');      //Handles user sessions
 var fs           = require('fs');
 var morgan       = require('morgan');
+var session = require('express-session');
+// var MongoStore   = require('connect-mongo')(session);
 
 global.Neptune_ROOT_DIR = __dirname;
 
@@ -20,12 +21,21 @@ mongoose.connect(configDB); // connect to our database
 
 // set up our cookies and html information for login
 app.use(morgan('dev')); // log every request to the console
-app.use(cookieParser()); // read cookies (needed for auth)
+app.use(cookieParser());
+app.use(session({secret:'iamneptune'}))
+//app.use(express.cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser.json()); // get information from html forms
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// required for passport
-app.use(session({ secret: 'iamneptune' })); // session secret
+// session required for passport
+// app.use(express.session({
+//     store: new MongoStore({
+//         url: configDB,
+//         ttl: 7 * 24 * 60 * 60 // = 7 days
+//     }),
+//     secret: 'iamneptune'
+// }));
+
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
@@ -54,13 +64,13 @@ hbs.registerPartials(__dirname + '/views/partials');
 /*********************   VIEWS   *********************/
 
 {
-    app.get('/assembly', viewsController.openAssemblyPage);
     app.get('/', viewsController.openHomePage);
-    app.get('/build', viewsController.openBuildPage);
-    app.get('/dashboard', viewsController.openDashboardPage);
-    app.get('/control', viewsController.openControlPage);
-    app.get('/specify', viewsController.openSpecifyPage);
-    app.get('/design', viewsController.openDesignPage);
+    app.get('/assembly', isLoggedIn, viewsController.openAssemblyPage);
+    app.get('/build', isLoggedIn, viewsController.openBuildPage);
+    app.get('/dashboard', isLoggedIn, viewsController.openDashboardPage);
+    app.get('/control', isLoggedIn, viewsController.openControlPage);
+    app.get('/specify', isLoggedIn, viewsController.openSpecifyPage);
+    app.get('/design', isLoggedIn, viewsController.openDesignPage);
 
         // PROFILE SECTION =========================
         app.get('/profile', isLoggedIn, function(req, res) {
@@ -89,7 +99,6 @@ hbs.registerPartials(__dirname + '/views/partials');
             failureFlash : true // allow flash messages
         }));
 
-        // SIGNUP =================================
         // show the signup form
         app.get('/signup', function(req, res) {
             res.render('signup.ejs', { message: req.flash('signupMessage') });
@@ -109,7 +118,7 @@ hbs.registerPartials(__dirname + '/views/partials');
         if (req.isAuthenticated())
             return next();
 
-        res.redirect('/');
+        res.redirect('/login');
     }
 
 /*************************** FILE WRITE ********************/
