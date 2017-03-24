@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
 
-    <!--Walkthrough tour-->c
+    <!--Walkthrough tour-->
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/css/bootstrap-tour.min.css">
@@ -41,22 +41,6 @@
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         }
-    </script>
-
-    <script type="text/javascript">
-
-        if (localStorage.firstUse == undefined)
-        {
-            $.post('/api/findHome',function(result,error)
-            {
-                localStorage.WORKSPACE = result.home_directory;
-                localStorage.firstUse = 'defined';
-            });
-        }
-        var tempWorkspace = localStorage.WORKSPACE;
-        localStorage.clear();
-        localStorage.WORKSPACE = tempWorkspace;
-
     </script>
 
 
@@ -278,9 +262,15 @@
                 <h4 class="modal-title"><span class="fa fa-lock"></span> Fluigi Cloud</h4>
             </div>
 
-            <div class="modal-body" align="center">
-            <a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Login</a>
-            <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Register</a>
+            <div class="modal-body" align="center" id="beforelogin">
+                <p> Log in to an existing account, or register for a new one.</p>
+                <a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Login</a>
+                <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Register</a>
+                    <!--<a href="/dashboard" class="btn btn-default"><span class="fa fa-play"></span> Proceed As Guest</a>-->
+            </div>
+            <div class="modal-body" align="center" id="loggedin">
+                <p> If you've logged in, please proceed to your profile.</p>
+                <a href="/profile" class="btn btn-default"><span class="fa fa-user"></span> My Profile</a>
                 <!--<a href="/dashboard" class="btn btn-default"><span class="fa fa-play"></span> Proceed As Guest</a>-->
             </div>
             <div class="modal-footer">
@@ -487,6 +477,8 @@
 <!-- Custom Theme JavaScript -->
 <script src="/javascripts/styles/sb-admin-2.js"></script>
 <!-- *** END: DEPENDENCIES *** -->
+
+
 
 </html>
 

@@ -41,12 +41,26 @@
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
     <div class="navbar-header">
         <img class="pull-left" height="40" width="40" style="margin-top: 5px; margin-left: 5px;" src="../images/NeptuneLogo.png">
-        <a class="navbar-brand" style="font-family: 'Open Sans'"> NEPTUNE </a>
+        <a class="navbar-brand" > NEPTUNE </a>
+        <ul class="nav navbar-top-links navbar-left" style="float: left!important;">
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user fa-fw"></i> {{user.local.email}} <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li><a href="../profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li><a href="/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
     </div>
-    <!-- /.navbar-header -->
-
 
 </nav>
+
+
 
 <div id="page-wrapper" style="margin-left: 0;">
     <div class="row">

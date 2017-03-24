@@ -148,6 +148,20 @@
     <div class="navbar-header">
         <img class="pull-left" id="dropdownHover" height="40" width="40" style="margin-top: 5px; margin-left: 5px;" src="../images/NeptuneLogo.png">
         <a class="navbar-brand" style="font-family: 'Open Sans'"> NEPTUNE </a>
+        <ul class="nav navbar-top-links navbar-left" style="float: left!important;">
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user fa-fw"></i> {{user.local.email}} <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li><a href="../profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li><a href="/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
     </div>
 
     <!-- START: SIDE NAVIGATION BAR -->
@@ -160,7 +174,7 @@
                 </li>
                 <!-- THIS LINKS TO THE MAIN DASHBOARD -->
                 <li>
-                    <a href="../dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard </a>
+                    <a href="../help"><i class="fa fa-dashboard fa-fw"></i> Help </a>
                 </li>
                 <!-- THESE LINKS PROVIDE USER NAVIGATION THROUGHOUT THE WORKFLOW -->
                 <li>
@@ -168,9 +182,6 @@
                     <ul class="nav nav-second-level">
                         <li>
                             <a href="../specify"><i class="fa fa-pencil-square-o  fa-fw"></i> Specify </a>
-                        </li>
-                        <li>
-                            <a href="../design"><i class="fa fa-cogs" aria-hidden="true"></i> Design </a>
                         </li>
                         <li>
                             <a href="../build"><i class="fa fa-wrench" aria-hidden="true"></i> Build</a>

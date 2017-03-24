@@ -3,7 +3,7 @@
  */
 
 exports.openHomePage = function(req, res) {
-   res.render('index', {title: 'Neptune'});
+    res.render('index', {title: 'Neptune', user:req.user});
 };
 
 exports.openAssemblyPage = function (req, res){
@@ -14,8 +14,8 @@ exports.openBuildPage = function (req, res){
     res.render('build', {title: 'Build', user: req.user});
 };
 
-exports.openDashboardPage = function(req, res){
-    res.render('dashboard', {title: 'Dashboard', user: req.user});
+exports.openHelpPage = function(req, res){
+    res.render('help', {title: 'Help', user: req.user});
 };
 
 exports.openControlPage = function(req, res) {
