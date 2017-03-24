@@ -1,19 +1,35 @@
-<div id="selectJob" class="modal fade" role="dialog">
+<div id="selectFile" class="modal fade" role="dialog">
     <div class="modal-dialog prj_select_dialog">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header modal-header-primary">
-                <h4 class="modal-title">Choose Target LFR</h4>
+                <h4 class="modal-title">Choose a File </h4>
             </div>
             <div class="modal-body" id="job_select">
                 {{#each objects}}
-                    <li id="possibleJob">
-                        <a data-dismiss="modal" onclick="loadToEditor('{{id}}',EDITOR.editor,EDITOR.session)"><i class="fa fa-file-code-o"></i> {{name}} <span></span></a>
-                    </li>
+                    <div id="possibleJob">
+                        <a data-dismiss="modal" onclick="loadFile('{{id}}')"><i class="fa fa-file-code-o"></i> {{name}} <span></span></a>
+                    </div>
+                    <br>
                 {{/each}}
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="nameProject();" data-target=".bd-example-modal-sm"> New Project </button>
+        </div>
+    </div>
+</div>
+<div id="selectConfig" class="modal fade" role="dialog">
+    <div class="modal-dialog prj_select_dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header modal-header-primary">
+                <h4 class="modal-title">Choose a Configuration File </h4>
+            </div>
+            <div class="modal-body" id="job_select">
+                {{#each objects}}
+                    <div id="possibleJob">
+                        <a data-dismiss="modal" onclick="loadConfigFile('{{id}}')"><i class="fa fa-file-code-o"></i> {{name}} <span></span></a>
+                    </div>
+                    <br>
+                {{/each}}
             </div>
         </div>
     </div>

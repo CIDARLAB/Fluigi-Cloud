@@ -154,7 +154,6 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse" id="file_tree">
                 </div>
-                <!-- /.sidebar-collapse -->
             </div>
             <!-- END: SIDE NAVIGATION BAR -->
 
@@ -188,32 +187,19 @@
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <button type="button" class="btn btn-secondary" onclick="var EDITOR = initializeEditor()"> Start Editor </button>
                                         <button type="button" class="btn btn-secondary" onclick="save(EDITOR.editor,EDITOR.session)"> Save </button>
-                                        <button type="button" class="btn btn-secondary" onclick="dojob(EDITOR.editor,EDITOR.session,'lfr')"> Translate LFR </button>
-                                        <button type="button" class="btn btn-secondary" onclick="dojob(EDITOR.editor,EDITOR.session,'mint')"> Compile MINT </button>
+                                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="translateJob()"> Translate to MINT </button>
+                                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="processJob()"> Compile to Schematic</button>
                                     </div>
 
+                            <script type="text/javascript">
+                                function translateJob(){
+                                    localStorage.jobType = 'lfr';
+                                }
+                                function processJob(){
+                                    localStorage.jobType = 'mint';
+                                }
+                            </script>
 
-
-                            <!--<i class="fa fa-bar-chart-o fa-fw"></i>-->
-                            <!--<ul class="nav nav-tabs" id='tabs_drpdwn'>-->
-                                <!--&lt;!&ndash;<button type="button" class="btn btn-secondary btn-lg btn-block" onclick="initializeEditor()">Start Editor</button>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<div class="well well-sm project_title">&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<h4 class="prj"> <em id="pj_t"> Project: </em> </h4><span class="pull-right project_title" id="project_title"> </span>&ndash;&gt;-->
-                                <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<li id="LFRtab" class="active"><a id="LFRtab_t" onclick="changeSpecifyTabs(editor_specify,'LFRtab',[LFR_tab,UCF_tab])"></a></li>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<li id="UCFtab"><a id="UCFtab_t" onclick="changeSpecifyTabs(editor_specify,'UCFtab',[LFR_tab,UCF_tab])"></a></li>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<li> &nbsp &nbsp </li>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<style>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;.prj {  text-align: center  }&ndash;&gt;-->
-                                <!--&lt;!&ndash;</style>&ndash;&gt;-->
-
-                                <!--<div class="pull-right">-->
-
-                                    <!--<button class="btn btn-default" onclick="saveEditorContent(editor_specify,localStorage.specify_editor_state)"> <i class="fa fa-floppy-o  fa-fw"></i></button>-->
-                                    <!--<button class="btn btn-default" data-toggle="modal" data-target="#name_outputMINT"> <i class="fa fa-play-circle-o  fa-fw"></i></button>-->
-
-                                <!--</div>-->
-                            <!--</ul>-->
 
                         </div>
 
@@ -545,10 +531,10 @@
         {
             $("#file_tree").html(html)
         });
-//        $.post('/api/partials_JobSelect',{workspace_id:localStorage.WORKSPACE},function(html)
-//        {
-//            $("#").html(html)
-//        });
+        $.post('/api/partials_JobSelect',{workspace_id:localStorage.WORKSPACE},function(html)
+        {
+            $("#compileModal").html(html)
+        });
     });
 </script>
 
@@ -631,3 +617,7 @@
             border-top-right-radius: 5px;
         }
     </style>
+
+<div id="compileModal" >
+
+</div>

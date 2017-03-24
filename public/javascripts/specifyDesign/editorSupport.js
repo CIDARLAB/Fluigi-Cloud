@@ -23,10 +23,20 @@
  This file holds all functions related to the editor and its function.
  */
 
-localStorage.WORKSPACE = 'c70c3ce8f0320cc147ba9';
-localStorage.FILE = 'designMINT.uf';               //'hello_world_lfr.v';
-localStorage.CONFIG = 'default_initilization_file.ini';  //'default_constraint_file.JSON';
+localStorage.WORKSPACE = '58cc70c3ce8f0320cc147ba9';
+localStorage.FILE = 'hello_world_lfr.v'; //LFR or MINT
+localStorage.CONFIG = 'default_constraint_file.JSON'; //UCF or INI
 
+
+function loadFile(id){
+    localStorage.FILE = id;
+   $('#selectConfig').modal('show');
+}
+
+function loadConfigFile(id){
+    localStorage.CONFIG = id;
+    dojob(EDITOR.editor, EDITOR.session, localStorage.jobType);
+}
 
 function loadToEditor(id,editor,session)
 {
