@@ -13,10 +13,10 @@ var lineder = require( "lineder" );
 
 var FLUIGI_BINARY_PATH = path.join(global.Neptune_ROOT_DIR, "backend", "Fluigi-jar-with-dependencies.jar");
 
-io = require('socket.io')(global.server);
-io.on('connection', function(socket){
-    console.log('a user connected');
-});
+// io = require('socket.io')(global.server);
+// io.on('connection', function(socket){
+//     console.log('a user connected');
+// });
 
 exports.compileMint = function(req, res)
 {

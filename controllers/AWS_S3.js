@@ -88,7 +88,7 @@ exports.Read_Bucket_Object = function(req, res)
 };
 exports.Update_Bucket_Object = function(req, res)
 {
-    var Target_Bucket_ID  = req.body.Target_Bucket_ID;
+    var Target_Bucket_ID  = 'neptune.primary.fs';//req.body.Target_Bucket_ID;
     var Target_Object_KEY = req.body.Target_Object_KEY;
     var Target_Object_STREAM = req.body.Target_Object_STREAM;
 
@@ -133,9 +133,56 @@ exports.Delete_Bucket_Object = function(req, res)
 
 };
 
+exports.preCompileFileTransfer = function(req, res)
+{
+    var Target_Bucket_ID = 'neptune.primary.fs';
+
+    var transferType = req.body.transferType;
+    switch (transferType)
+    {
+        case 'lfr':
+            var lfrpath = req.body.job;
+            var ucfpath = req.body.config;
+
+            var Parameters_lfr = {
+                Bucket: Target_Bucket_ID,
+                Key: lfrpath,
+                ResponseContentEncoding: 'utf-8',
+                ResponseContentType: 'string/utf-8'
+            };
+            var Parameters_ucf = {
+                Bucket: Target_Bucket_ID,
+                Key: ucfpath,
+                ResponseContentEncoding: 'utf-8',
+                ResponseContentType: 'string/utf-8'
+            };
+            var path1 = path.join(global.Neptune_ROOT_DIR, "jobs", "job.txt");
+            s3.getObject(Parameters_lfr,function(error,data){
+                var fd = fs.openSync(path1, 'w+');
+                fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
+                fs.closeSync(fd);
+            });
+            var path2 = path.join(global.Neptune_ROOT_DIR, "jobs", "config.txt");
+            s3.getObject(Parameters_ucf,function(error,data){
+                var fd = fs.openSync(path2, 'w+');
+                fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
+                fs.closeSync(fd);
+            });
+            res.send('Done');
+            break;
+        case 'mint':
+            var mintpath = req.body.job;
+            var inipath = req.body.config;
+            break;
+    }
+
+
+};
+
 
 exports.redirectToSpecify = function(req,res)
 {
     res.redirect('../Specify');
 };
+
 

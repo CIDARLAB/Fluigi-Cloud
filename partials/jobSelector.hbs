@@ -1,0 +1,33 @@
+<div id="selectJob" class="modal fade" role="dialog">
+    <div class="modal-dialog prj_select_dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header modal-header-primary">
+                <h4 class="modal-title">Choose Target LFR</h4>
+            </div>
+            <div class="modal-body" id="job_select">
+                {{#each objects}}
+                    <li id="possibleJob">
+                        <a data-dismiss="modal" onclick="loadToEditor('{{id}}',EDITOR.editor,EDITOR.session)"><i class="fa fa-file-code-o"></i> {{name}} <span></span></a>
+                    </li>
+                {{/each}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="nameProject();" data-target=".bd-example-modal-sm"> New Project </button>
+            </div>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    #job_select
+    {
+        overflow-y: auto;
+    }
+    #selectJob
+    {
+        position: absolute !important;
+    }
+    .prj_select_dialog
+    {
+    }
+</style>

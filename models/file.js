@@ -34,15 +34,16 @@ fileSchema.methods.updateS3File = function updateS3File()
 
 fileSchema.pre('save', function(next)
 {
+    this.set("_id", mongoose.Types.ObjectId(this._id), {strict: false});
+
     // Save date of creation
     var currentDate = new Date();       // Get the current date
     this.updated_at = currentDate;      // Change the updated_at field to current date
     if (!this.created_at)
         this.created_at = currentDate;  // If created_at doesn't exist, add to that field
 
-    // Unique id is automatically generated
+    next();
 
-    next();                             // Execute next function.
 });
 
 var File = mongoose.model('File', fileSchema);

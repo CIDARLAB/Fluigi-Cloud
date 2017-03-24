@@ -23,6 +23,55 @@
  This file holds all functions related to the editor and its function.
  */
 
+localStorage.WORKSPACE = '58cc70c3ce8f0320cc147ba9';
+localStorage.FILE = 'hello_world_lfr.v';
+localStorage.CONFIG = 'default_constraint_file.JSON';
+
+
+function loadToEditor(id,editor,session)
+{
+    $.post('/api/Read_Bucket_Object', {Target_Object_KEY: id}, function (data)
+    {
+        session.setValue(data);
+    });
+}
+
+
+function initializeEditor()
+{
+    var editor_specify = ace.edit("editor_specify");
+    editor_specify.setTheme("ace/theme/crimson_editor");
+    editor_specify.setOptions({
+        fontFamily: "monospace",
+        fontSize: "12pt"
+    });
+    var MainSession = ace.createEditSession('MainSession', "ace/mode/verilog");
+    editor_specify.setSession(MainSession);
+
+    $.post('/api/Read_Bucket_Object', {Target_Object_KEY: localStorage.FILE}, function (data)
+    {
+        editor_specify.setValue(data);
+    });
+
+    EDITOR = {editor: editor_specify, session: MainSession};
+    return EDITOR;
+};
+
+function save(editor,session)
+{
+    var data = session.getValue();
+    $.post('/api/Update_Bucket_Object', {Target_Object_KEY:localStorage.FILE,Target_Object_STREAM:data}, function(data) {});
+}
+
+function dojob(editor,session,jobtype)
+{
+    save(editor,session);
+    $.post('/api/preCompileFileTransfer',{transferType:'lfr',job:localStorage.FILE,config:localStorage.CONFIG},function(data){
+        $.post('/api/translate');
+    });
+    //$.post('/api/translateLFR',{filP})
+}
+
 function changeSpecifyTabs(Editor,Tab_To_Switch_To,SessionArray)
 {
     switch (Tab_To_Switch_To)

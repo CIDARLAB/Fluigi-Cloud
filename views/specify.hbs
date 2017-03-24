@@ -18,28 +18,27 @@
             SpecifyTerminal.echo(string);
         }
     </script>
-    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <!--<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <script>
-        var SpecifyTerminal = null;
-        var socket = io();
-        socket.on('translate_console_readout', function(data){
-            //$('.translate_readout').append(data + '<br><br>');
-            terminalLog(data);
-        });
+//        var SpecifyTerminal = null;
+//        var socket = io();
+//        socket.on('translate_console_readout', function(data){
+//            //$('.translate_readout').append(data + '<br><br>');
+//            terminalLog(data);
+//        });
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
     <script type="text/javascript" src="../javascripts/specifyDesign/actionCenterSupport.js"></script>
-    <script>
-        localStorage.specify_editor_state = 'specifyLFR';
-        localStorage.lfr_state = 'write';
-        localStorage.ucf_state = 'write';
-    </script>
+
+    <!--<script>-->
+        <!--localStorage.specify_editor_state = 'specifyLFR';-->
+        <!--localStorage.lfr_state = 'write';-->
+        <!--localStorage.ucf_state = 'write';-->
+    <!--</script>-->
 
     <!-- JAVASCRIPT DEPENDENCIES -->
-    <script type="text/javascript" src="../javascripts/specifyDesign/editorSupport.js"></script>
-
 
     <!-- CSS DEPENDENCIES -->
 
@@ -85,7 +84,6 @@
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.0.14/js/jquery.terminal.js"></script>-->
 
     <!--Local files-->
-    <script type="text/javascript" src="../javascripts/specifyDesign/editorSupport.js"></script>
 
     <script src="/javascripts/styles/jquery.min.js"></script>
     <script src="/javascripts/styles/bootstrap.min.js"></script>
@@ -94,6 +92,7 @@
     <script src="/javascripts/styles/morris.min.js"></script>
     <script src="/javascripts/styles/sb-admin-2.js"></script>
     <script type="text/javascript" src="../javascripts/specifyDesign/editorSupport.js"></script>
+    <script type="test/javascript" src="../javascripts/specifyDesign/init_specify.js"></script>
     <script type="text/javascript" src="../javascripts/specifyDesign/fileNavigator.js"></script>
 
 
@@ -185,26 +184,37 @@
                     <!-- START: LFR EDITOR -->
                     <div class="panel with-nav-tabs panel-default">
                         <div class="panel-heading">
+
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <button type="button" class="btn btn-secondary" onclick="var EDITOR = initializeEditor()"> Start Editor </button>
+                                        <button type="button" class="btn btn-secondary" onclick="save(EDITOR.editor,EDITOR.session)"> Save </button>
+                                        <button type="button" class="btn btn-secondary" onclick="dojob(EDITOR.editor,EDITOR.session,'lfr')"> Translate LFR </button>
+                                        <button type="button" class="btn btn-secondary" onclick="dojob(EDITOR.editor,EDITOR.session,'mint')"> Compile MINT </button>
+                                    </div>
+
+
+
                             <!--<i class="fa fa-bar-chart-o fa-fw"></i>-->
+                            <!--<ul class="nav nav-tabs" id='tabs_drpdwn'>-->
+                                <!--&lt;!&ndash;<button type="button" class="btn btn-secondary btn-lg btn-block" onclick="initializeEditor()">Start Editor</button>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<div class="well well-sm project_title">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<h4 class="prj"> <em id="pj_t"> Project: </em> </h4><span class="pull-right project_title" id="project_title"> </span>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<li id="LFRtab" class="active"><a id="LFRtab_t" onclick="changeSpecifyTabs(editor_specify,'LFRtab',[LFR_tab,UCF_tab])"></a></li>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<li id="UCFtab"><a id="UCFtab_t" onclick="changeSpecifyTabs(editor_specify,'UCFtab',[LFR_tab,UCF_tab])"></a></li>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<li> &nbsp &nbsp </li>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<style>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;.prj {  text-align: center  }&ndash;&gt;-->
+                                <!--&lt;!&ndash;</style>&ndash;&gt;-->
 
-                            <ul class="nav nav-tabs" id='tabs_drpdwn'>
-                                <div class="well well-sm project_title">
-                                    <h4 class="prj"> <em id="pj_t"> Project: </em> </h4><span class="pull-right project_title" id="project_title"> </span>
-                                </div>
-                                <li id="LFRtab" class="active"><a id="LFRtab_t" onclick="changeSpecifyTabs(editor_specify,'LFRtab',[LFR_tab,UCF_tab])"></a></li>
-                                <li id="UCFtab"><a id="UCFtab_t" onclick="changeSpecifyTabs(editor_specify,'UCFtab',[LFR_tab,UCF_tab])"></a></li>
-                                <li> &nbsp &nbsp </li>
-                                <style>
-                                    .prj {  text-align: center  }
-                                </style>
+                                <!--<div class="pull-right">-->
 
-                                <div class="pull-right">
+                                    <!--<button class="btn btn-default" onclick="saveEditorContent(editor_specify,localStorage.specify_editor_state)"> <i class="fa fa-floppy-o  fa-fw"></i></button>-->
+                                    <!--<button class="btn btn-default" data-toggle="modal" data-target="#name_outputMINT"> <i class="fa fa-play-circle-o  fa-fw"></i></button>-->
 
-                                    <button class="btn btn-default" onclick="saveEditorContent(editor_specify,localStorage.specify_editor_state)"> <i class="fa fa-floppy-o  fa-fw"></i></button>
-                                    <button class="btn btn-default" data-toggle="modal" data-target="#name_outputMINT"> <i class="fa fa-play-circle-o  fa-fw"></i></button>
+                                <!--</div>-->
+                            <!--</ul>-->
 
-                                </div>
-                            </ul>
                         </div>
 
                         <div class="panel-body" >
@@ -224,16 +234,6 @@
 
 
                 <script src="/javascripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-                <script> var editor_specify = ace.edit("editor_specify"); editor_specify.setTheme("ace/theme/crimson_editor");
-                editor_specify.setOptions({
-                    fontFamily: "monospace",
-                    fontSize: "12pt"
-                });</script>
-                <script>
-                    var LFR_tab = ace.createEditSession('LFR_tab',"ace/mode/verilog");
-                    var UCF_tab = ace.createEditSession('UCF_tab',"ace/mode/json");
-                    editor_specify.setSession(LFR_tab);
-                </script>
                 <!-- END: LFR EDITOR & 2 other panels-->
 
                 <!-- START: UPLOAD FORM, UCF SUMMARY, INI SUMMARY -->
@@ -479,20 +479,7 @@
         //template_UCF_UI();
     </script>
 
-    <script type="text/javascript">
 
-        $.post('/api/Query_Workspace',{workspace_id: localStorage.workspace},function(workspace){
-            console.log(workspace);
-        });
-
-        $.get('../hbsPartials/workspaceFiles.hbs', function (data)
-        {
-            var template = Handlebars.compile(data);
-            var myhtml = template(file_tree);
-            $("#file_tree").html(myhtml);
-        },'html');
-
-    </script>
 
     <div id='renameLFR' class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
@@ -532,6 +519,7 @@
             </div>
         </div>
     </div>
+
     <script type="text/javascript">
         function renameFile(selected_file)
         {
@@ -546,15 +534,26 @@
                 case 'ini':
                     break
             }
-//        $.post('/api/renameFile',{fileToRename: localStorage.LFR, newName: 'x'},function(data)
-//        {
-//            toastr.info('','')
-//        })
         }
-
     </script>
 
     </html>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $.post('/api/partials_FileNavBar',{workspace_id:localStorage.WORKSPACE},function(html)
+        {
+            $("#file_tree").html(html)
+        });
+//        $.post('/api/partials_JobSelect',{workspace_id:localStorage.WORKSPACE},function(html)
+//        {
+//            $("#").html(html)
+//        });
+    });
+</script>
+
+
+
 
     <style type="text/css">
 

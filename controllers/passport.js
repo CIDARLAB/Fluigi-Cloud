@@ -2,7 +2,7 @@
 var LocalStrategy    = require('passport-local').Strategy;
 
 // load up the user model
-var User       = require('./user');
+var User       = require('../models/user');
 
 // load the auth variables
 // var configAuth = require('./auth'); // use this one for testing
@@ -119,7 +119,7 @@ module.exports = function(passport) {
                             var user = req.user;
                             user.local.email = email;
                             user.local.password = user.generateHash(password);
-                            user.save(function (err) {
+                            user.save(function (err,success) {
                                 if (err)
                                     return done(err);
 

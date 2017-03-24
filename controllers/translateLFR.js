@@ -9,22 +9,20 @@ var fs = require('fs');
 const readline = require('readline');
 const path = require('path');
 
-var MM_BINARY_PATH = path.join(global.Neptune_ROOT_DIR, "backend", "MuShroomMapper.jar");
+var MM_BINARY_PATH  = path.join(global.Neptune_ROOT_DIR, "jobs", "MuShroomMapper.jar");
+var lfr_path        = path.join(global.Neptune_ROOT_DIR, "jobs", "job.txt");
+var ucf_path        = path.join(global.Neptune_ROOT_DIR, "jobs", "config.txt");
+var out_path        = path.join(global.Neptune_ROOT_DIR, "jobs", "output.txt");
 
-io = require('socket.io')(global.server);
-io.on('connection', function(socket){
-    console.log('a user connected');
-});
+// io = require('socket.io')(global.server);
+// io.on('connection', function(socket){
+//     console.log('a user connected');
+// });
 
 exports.translateLFR = function(req, res)
 {
-    var lfr_path = req.body.filePathLFR;
-    var ucf_path = req.body.filePathUCF;
-    var out_path = req.body.filePathOut;
-    var name     = req.body.name;
+    var name     = "new_device";
     var outputPath = path.join(out_path,name);
-
-
 
 
     var par_terminal = require('child_process').spawn(

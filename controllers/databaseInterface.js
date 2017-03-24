@@ -13,10 +13,9 @@ var mongoose    = require('mongoose');
 var fs          = require('fs');
 var AWS         = require('aws-sdk');
 var s3s         = require('s3-streams');
-
 AWS.config.update({
-    accessKeyId: "AKIAJH2JZ3M6CT3RKEMA",
-    secretAccessKey: "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"
+    accessKeyId: process.env['AWSID'],
+    secretAccessKey: process.env['AWSKEY']
 });
 var s3          = new AWS.S3();
 
@@ -31,44 +30,46 @@ exports.Create_User = function(req, res)
         password: password
     });
 
-    newUser.save(function(err,success) {
+    var id_temp;
+    newUser.save(function(err,success)
+    {
+        id_temp = success.id;
         if(err) throw err;
         console.log('-- New User Created --');
         console.log('Username: %s',username);
         console.log('Password: %s',password);
         console.log('UniqueId: %s',success.id);
         console.log('----------------------');
+
+        var User = require('../models/user');
+        //User.findById(success.id);
+        // newUser.methods.generateWorkspaces_and_updateSchema(id_temp);
     });
-
-    newUser.generateWorkspaces_and_updateSchema();
-
-    res.send(newUser.id);
+    res.send(id_temp);
 };
 exports.Update_User = function(req, res)
 {
-    var userId = req.body.id;
-    User.findById(userId, function(err, user){
-        if(err) throw err;
+    var User = require('../models/user');
 
-        var update_type = req.body.update_type;
-        switch(update_type)
-        {
-            case 'username':
-                console.log('Username updated!');
-                break;
-            case 'password':
-                console.log('Password updated!');
-                break;
-            case 'workspace':
-                var workspace = req.body.workspace;
-                user.workspace = workspace;
-                console.log('Workspace set to: %s', workspace);
-                break;
-            case 'newWorkspace':
-                var workspace = req.body.workspace;
-                break;
-        }
+    var userId      = req.body.user_id;
+    var update_type = req.body.update_type;
+    var update      = req.body.update;
+
+    console.log('ATTEMPTING TO UPDATE USER w/ ID [%s] BY PUSHING WORKSPACE ID: [%s]',userId,update);
+
+    User.findById(userId, function (err,user)
+    {
+        if(err) throw err;
+        user.local.workspaces.push(update);
     });
+
+    // User.update({_id: userId}, {$push: {workspaces: update}}, function(err)
+    // {
+    //     if(err) console.log(err);
+    //     else    console.log(update);
+    // });
+
+    return 0;
 };
 exports.Query_User = function(req, res)
 {
@@ -161,31 +162,22 @@ exports.Create_Workspace = function(req, res)
     });
 
     newWorkspace.generateFiles_and_updateSchema();
-    //res.send(newWorkspace.id);
-    return newWorkspace.id;
+    return newWorkspace._id;
 };
 exports.Query_Workspace = function(req, res)
 {
-    var workspace_id = req.body.workspace_id;
     var Workspace = require('../Models/workspace');
+    var searchFor = req.body.workspace_id;
 
-    // var workspace = Workspace.findById(workspace_id, 'specify_files' ,function (err,workspace)
-    // {
-    //     if(err) throw err;
-    //     return workspace;
-    //     //res.send(workspace);
-    // });
-    // return workspace;
-    // //res(workspace);
-
-
-    var workspace = Workspace.findOne({_id:workspace_id}, function(err, workspace)
+    var fileSpace = {};
+    Workspace.findById('58d514934146a97023e32b26',{specify_files:1 ,design_files:1}, function (err,workspace)
     {
-        console.log('Im yag');
-        if (err) return err;
-        else return workspace;
-        return workspace;
+        if(err) throw err;
+        fileSpace = {specify_files: workspace.specify_files, design_files: workspace.design_files};
+        console.log(fileSpace);
     });
+
+    return fileSpace;
 };
 exports.Update_Workspace = function(req, res)
 {
@@ -247,8 +239,12 @@ exports.Query_File = function(req, res)
 
     File.findById(file_id, function (err,file)
     {
+        console.log('File found');
+        console.log(file);
         if(err) throw err;
-        res.send(file);
+        return file;
+
+        //res.send(file);
     });
 };
 exports.Update_File = function(req, res)
@@ -292,5 +288,29 @@ exports.Delete_File = function(req, res)
     });
 };
 
-
-
+/* NOTES , MEMOS, DEPRECATED CODE */
+/*
+// User.findById(userId, function(err, user)
+// {
+//     if(err) throw err;
+//     switch(update_type)
+//     {
+//         case 'username':
+//             console.log('Username updated!');
+//             break;
+//         case 'password':
+//             console.log('Password updated!');
+//             break;
+//         case 'add_workspace':
+//             User.update({_id: userId}, {$push: {$workspaces: update}}, function(err)
+//             {
+//                 if(err) console.log(err);
+//                 else    console.log(update);
+//             });
+//             break;
+//         case 'newWorkspace':
+//             var workspace = req.body.workspace;
+//             break;
+//     }
+// });
+*/

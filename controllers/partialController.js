@@ -13,41 +13,94 @@ var mongoose    = require('mongoose');
 var fs          = require('fs');
 var AWS         = require('aws-sdk');
 var s3s         = require('s3-streams');
+var Handlebars  = require('handlebars');
 
 exports.FileNavigationBar = function(req,res)
 {
     fs.readFile('./partials/fileNavigationBar.hbs', 'utf8',function (err,data)
     {
-        //var template = Handlebars.compile(data);
+        var template = Handlebars.compile(data);
 
-        var body = {body:{id:req.body.workspace_id}};
+        var body = {body:{workspace_id:req.body.workspace_id}};
         var databaseInterface = require('./databaseInterface');
 
-        var workspace = databaseInterface.Query_Workspace(body);
-
-        //    ,function(workspace)
-        //{
-        //workspace.
-        /* Parse workspace for specify files */
-        var length = workspace.specify_files.length;
-        var fileSpace = {files: []};
-        for (var i = 0; i < length; i++)
+        var Workspace = require('../Models/workspace');
+        var fileSpace = {};
+        Workspace.findById('58d514934146a97023e32b26',{specify_files:1 ,design_files:1}, function (err,WorkSpace)
         {
-            /* For Each specify file in workspace, call query to get file name */
-            var body = {body: {file_id:workspace.specify_files[i]} };
-            console.log(workspace.specify_files[i]);
-            databaseInterface.Query_File(body,function(file)
+            if(err) throw err;
+            fileSpace = {specify_files: WorkSpace.specify_files, design_files: WorkSpace.design_files};
+            var workspace = fileSpace;
+
+            var length_specify = workspace.specify_files.length;
+            var length_design  = workspace.design_files.length;
+            var files = [];
+            for (var i = 0; i < length_specify; i++) files.push(fileSpace.specify_files[i]);
+            for (var i = 0; i < length_design; i++) files.push(fileSpace.design_files[i]);
+
+            var File = require('../Models/file');
+            File.find({
+                '_id': { $in: files}
+            }, function(err, docs)
             {
-                /* Build JSON object with file names and id's */
-                fileSpace.files.push({name:file.name,id:file.id})
+                console.log(docs);
+                var json = [];
+                for (var i = 0; i < docs.length; i++)
+                {
+                    var singleStage = {id: docs[i]._id, name: docs[i].name};
+                    json.push(singleStage);
+                }
+                console.log(json);
+                var wrapper = {objects: json};
+                var final_html = template(wrapper);
+                console.log(final_html);
+                res.send(final_html);
             });
+        });
+    });
+};
 
-        }
-        console.log(fileSpace);
-        res.send(fileSpace);
-        //});
+exports.JobSelector = function(req,res)
+{
+    fs.readFile('./partials/jobSelector.hbs', 'utf8',function (err,data)
+    {
+        var template = Handlebars.compile(data);
 
-        //var myhtml = template(file_tree);
-        //$("#file_tree").html(myhtml);
+        var body = {body:{workspace_id:req.body.workspace_id}};
+        var databaseInterface = require('./databaseInterface');
+
+        var Workspace = require('../Models/workspace');
+        var fileSpace = {};
+        Workspace.findById('58d514934146a97023e32b26',{specify_files:1 ,design_files:1}, function (err,WorkSpace)
+        {
+            if(err) throw err;
+            fileSpace = {specify_files: WorkSpace.specify_files, design_files: WorkSpace.design_files};
+            var workspace = fileSpace;
+
+            var length_specify = workspace.specify_files.length;
+            var length_design  = workspace.design_files.length;
+            var files = [];
+            for (var i = 0; i < length_specify; i++) files.push(fileSpace.specify_files[i]);
+            for (var i = 0; i < length_design; i++) files.push(fileSpace.design_files[i]);
+
+            var File = require('../Models/file');
+            File.find({
+                '_id': { $in: files}
+            }, function(err, docs)
+            {
+                console.log(docs);
+                var json = [];
+                for (var i = 0; i < docs.length; i++)
+                {
+                    var singleStage = {id: docs[i]._id, name: docs[i].name};
+                    json.push(singleStage);
+                }
+                console.log(json);
+                var wrapper = {objects: json};
+                var final_html = template(wrapper);
+                console.log(final_html);
+                res.send(final_html);
+            });
+        });
     });
 };

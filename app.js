@@ -57,7 +57,8 @@ hbs.registerPartials(__dirname + '/views/partials');
     var writeController = require('./controllers/fileWrite');
     var workspaceController = require('./controllers/workspace');
     var compileMintController = require('./controllers/compileMint');
-    var translateLFRController = require('./controllers/translateLFR');
+    //var translateLFRController = require('./controllers/translateLFR');
+    var translateController = require('./controllers/translate');
     var AWS_S3_Controller = require('./controllers/AWS_S3');
     var databaseController = require('./controllers/databaseInterface');
     var partialController = require('./controllers/partialController');
@@ -133,7 +134,8 @@ hbs.registerPartials(__dirname + '/views/partials');
     app.post('/api/Create_Bucket_Object',AWS_S3_Controller.Create_Bucket_Object);
     app.post('/api/Read_Bucket_Object'  ,AWS_S3_Controller.Read_Bucket_Object);
     app.post('/api/Update_Bucket_Object',AWS_S3_Controller.Update_Bucket_Object);
-    app.post('/api.Delete_Bucket_Object',AWS_S3_Controller.Delete_Bucket_Object)
+    app.post('/api.Delete_Bucket_Object',AWS_S3_Controller.Delete_Bucket_Object);
+    app.post('/api/preCompileFileTransfer',AWS_S3_Controller.preCompileFileTransfer);
 }
 
 /************** Mongoose DataBase Calls **************/
@@ -153,11 +155,12 @@ hbs.registerPartials(__dirname + '/views/partials');
     app.post('/api/Query_File', databaseController.Query_File);
     app.post('/api/Delete_File',databaseController.Delete_File);
 }
-/* Partials */
-{
-    app.post('/api/FileNavigationBar_Partial',partialController.FileNavigationBar);
-}
 
+/*************** Partials **************/
+{
+    app.post('/api/partials_FileNavBar',partialController.FileNavigationBar);
+    app.post('/api/partials_JobSelect',partialController.JobSelector);
+}
 
 /************** Redirects **************/
 {
@@ -167,7 +170,8 @@ hbs.registerPartials(__dirname + '/views/partials');
 /**************** USHROOM MAPPER & FLUIGI ****************/
 {
     app.post('/api/compileMint', compileMintController.compileMint);
-    app.post('/api/translateLFR', translateLFRController.translateLFR);
+    app.post('/api/translate', translateController.translate);
+    //app.post('/api/translateLFR', translateLFRController.translateLFR);
 }
 
 /**************** WORKSPACE INITIATION AND MAINTAINENCE ****************/
