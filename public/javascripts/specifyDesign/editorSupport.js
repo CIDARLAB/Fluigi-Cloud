@@ -23,9 +23,9 @@
  This file holds all functions related to the editor and its function.
  */
 
-localStorage.WORKSPACE = '58cc70c3ce8f0320cc147ba9';
-localStorage.FILE = 'hello_world_lfr.v';
-localStorage.CONFIG = 'default_constraint_file.JSON';
+localStorage.WORKSPACE = 'c70c3ce8f0320cc147ba9';
+localStorage.FILE = 'designMINT.uf';               //'hello_world_lfr.v';
+localStorage.CONFIG = 'default_initilization_file.ini';  //'default_constraint_file.JSON';
 
 
 function loadToEditor(id,editor,session)
@@ -35,7 +35,6 @@ function loadToEditor(id,editor,session)
         session.setValue(data);
     });
 }
-
 
 function initializeEditor()
 {
@@ -66,10 +65,20 @@ function save(editor,session)
 function dojob(editor,session,jobtype)
 {
     save(editor,session);
-    $.post('/api/preCompileFileTransfer',{transferType:'lfr',job:localStorage.FILE,config:localStorage.CONFIG},function(data){
-        $.post('/api/translate');
-    });
-    //$.post('/api/translateLFR',{filP})
+    switch (jobtype)
+    {
+        case 'lfr':
+            $.post('/api/preCompileFileTransfer',{transferType:'lfr',job:localStorage.FILE,config:localStorage.CONFIG},function(data){
+                $.post('/api/translate');
+            });
+            break;
+        case 'mint':
+            $.post('/api/preCompileFileTransfer',{transferType:'mint',job:localStorage.FILE,config:localStorage.CONFIG},function(data){
+                $.post('/api/compile');
+            });
+            break;
+
+    }
 }
 
 function changeSpecifyTabs(Editor,Tab_To_Switch_To,SessionArray)

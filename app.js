@@ -53,15 +53,16 @@ hbs.registerPartials(__dirname + '/views/partials');
 
 /**************** CONTROLLERS ****************/
 {
-    var viewsController = require('./controllers/views');
-    var writeController = require('./controllers/fileWrite');
-    var workspaceController = require('./controllers/workspace');
-    var compileMintController = require('./controllers/compileMint');
-    //var translateLFRController = require('./controllers/translateLFR');
-    var translateController = require('./controllers/translate');
-    var AWS_S3_Controller = require('./controllers/AWS_S3');
-    var databaseController = require('./controllers/databaseInterface');
-    var partialController = require('./controllers/partialController');
+    var viewsController             = require('./controllers/views');
+    var writeController             = require('./controllers/fileWrite');
+    var workspaceController         = require('./controllers/workspace');
+    var compileMintController       = require('./controllers/compileMint');
+    //var translateLFRController    = require('./controllers/translateLFR');
+    var translateController         = require('./controllers/translate');
+    var compileController           = require('./controllers/compile');
+    var AWS_S3_Controller           = require('./controllers/AWS_S3');
+    var databaseController          = require('./controllers/databaseInterface');
+    var partialController           = require('./controllers/partialController');
 }
 
 /*********************   VIEWS   *********************/
@@ -171,6 +172,7 @@ hbs.registerPartials(__dirname + '/views/partials');
 {
     app.post('/api/compileMint', compileMintController.compileMint);
     app.post('/api/translate', translateController.translate);
+    app.post('/api/compile', compileController.compile);
     //app.post('/api/translateLFR', translateLFRController.translateLFR);
 }
 

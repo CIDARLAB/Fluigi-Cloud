@@ -173,10 +173,34 @@ exports.preCompileFileTransfer = function(req, res)
         case 'mint':
             var mintpath = req.body.job;
             var inipath = req.body.config;
+
+            var Parameters_mint = {
+                Bucket: Target_Bucket_ID,
+                Key: mintpath,
+                ResponseContentEncoding: 'utf-8',
+                ResponseContentType: 'string/utf-8'
+            };
+            var Parameters_ini = {
+                Bucket: Target_Bucket_ID,
+                Key: inipath,
+                ResponseContentEncoding: 'utf-8',
+                ResponseContentType: 'string/utf-8'
+            };
+            var path1 = path.join(global.Neptune_ROOT_DIR, "jobs", "job.txt");
+            s3.getObject(Parameters_mint,function(error,data){
+                var fd = fs.openSync(path1, 'w+');
+                fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
+                fs.closeSync(fd);
+            });
+            var path2 = path.join(global.Neptune_ROOT_DIR, "jobs", "config.txt");
+            s3.getObject(Parameters_ini,function(error,data){
+                var fd = fs.openSync(path2, 'w+');
+                fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
+                fs.closeSync(fd);
+            });
+            res.send('Done');
             break;
     }
-
-
 };
 
 

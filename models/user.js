@@ -27,6 +27,7 @@ userSchema.methods.generateWorkspaces_and_updateSchema = function generateWorksp
     var databaseInterface = require('../controllers/databaseInterface');
 
     console.log('MY ID IS: %s',id);
+
     var body = {body:{name:'Playground'}};
     var workspace_id = databaseInterface.Create_Workspace(body);
     {

@@ -33,25 +33,12 @@
     <!--</li>-->
 
 
-<!--<ul>-->
-    <li>
-    <form>
-        <div class="form-group">
-            {{#each objects}}
+    {{#each objects}}
+        <li id="file_tree">
+            <a onclick="loadToEditor('{{id}}',EDITOR.editor,EDITOR.session)"><i class="fa fa-file-code-o"></i> {{name}} <span></span></a>
+        </li>
+    {{/each}}
 
-                    <li id="file_tree">
-                        <label><a onclick="loadToEditor('{{id}}',EDITOR.editor,EDITOR.session)"><i class="fa fa-file-code-o"></i> {{name}} <span></span></a> <input type="checkbox" name="fav_foods" value="pizza">
-                        </label>
-                    </li>
-
-            {{/each}}
-        </div>
-        <div class="form-group"> <!-- Submit button !-->
-            <button class="btn btn-primary " name="submit" type="submit">Select Working Set</button>
-        </div>
-    </form>
-    </li>
-<!--</ul>-->
 
     <li id="new_proj">
         <a href="#"><i class="fa fa-plus-square-o"></i> New File <span class="fa plus-square-o"></span></a>

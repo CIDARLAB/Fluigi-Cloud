@@ -18,6 +18,10 @@ var out_path        = path.join(global.Neptune_ROOT_DIR, "jobs", "output.txt");
 exports.translate = function(req, res)
 {
     console.log('TRANSLATING!');
+    console.log('LFR PATH: %s',lfr_path);
+    console.log('UCF PATH: %s',ucf_path);
+    console.log('OUT PATH: %s',out_path);
+
     var name     = "new_device";
     var outputPath = path.join(out_path,name);
 
