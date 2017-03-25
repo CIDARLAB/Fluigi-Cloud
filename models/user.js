@@ -6,19 +6,19 @@ var userSchema = new Schema({
     local            : {
         email        : String,
         password     : String,
-        workspaces   : { type: [String], required: false },
         created_at   : Date,
         updated_at   : Date
-    }
+    },
+    workspaces   : { type: [String], required: false }
 });
 
-// generating a hash
-userSchema.methods.generateHash = function(password) {
+userSchema.methods.generateHash = function(password)
+{
     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
 
-// checking if password is valid
-userSchema.methods.validPassword = function(password) {
+userSchema.methods.validPassword = function(password)
+{
     return bcrypt.compareSync(password, this.local.password);
 };
 
@@ -26,24 +26,21 @@ userSchema.methods.generateWorkspaces_and_updateSchema = function generateWorksp
 {
     var databaseInterface = require('../controllers/databaseInterface');
 
-    console.log('MY ID IS: %s',id);
-
-    var body = {body:{name:'Playground'}};
-    var workspace_id = databaseInterface.Create_Workspace(body);
+    var body1 = {body:{name:'Playground'}};
+    var workspace_id1 = databaseInterface.Create_Workspace(body1);
     {
-        var body = {body: {update_type: 'add_workspace', user_id: id , update: workspace_id}};
-        databaseInterface.Update_User(body);
+        var body11 = {body: {update_type: 'add_workspace', user_id: id , update: workspace_id1}};
+        databaseInterface.Update_User(body11);
     }
-    var body ={body:{name:'Microfluidic Examples'}};
-    var workspace_id = databaseInterface.Create_Workspace(body);
+    var body2 ={body:{name:'Microfluidic Examples'}};
+    var workspace_id2 = databaseInterface.Create_Workspace(body2);
     {
-        var body = {body: {update_type: 'add_workspace', user_id: id, update: workspace_id}};
-        databaseInterface.Update_User(body);
+        var body22 = {body: {update_type: 'add_workspace', user_id: id, update: workspace_id2}};
+        databaseInterface.Update_User(body22);
     }
-    return ;
+    return;
 };
 
-// Upon creation of a new user schema, generate and save the following content:
 userSchema.pre('save', function(next)
 {
     this.set("_id", mongoose.Types.ObjectId(this._id), {strict: false});

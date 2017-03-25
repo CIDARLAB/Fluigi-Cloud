@@ -92,10 +92,6 @@ exports.Update_Bucket_Object = function(req, res)
     var Target_Object_KEY = req.body.Target_Object_KEY;
     var Target_Object_STREAM = req.body.Target_Object_STREAM;
 
-    console.log(Target_Bucket_ID);
-    console.log(Target_Object_KEY);
-    console.log(Target_Object_STREAM);
-
     var Parameters = {
         Bucket: Target_Bucket_ID,
         Key: Target_Object_KEY,

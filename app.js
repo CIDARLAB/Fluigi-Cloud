@@ -143,14 +143,18 @@ function isLoggedIn(req, res, next) {
 {
     app.post('/api/Create_User', databaseController.Create_User);
     app.post('/api/Update_User',databaseController.Update_User);
+    app.post('/api/Update_User_cs',databaseController.Update_User_cs);
     app.post('/api/Query_User', databaseController.Query_User);
     app.post('/api/Delete_User',databaseController.Delete_User);
 
     app.post('/api/Create_Workspace', databaseController.Create_Workspace);
+    app.post('/api/Create_Workspace_cs', databaseController.Create_Workspace_cs);
     app.post('/api/Update_Workspace',databaseController.Update_Workspace);
+    app.post('/api/Update_Workspace_cs',databaseController.Update_Workspace_cs);
     app.post('/api/Query_Workspace', databaseController.Query_Workspace);
     app.post('/api/Delete_Workspace',databaseController.Delete_Workspace);
 
+    app.post('/api/Create_File_cs',databaseController.Create_File_cs);
     app.post('/api/Create_File', databaseController.Create_File);
     app.post('/api/Update_File',databaseController.Update_File);
     app.post('/api/Query_File', databaseController.Query_File);
@@ -161,6 +165,7 @@ function isLoggedIn(req, res, next) {
 {
     app.post('/api/partials_FileNavBar',partialController.FileNavigationBar);
     app.post('/api/partials_JobSelect',partialController.JobSelector);
+    app.post('/api/partials_WorkspaceNavBar',partialController.WorkspaceNavigationBar);
 }
 
 /************** Redirects **************/

@@ -21,7 +21,7 @@ var s3          = new AWS.S3();
 
 exports.Create_User = function(req, res)
 {
-    var User = require('../Models/user');
+    var User = require('../models/user');
     var username  = req.body.username;
     var password  = req.body.password;
 
@@ -53,28 +53,39 @@ exports.Update_User = function(req, res)
 
     var userId      = req.body.user_id;
     var update_type = req.body.update_type;
-    var update      = req.body.update;
+    var update_body      = req.body.update;
 
-    console.log('ATTEMPTING TO UPDATE USER w/ ID [%s] BY PUSHING WORKSPACE ID: [%s]',userId,update);
+    console.log('ATTEMPTING TO UPDATE USER w/ ID [%s] BY PUSHING WORKSPACE ID: [%s]',userId,update_body);
 
-    User.findById(userId, function (err,user)
-    {
-        if(err) throw err;
-        user.local.workspaces.push(update);
-    });
+    User.findByIdAndUpdate(userId, {
+        $push: { workspaces: update_body }
+    }, { 'new': true}, callback);
 
-    // User.update({_id: userId}, {$push: {workspaces: update}}, function(err)
-    // {
-    //     if(err) console.log(err);
-    //     else    console.log(update);
-    // });
+    function callback (err, numAffected) {}
 
     return 0;
+};
+exports.Update_User_cs = function(req, res)
+{
+    var User = require('../models/user');
+
+    var userId           = req.body.user_id;
+    var update_body      = req.body.update;
+
+    console.log('ATTEMPTING TO UPDATE USER w/ ID [%s] BY PUSHING WORKSPACE ID: [%s]',userId,update_body);
+
+    User.findByIdAndUpdate(userId, {
+        $push: { workspaces: update_body }
+    }, { 'new': true}, callback);
+
+    function callback (err, numAffected) {}
+
+    res.send(0);
 };
 exports.Query_User = function(req, res)
 {
     // We can effectively add logic for searching and all else here
-    var User        = require('../Models/user');
+    var User        = require('../models/user');
     var id          = req.body.id;
     var username    = req.body.username;
     var lookupType  = req.body.lookupType;
@@ -85,7 +96,6 @@ exports.Query_User = function(req, res)
         User.find({username:username}, function (err, user)
         {
             if(err) throw err;
-            console.log(user)
         })
     }
     else if (lookupType == 'Full')
@@ -93,7 +103,6 @@ exports.Query_User = function(req, res)
         User.find({}, function (err, users)
         {
             if(err) throw err;
-            console.log(users)
         })
     }
     else if (lookupType == 'Id')
@@ -137,7 +146,7 @@ exports.Query_User = function(req, res)
 exports.Delete_User = function(req, res)
 {
     var user_id = req.body.id;
-    var User = require('../Models/user');
+    var User = require('../models/user');
     User.findByIdAndRemove(user_id, function(err)
     {
         if (err) throw err;
@@ -149,7 +158,7 @@ exports.Delete_User = function(req, res)
 exports.Create_Workspace = function(req, res)
 {
     var workspace_name = req.body.name;
-    var Workspace = require('../Models/workspace');
+    var Workspace = require('../models/workspace');
 
     var newWorkspace = Workspace({
         name: workspace_name
@@ -161,12 +170,30 @@ exports.Create_Workspace = function(req, res)
         console.log('Workspace Name: %s',workspace_name);
     });
 
-    newWorkspace.generateFiles_and_updateSchema();
+    //newWorkspace.generateFiles_and_updateSchema();
     return newWorkspace._id;
+};
+exports.Create_Workspace_cs = function(req, res)
+{
+    var workspace_name = req.body.name;
+    var Workspace = require('../models/workspace');
+
+    var newWorkspace = Workspace({
+        name: workspace_name
+    });
+
+    newWorkspace.save(function(err) {
+        if(err) throw err;
+        console.log('New Workspace');
+        console.log('Workspace Name: %s',workspace_name);
+    });
+
+    //newWorkspace.generateFiles_and_updateSchema();
+    res.send(newWorkspace._id);
 };
 exports.Query_Workspace = function(req, res)
 {
-    var Workspace = require('../Models/workspace');
+    var Workspace = require('../models/workspace');
     var searchFor = req.body.workspace_id;
 
     var fileSpace = {};
@@ -181,27 +208,74 @@ exports.Query_Workspace = function(req, res)
 };
 exports.Update_Workspace = function(req, res)
 {
-    var workspaceId = req.body.id;
-    var Workspace = require('../Models/workspace');
+    var Workspace = require('../models/workspace');
 
-    Workspace.findById(userId, function(err, user)
+    var workspaceId         = req.body.workspace_id;
+    var update_type         = req.body.update_type;
+    var update_body         = req.body.update;
+
+    console.log('ATTEMPTING TO UPDATE WORKSPACE w/ ID [%s] BY PUSHING FILE ID: [%s]',workspaceId,update_body);
+
+    switch (update_type)
     {
-        if(err) throw err;
+        case 'add_file_s':
+            Workspace.findByIdAndUpdate(workspaceId, {
+                $push: { specify_files: update_body }
+            }, { 'new': true}, callback);
+            break;
+        case 'add_file_d':
+            Workspace.findByIdAndUpdate(workspaceId, {
+                $push: { design_files: update_body }
+            }, { 'new': true}, callback);
+            break;
+        case 'add_file_sol':
+            Workspace.findByIdAndUpdate(workspaceId, {
+                $push: { solution_files: update_body }
+            }, { 'new': true}, callback);
+            break;
+    }
 
-        var update_type = req.body.update_type;
-        switch(update_type)
-        {
-            case '1':
-                break;
-            case '2':
-                break;
-        }
-    });
+    function callback (err, numAffected) {}
+
+    return 0;
+};
+exports.Update_Workspace_cs = function(req, res)
+{
+    var Workspace = require('../models/workspace');
+
+    var workspaceId         = req.body.workspace_id;
+    var update_type         = req.body.update_type;
+    var update_body         = req.body.update;
+
+    console.log('ATTEMPTING TO UPDATE WORKSPACE w/ ID [%s] BY PUSHING FILE ID: [%s]',workspaceId,update_body);
+
+    switch (update_type)
+    {
+        case 'add_file_s':
+            Workspace.findByIdAndUpdate(workspaceId, {
+                $push: { specify_files: update_body }
+            }, { 'new': true}, callback);
+            break;
+        case 'add_file_d':
+            Workspace.findByIdAndUpdate(workspaceId, {
+                $push: { design_files: update_body }
+            }, { 'new': true}, callback);
+            break;
+        case 'add_file_sol':
+            Workspace.findByIdAndUpdate(workspaceId, {
+                $push: { solution_files: update_body }
+            }, { 'new': true}, callback);
+            break;
+    }
+
+    function callback (err, numAffected) {}
+
+    res.send(0);
 };
 exports.Delete_Workspace = function(req, res)
 {
     var workspace_id = req.body.id;
-    var Workspace = require('../Models/workspace');
+    var Workspace = require('../models/workspace');
     Workspace.findByIdAndRemove(workspace_id, function(err)
     {
         if (err) throw err;
@@ -209,12 +283,13 @@ exports.Delete_Workspace = function(req, res)
     });
 };
 
+
 exports.Create_File = function(req, res)
 {
     var file_name = req.body.file_name;
     var file_ext  = req.body.ext;
 
-    var File = require('../Models/file');
+    var File = require('../models/file');
 
     var newFile = File({
         name: file_name,
@@ -228,14 +303,33 @@ exports.Create_File = function(req, res)
     });
 
     newFile.createS3File_and_linkToMongoDB();
-    return newFile.id;
-    //res.send(newFile.id);
+    return newFile._id;
+};
+exports.Create_File_cs = function(req, res)
+{
+    var file_name = req.body.file_name;
+    var file_ext  = req.body.ext;
 
+    var File = require('../models/file');
+
+    var newFile = File({
+        name: file_name,
+        file_extension: file_ext
+    });
+
+    newFile.save(function(err) {
+        if(err) throw err;
+        console.log('New File');
+        console.log('File Name: %s',file_name);
+    });
+
+    newFile.createS3File_and_linkToMongoDB();
+    res.send(newFile._id);
 };
 exports.Query_File = function(req, res)
 {
     var file_id = req.body.file_id;
-    var File = require('../Models/file');
+    var File = require('../models/file');
 
     File.findById(file_id, function (err,file)
     {
@@ -250,7 +344,7 @@ exports.Query_File = function(req, res)
 exports.Update_File = function(req, res)
 {
     var fileId = req.body.id;
-    var File = require('../Models/file');
+    var File = require('../models/file');
 
     File.findById(fileId, function(err, file)
     {
@@ -270,7 +364,7 @@ exports.Update_File = function(req, res)
 exports.Delete_File = function(req, res)
 {
     var fileId = req.body.id;
-    var File = require('../Models/file');
+    var File = require('../models/file');
 
     File.findById(fileId, function(err, file)
     {
@@ -313,4 +407,37 @@ exports.Delete_File = function(req, res)
 //             break;
 //     }
 // });
+
+ // User.update({_id: userId}, {$push: {workspaces: update}}, function(err)
+ // {
+ //     if(err) console.log(err);
+ //     else    console.log(update);
+ // });
+
+ // User.findById(userId, function (err,user)
+ // {
+ //     if(err) throw err;
+ //     user.local.workspaces.push(update_body);
+ //     console.log('FOUND USER:');
+ //     console.log(user);
+ //     user.update();
+ // });
+
+
+ // var workspaceId = req.body.id;
+ // var Workspace = require('../Models/workspace');
+ //
+ // Workspace.findById(userId, function(err, user)
+ // {
+ //     if(err) throw err;
+ //
+ //     var update_type = req.body.update_type;
+ //     switch(update_type)
+ //     {
+ //         case '1':
+ //             break;
+ //         case '2':
+ //             break;
+ //     }
+ // });
 */

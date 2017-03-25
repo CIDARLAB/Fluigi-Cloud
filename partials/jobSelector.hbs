@@ -3,15 +3,18 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header modal-header-primary">
-                <h4 class="modal-title">Choose a File </h4>
+                <h4 class="modal-title">Choose the file you wish to compile: </h4>
             </div>
             <div class="modal-body" id="job_select">
                 {{#each objects}}
                     <div id="possibleJob">
-                        <a data-dismiss="modal" onclick="loadFile('{{id}}')"><i class="fa fa-file-code-o"></i> {{name}} <span></span></a>
+                        <a data-dismiss="modal" onclick="stage_job('{{id}}')"><i></i> {{name}} <span></span></a>
                     </div>
                     <br>
                 {{/each}}
+                Note that if you are translating an LFR, you should choose a LFR file.
+                If you are compiling a MINT, then you should choose a MINT file.
+                Unexpected behavior could occur otherwise - This proccess will be smoother in the next update.
             </div>
         </div>
     </div>
@@ -21,15 +24,18 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header modal-header-primary">
-                <h4 class="modal-title">Choose a Configuration File </h4>
+                <h4 class="modal-title">Choose the configuration or constrain file to couple with your job: </h4>
             </div>
             <div class="modal-body" id="job_select">
                 {{#each objects}}
                     <div id="possibleJob">
-                        <a data-dismiss="modal" onclick="loadConfigFile('{{id}}')"><i class="fa fa-file-code-o"></i> {{name}} <span></span></a>
+                        <a data-dismiss="modal" onclick="stage_config_and_execute('{{id}}',EDITOR.editor,EDITOR.session)"><i></i> {{name}} <span></span></a>
                     </div>
                     <br>
                 {{/each}}
+                Choose the configuration file to couple with your job.
+                This should be a User Constrain File (.json) for LFR jobs.
+                This should be a Initialization File (.ini)  for MINT jobs.
             </div>
         </div>
     </div>

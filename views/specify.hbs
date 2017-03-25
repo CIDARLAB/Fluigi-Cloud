@@ -152,8 +152,29 @@
 
             <!-- START: SIDE NAVIGATION BAR -->
             <div class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse" id="file_tree">
+                <div class="sidebar-nav" id="file_trees">
+                    <ul class="nav" id="side-menu">
+                        <li>
+                            <a href="../"><i class="fa fa-home fa-fw"></i> Home </a>
+                        </li>
+                        <li id="1">
+                            <a><i class="fa fa-external-link-square"></i> Workspaces: <span class="fa plus-square-o"></span></a>
+                        </li>
+                        <ul id="workhbs"></ul>
+                        <li id="1">
+                            <a><i class="fa fa-folder-open"></i> Files in Workspace: <span class="fa plus-square-o"></span></a>
+                        </li>
+                        <ul id="filehbs"></ul>
+                        <li id="new_Proj">
+                            <a href="#new_workspace" data-target="#new_workspace" data-toggle="modal"><i class="fa fa-plus-square"></i> New Project <span class="fa plus-square-o"></span></a>
+                        </li>
+                        <li id="new_File">
+                            <a href="#new_file" data-target="#new_file" data-toggle="modal"><i class="fa fa-plus-square"></i> New File <span class="fa plus-square"></span></a>
+                        </li>
+                    </ul>
                 </div>
+                <!--<div class="sidebar-nav" id="workspace_tree">-->
+                <!--</div>-->
             </div>
             <!-- END: SIDE NAVIGATION BAR -->
 
@@ -181,26 +202,28 @@
                 <div class="col-lg-8">
 
                     <!-- START: LFR EDITOR -->
+                    <div class = "row"> <label id="filename" for="editor_specify">File Name: </label> </div>
+                    <div class = "row"> <label id="workspacename" for="editor_specify">Workspace: </label></div>
                     <div class="panel with-nav-tabs panel-default">
                         <div class="panel-heading">
 
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-secondary" onclick="var EDITOR = initializeEditor()"> Start Editor </button>
+                                        <button type="button" class="btn btn-success" onclick="var EDITOR = initializeEditor()"> Start Editor </button>
                                         <button type="button" class="btn btn-secondary" onclick="save(EDITOR.editor,EDITOR.session)"> Save </button>
-                                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="translateJob()"> Translate to MINT </button>
-                                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="processJob()"> Compile to Schematic</button>
+                                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="togglelfr()"> Translate to MINT </button>
+                                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="togglemint()"> Compile to Schematic</button>
+                                        <!--<button type="button" class="btn btn-secondary" id="filename"> </button>-->
+                                        <!--<button type="button" class="btn btn-secondary" id="workspacename"> </button>-->
                                     </div>
 
-                            <script type="text/javascript">
-                                function translateJob(){
+                                    <script type="text/javascript">
+                                function togglelfr(){
                                     localStorage.jobType = 'lfr';
                                 }
-                                function processJob(){
+                                function togglemint(){
                                     localStorage.jobType = 'mint';
                                 }
                             </script>
-
-
                         </div>
 
                         <div class="panel-body" >
@@ -210,14 +233,6 @@
                     </div>
                     <div class="text-center"></div>
                 </div>
-
-                <style type="text/css">
-                    .project_title {
-                        font-family: "Arial";
-                        font-size:large;
-                    }
-                </style>
-
 
                 <script src="/javascripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
                 <!-- END: LFR EDITOR & 2 other panels-->
@@ -292,6 +307,62 @@
 
                 <!-- ALL MODALS BELOW HERE -->
                 <!-- FILE PREVIEW MODAL -->
+                <div id="new_file" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header modal-header-primary">
+                            <h4 class="modal-title">Enter your file name and type:</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="setfile_in">File name: </label>
+                                <input type="text" class="form-control" id="setfile_in">
+                            </div>
+                            <div class="form-group">
+                                <label for="setext_in">File type/extension: </label>
+                                <input type="text" class="form-control" id="setext_in">
+                            </div>
+                            Please carefully enter the name and extension of your new file.
+                            The file name can be anything.
+                            The file extension must be input correctly, follow the example:
+                                LFR: '.v'
+                                UCF: '.json'
+                                MINT:'.uf'
+                                INI :'.ini'
+                            Apologies for the awkward implementation. Soon to be improved :)
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"> Cancel </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="newFile_cs(localStorage.WORKSPACE)"> Create File </button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="new_workspace" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header modal-header-primary">
+                                <h4 class="modal-title">Create a new workspace:</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="setwrk_in">Workspace name: </label>
+                                    <input type="text" class="form-control" id="setwrk_in">
+                                </div>
+                                Please enter the name of your new workspace. This workspace will be populated with
+                                a single file that you can begin editing.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal"> Cancel </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="newWorkspace_cs(localStorage.USER)"> Create Workspace </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="modal fade" id="preview_dashboard" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -364,9 +435,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
 
                 <!-- Modal: Translate Actions -->
                 <div class="modal fade" id="myModal_translateComplete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
@@ -505,31 +573,18 @@
             </div>
         </div>
     </div>
-
-    <script type="text/javascript">
-        function renameFile(selected_file)
-        {
-            switch (selected_file)
-            {
-                case 'lfr':
-                    break;
-                case 'ucf':
-                    break;
-                case 'mint':
-                    break;
-                case 'ini':
-                    break
-            }
-        }
-    </script>
-
     </html>
 
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function()
+    {
         $.post('/api/partials_FileNavBar',{workspace_id:localStorage.WORKSPACE},function(html)
         {
-            $("#file_tree").html(html)
+            $("#filehbs").html(html)
+        });
+        $.post('/api/partials_WorkspaceNavBar',{user_id:localStorage.USER},function(html)
+        {
+            $("#workhbs").html(html)
         });
         $.post('/api/partials_JobSelect',{workspace_id:localStorage.WORKSPACE},function(html)
         {
@@ -537,9 +592,6 @@
         });
     });
 </script>
-
-
-
 
     <style type="text/css">
 

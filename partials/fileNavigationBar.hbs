@@ -1,8 +1,8 @@
-<ul class="nav" id="side-menu">
+<!--<ul class="nav" id="side-menu">-->
 
-    <li>
-        <a href="../"><i class="fa fa-home fa-fw"></i> Home </a>
-    </li>
+    <!--<li>-->
+        <!--<a href="../"><i class="fa fa-home fa-fw"></i> Home </a>-->
+    <!--</li>-->
 
     <!-- THIS LINKS TO THE MAIN DASHBOARD -->
     <!--<li>-->
@@ -32,19 +32,17 @@
         <!--&lt;!&ndash; /.nav-second-level &ndash;&gt;-->
     <!--</li>-->
 
-
     {{#each objects}}
         <li id="file_tree">
-            <a onclick="loadToEditor('{{id}}',EDITOR.editor,EDITOR.session)"><i class="fa fa-file-code-o"></i> {{name}} <span></span></a>
+            <a onclick="loadToEditor('{{id}}',EDITOR.editor,EDITOR.session,'{{name}}')"><i class="fa fa-file-code-o"></i> {{name}} <span></span></a>
         </li>
     {{/each}}
 
+    <!--<li id="new_proj">-->
+        <!--<a href="#"><i class="fa fa-plus-square-o"></i> New File <span class="fa plus-square-o"></span></a>-->
+    <!--</li>-->
+    <!--<li id="new_proj">-->
+        <!--<a href="#"><i class="fa fa-plus-square-o"></i> New Project <span class="fa plus-square"></span></a>-->
+    <!--</li>-->
 
-    <li id="new_proj">
-        <a href="#"><i class="fa fa-plus-square-o"></i> New File <span class="fa plus-square-o"></span></a>
-    </li>
-    <li id="new_proj">
-        <a href="#"><i class="fa fa-plus-square-o"></i> New Project <span class="fa plus-square"></span></a>
-    </li>
-
-</ul>
+<!--</ul>-->

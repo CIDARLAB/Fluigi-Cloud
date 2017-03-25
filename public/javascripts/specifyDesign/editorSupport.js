@@ -19,30 +19,104 @@
  baseName()                      13
  color_ui()                      14
 
-
  This file holds all functions related to the editor and its function.
  */
 
-localStorage.WORKSPACE = '58cc70c3ce8f0320cc147ba9';
-localStorage.FILE = 'hello_world_lfr.v'; //LFR or MINT
-localStorage.CONFIG = 'default_constraint_file.JSON'; //UCF or INI
 
+localStorage.USER       = '58d69c1c1cb52c6018d7fd5e';       // Current User Session
+localStorage.WORKSPACE  = '58d69c1c1cb52c6018d7fd5f';       // Current Selected Workspace Session
+localStorage.FILE       = 'hello_world_lfr.v';              // Working Set Job File
+localStorage.CONFIG     = 'default_constraint_file.JSON';   // Working Set Config File
 
-function loadFile(id){
+function stage_job(job_id)
+{
+    localStorage.JOB = job_id;
+}
+
+function stage_config_and_execute(config_id,editor,session)
+{
+    localStorage.CONFIG = config_id;
+    dojob(editor,session,localStorage.jobType)
+}
+
+function newFile_cs(workspace_id)
+{
+    var filename = (document.getElementById('setfile_in').value);
+    var fileext  = (document.getElementById('setext_in').value);
+    var fileName = filename + fileext;
+    $.post('/api/Create_File_cs',{file_name: fileName, ext: fileext},function(file_id)
+    {
+        $.post('/api/Update_Workspace_cs',{update_type: 'add_file_s', workspace_id: workspace_id, update: file_id},function(data)
+        {
+            $.post('/api/partials_FileNavBar',{workspace_id:localStorage.WORKSPACE},function(html)
+            {
+                $("#filehbs").html(html)
+            });
+            $.post('/api/partials_JobSelect',{workspace_id:localStorage.WORKSPACE},function(html)
+            {
+                $("#compileModal").html(html)
+            });
+        });
+    });
+}
+
+function newWorkspace_cs(user_id)
+{
+    var workspace_name = (document.getElementById('setwrk_in').value);
+    $.post('/api/Create_Workspace_cs',{name:workspace_name},function(workspace_id)
+    {
+        $.post('/api/Update_User_cs',{user_id: user_id,update:workspace_id},function(data){
+            $.post('/api/partials_FileNavBar',{workspace_id:localStorage.WORKSPACE},function(html)
+            {
+                $("#filehbs").html(html)
+            });
+            $.post('/api/partials_WorkspaceNavBar',{user_id:localStorage.USER},function(html)
+            {
+                $("#workhbs").html(html)
+            });
+            $.post('/api/partials_JobSelect',{workspace_id:localStorage.WORKSPACE},function(html)
+            {
+                $("#compileModal").html(html)
+            });
+        });
+    });
+}
+
+function loadFile(id)
+{
     localStorage.FILE = id;
    $('#selectConfig').modal('show');
 }
 
-function loadConfigFile(id){
+function loadConfigFile(id)
+{
     localStorage.CONFIG = id;
     dojob(EDITOR.editor, EDITOR.session, localStorage.jobType);
 }
 
-function loadToEditor(id,editor,session)
+function loadToEditor(id,editor,session,name)
 {
+    localStorage.FILE = id;
+    localStorage.FILE_NAME = name;
+    document.getElementById('filename').innerText = 'File Name: ' + localStorage.FILE_NAME;
     $.post('/api/Read_Bucket_Object', {Target_Object_KEY: id}, function (data)
     {
         session.setValue(data);
+    });
+}
+
+function changeWorkspace(id,name)
+{
+    localStorage.WORKSPACE = id;
+    localStorage.WORKSPACE_NAME = name;
+    document.getElementById('workspacename').innerText = 'Inside Workspace: ' + localStorage.WORKSPACE_NAME;
+    $.post('/api/partials_FileNavBar',{workspace_id:localStorage.WORKSPACE},function(html)
+    {
+        $("#filehbs").html(html);
+        $.post('/api/partials_JobSelect',{workspace_id:localStorage.WORKSPACE},function(html)
+        {
+            $("#compileModal").html(html)
+        });
     });
 }
 
@@ -64,7 +138,7 @@ function initializeEditor()
 
     EDITOR = {editor: editor_specify, session: MainSession};
     return EDITOR;
-};
+}
 
 function save(editor,session)
 {
@@ -78,12 +152,12 @@ function dojob(editor,session,jobtype)
     switch (jobtype)
     {
         case 'lfr':
-            $.post('/api/preCompileFileTransfer',{transferType:'lfr',job:localStorage.FILE,config:localStorage.CONFIG},function(data){
+            $.post('/api/preCompileFileTransfer',{transferType:'lfr',job:localStorage.JOB,config:localStorage.CONFIG},function(data){
                 $.post('/api/translate');
             });
             break;
         case 'mint':
-            $.post('/api/preCompileFileTransfer',{transferType:'mint',job:localStorage.FILE,config:localStorage.CONFIG},function(data){
+            $.post('/api/preCompileFileTransfer',{transferType:'mint',job:localStorage.JOB,config:localStorage.CONFIG},function(data){
                 $.post('/api/compile');
             });
             break;
