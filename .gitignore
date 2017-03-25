@@ -38,3 +38,8 @@ jspm_packages
 
 # Environment variables
 .env
+
+.idea/Fluigi-Cloud.iml
+.idea/jsLibraryMappings.xml
+.idea/workspace.xml
+.idea/workspace.xml
