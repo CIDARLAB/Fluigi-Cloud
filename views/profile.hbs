@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+  <title>Profile</title>
+
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+  <style>
+    body         { padding-top:80px; word-wrap:break-word; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header text-center">
+    <h1> Profile Page</h1>
+    <a href="/logout" class="btn btn-default">Logout</a>
+    <a href="../help" target="_blank" class="btn btn-default">  Help</a>
+  </div>
+
+  <div class="row">
+
+    <!-- LOCAL INFORMATION -->
+    <div class="text-center">
+      <div class="well">
+        <h3><span class="fa fa-user"></span> Welcome </h3>
+
+
+        <p>
+          <!--user._id-->
+          <strong>email</strong>: {{user.local.email}}<br>
+          <!--user.local.password-->
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="text-center">
+    <h3> My Projects</h3><br>
+    <!--<p><span class="fa fa-file-text"></span>  Project 1</p><br>-->
+    <!--<p><span class="fa fa-file-text"></span>  Project 2</p><br>-->
+    <!--<p><span class="fa fa-file-text"></span>  Project 3</p><br>-->
+    <a href="../specify" class="btn btn-default"><span class="fa fa-plus"></span>  Start a new project  </a>
+  </div>
+
+</div>
+</body>
+</html>

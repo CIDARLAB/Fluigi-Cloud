@@ -46,39 +46,42 @@ function newFile_cs(workspace_id)
     var fileName = filename + fileext;
     $.post('/api/Create_File_cs',{file_name: fileName, ext: fileext},function(file_id)
     {
-        $.post('/api/Update_Workspace_cs',{update_type: 'add_file_s', workspace_id: workspace_id, update: file_id},function(data)
-        {
-            $.post('/api/partials_FileNavBar',{workspace_id:localStorage.WORKSPACE},function(html)
-            {
-                $("#filehbs").html(html)
-            });
-            $.post('/api/partials_JobSelect',{workspace_id:localStorage.WORKSPACE},function(html)
-            {
-                $("#compileModal").html(html)
-            });
+        //TODO: update the files that are shown
+        $.get('/api/v1/files',{workspaceid: workspace_id},function (response) {
+           console.log(response);
         });
-    });
+     });
 }
 
-function newWorkspace_cs(user_id)
+function newWorkspace_cs(wordspace_name)
 {
     var workspace_name = (document.getElementById('setwrk_in').value);
-    $.post('/api/Create_Workspace_cs',{name:workspace_name},function(workspace_id)
+    $.post('/api/v1/workspace',
+        {
+            name: workspace_name
+        },
+        function(workspace_id)
     {
-        $.post('/api/Update_User_cs',{user_id: user_id,update:workspace_id},function(data){
-            $.post('/api/partials_FileNavBar',{workspace_id:localStorage.WORKSPACE},function(html)
-            {
-                $("#filehbs").html(html)
-            });
-            $.post('/api/partials_WorkspaceNavBar',{user_id:localStorage.USER},function(html)
-            {
-                $("#workhbs").html(html)
-            });
-            $.post('/api/partials_JobSelect',{workspace_id:localStorage.WORKSPACE},function(html)
-            {
-                $("#compileModal").html(html)
-            });
-        });
+        console.log("Created Workspace: " + workspace_id);
+        console.log("Getting all the new workspaces :"  );
+        $.get('api/v1/workspaces',function (response) {
+            console.log(response);
+        })
+        //TODO update the user and workspace models
+        // $.post('/api/Update_User_cs',{user_id: user_id,update:workspace_id},function(data){
+        //     $.post('/api/partials_FileNavBar',{workspace_id:localStorage.WORKSPACE},function(html)
+        //     {
+        //         $("#filehbs").html(html)
+        //     });
+        //     $.post('/api/partials_WorkspaceNavBar',{user_id:localStorage.USER},function(html)
+        //     {
+        //         $("#workhbs").html(html)
+        //     });
+        //     $.post('/api/partials_JobSelect',{workspace_id:localStorage.WORKSPACE},function(html)
+        //     {
+        //         $("#compileModal").html(html)
+        //     });
+        // });
     });
 }
 

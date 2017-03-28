@@ -29,3 +29,15 @@ exports.openSpecifyPage = function(req, res) {
 exports.openDesignPage = function(req, res) {
     res.render('design', {title: 'Design', user: req.user});
 };
+
+exports.openSignupPage = function(req, res) {
+    res.render('signup', { title: 'Signup' , message: req.flash('signupMessage')});
+};
+
+exports.openLoginPage = function (req, res){
+    res.render('login', {title: 'Login', message: req.flash('loginMessage')});
+};
+
+exports.openProfilePage = function (req, res){
+    res.render('profile', {title: 'Profile', user: req.user});
+};

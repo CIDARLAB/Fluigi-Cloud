@@ -12,29 +12,29 @@ var bodyParser   = require('body-parser');
 var fs           = require('fs');
 var morgan       = require('morgan');
 var session = require('express-session');
-// var MongoStore   = require('connect-mongo')(session);
+var MongoStore   = require('connect-mongo')(session);
 
 global.Neptune_ROOT_DIR = __dirname;
 
-var configDB = process.env['MONGOURL'];
+var configDB = process.env['NEPTUNE_MONGOURL'];
 mongoose.connect(configDB); // connect to our database
 
 // set up our cookies and html information for login
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser());
-app.use(session({secret:'iamneptune'}))
+//app.use(session({secret:process.env['NEPTUNE_SESSIONSECRET']}))
 //app.use(express.cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser.json()); // get information from html forms
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // session required for passport
-// app.use(express.session({
-//     store: new MongoStore({
-//         url: configDB,
-//         ttl: 7 * 24 * 60 * 60 // = 7 days
-//     }),
-//     secret: 'iamneptune'
-// }));
+app.use(session({
+    store: new MongoStore({
+        url: configDB,
+        ttl: 7 * 24 * 60 * 60 // = 7 days
+    }),
+    secret: process.env['NEPTUNE_SESSIONSECRET']
+}));
 
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
@@ -66,7 +66,6 @@ hbs.registerPartials(__dirname + '/views/partials');
 }
 
 /*********************   VIEWS   *********************/
-
 {
     app.get('/', viewsController.openHomePage);
     app.get('/assembly', isLoggedIn, viewsController.openAssemblyPage);
@@ -75,26 +74,10 @@ hbs.registerPartials(__dirname + '/views/partials');
     app.get('/control', isLoggedIn, viewsController.openControlPage);
     app.get('/specify', isLoggedIn, viewsController.openSpecifyPage);
     app.get('/design', isLoggedIn, viewsController.openDesignPage);
-
-    // PROFILE SECTION =========================
-    app.get('/profile', isLoggedIn, function(req, res) {
-        res.render('profile.ejs', {
-            user : req.user
-        });
-    });
-
-    // LOGOUT ==============================
-    app.get('/logout', function(req, res) {
-        req.logout();
-        res.redirect('/');
-    });
-
-    // locally --------------------------------
-    // LOGIN ===============================
-    // show the login form
-    app.get('/login', function(req, res) {
-        res.render('login.ejs', { message: req.flash('loginMessage') });
-    });
+    app.get('/signup', viewsController.openSignupPage);
+    app.get('/login', viewsController.openLoginPage);
+    app.get('/profile', isLoggedIn, viewsController.openProfilePage);
+    app.get('/logout', function(req, res) {req.logout(); res.redirect('/');});
 
     // process the login form
     app.post('/login', passport.authenticate('local-login', {
@@ -103,11 +86,6 @@ hbs.registerPartials(__dirname + '/views/partials');
         failureFlash : true // allow flash messages
     }));
 
-    // show the signup form
-    app.get('/signup', function(req, res) {
-        res.render('signup.ejs', { message: req.flash('signupMessage') });
-    });
-
     // process the signup form
     app.post('/signup', passport.authenticate('local-signup', {
         successRedirect : '/profile', // redirect to the secure profile section
@@ -115,14 +93,12 @@ hbs.registerPartials(__dirname + '/views/partials');
         failureFlash : true // allow flash messages
     }));
 
-}
-
-// route middleware to ensure user is logged in
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-
-    res.redirect('/login');
+    // route middleware to ensure user is logged in
+    function isLoggedIn(req, res, next) {
+        if (req.isAuthenticated())
+            return next();
+        res.redirect('/login');
+    }
 }
 
 /*************************** FILE WRITE ********************/
@@ -148,13 +124,23 @@ function isLoggedIn(req, res, next) {
     app.post('/api/Delete_User',databaseController.Delete_User);
 
     app.post('/api/Create_Workspace', databaseController.Create_Workspace);
-    app.post('/api/Create_Workspace_cs', databaseController.Create_Workspace_cs);
-    app.post('/api/Update_Workspace',databaseController.Update_Workspace);
-    app.post('/api/Update_Workspace_cs',databaseController.Update_Workspace_cs);
+    //app.post('/api/Create_Workspace_cs', databaseController.Create_Workspace_cs);
+
+    app.get('/api/v1/workspaces', databaseController.getWorkspaces);
+    app.get('/api/v1/workspace', databaseController.getWorkspace);
+    app.post('/api/v1/workspace', databaseController.Create_Workspace_cs);
+
+
+    // app.post('/api/Update_Workspace',databaseController.Update_Workspace);
+    // app.post('/api/Update_Workspace_cs',databaseController.Update_Workspace_cs);
     app.post('/api/Query_Workspace', databaseController.Query_Workspace);
     app.post('/api/Delete_Workspace',databaseController.Delete_Workspace);
 
-    app.post('/api/Create_File_cs',databaseController.Create_File_cs);
+    //app.post('/api/Create_File_cs',databaseController.Create_File_cs);
+    app.get('/api/v1/files', databaseController.getFiles);
+    app.get('/api/v1/file', databaseController.getFile);
+    app.post('/api/v1/file', databaseController.Create_File_cs);
+
     app.post('/api/Create_File', databaseController.Create_File);
     app.post('/api/Update_File',databaseController.Update_File);
     app.post('/api/Query_File', databaseController.Query_File);

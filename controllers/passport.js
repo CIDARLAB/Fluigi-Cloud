@@ -98,9 +98,10 @@ module.exports = function(passport) {
                             newUser.save(function(err) {
                                 if (err)
                                     return done(err);
-
-                                return done(null, newUser);
                             });
+
+                            newUser.generateWorkspaces_and_updateSchema(newUser);
+                            return done(null, newUser);
                         }
 
                     });

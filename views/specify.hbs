@@ -80,6 +80,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/js/bootstrap-tour.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
     <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.0.14/css/jquery.terminal.css" rel="stylesheet">-->
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/1.0.14/js/jquery.terminal.js"></script>-->
 
@@ -94,6 +95,7 @@
     <script type="text/javascript" src="../javascripts/specifyDesign/editorSupport.js"></script>
     <script type="test/javascript" src="../javascripts/specifyDesign/init_specify.js"></script>
     <script type="text/javascript" src="../javascripts/specifyDesign/fileNavigator.js"></script>
+    <script src="/javascripts/common/knockout-3.4.2.js"></script>
 
 
     <script type="text/javascript">
@@ -113,11 +115,14 @@
                 "hideEasing": "linear",
                 "showMethod": "fadeIn",
                 "hideMethod": "fadeOut"
-            }</script>
+            }
+    </script>
 
-        <style>
-            body {  padding: 0 !important;  }
-        </style>
+
+
+    <style>
+        body {  padding: 0 !important;  }
+    </style>
 
     </head>
 
@@ -160,11 +165,15 @@
                         <li id="1">
                             <a><i class="fa fa-external-link-square"></i> Workspaces: <span class="fa plus-square-o"></span></a>
                         </li>
-                        <ul id="workhbs"></ul>
+
+                        {{> workspaceNavigationBar}}
+
                         <li id="1">
                             <a><i class="fa fa-folder-open"></i> Files in Workspace: <span class="fa plus-square-o"></span></a>
                         </li>
-                        <ul id="filehbs"></ul>
+
+                        {{> fileNavigationBar}}
+
                         <li id="new_Proj">
                             <a href="#new_workspace" data-target="#new_workspace" data-toggle="modal"><i class="fa fa-plus-square"></i> New Project <span class="fa plus-square-o"></span></a>
                         </li>
@@ -202,8 +211,8 @@
                 <div class="col-lg-8">
 
                     <!-- START: LFR EDITOR -->
-                    <div class = "row"> <label id="filename" for="editor_specify">File Name: </label> </div>
-                    <div class = "row"> <label id="workspacename" for="editor_specify">Workspace: </label></div>
+                    <div class = "row"> <label id="filename" for="editor_specify">File Name: <span data-bind="text: currentFile"/></label> </div>
+                    <div class = "row"> <label id="workspacename" for="editor_specify">Workspace: <span data-bind="text: currentWorkSpace.name"/></label></div>
                     <div class="panel with-nav-tabs panel-default">
                         <div class="panel-heading">
 
@@ -350,14 +359,14 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label for="setwrk_in">Workspace name: </label>
-                                    <input type="text" class="form-control" id="setwrk_in">
+                                    <input type="text" class="form-control" id="setwrk_in" data-bind="value : newWorkSpaceName">
                                 </div>
                                 Please enter the name of your new workspace. This workspace will be populated with
                                 a single file that you can begin editing.
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal"> Cancel </button>
-                                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="newWorkspace_cs(localStorage.USER)"> Create Workspace </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: createNewWorkSpace"> Create Workspace </button>
                             </div>
                         </div>
                     </div>
@@ -575,24 +584,6 @@
     </div>
     </html>
 
-<script type="text/javascript">
-    $(document).ready(function()
-    {
-        $.post('/api/partials_FileNavBar',{workspace_id:localStorage.WORKSPACE},function(html)
-        {
-            $("#filehbs").html(html)
-        });
-        $.post('/api/partials_WorkspaceNavBar',{user_id:localStorage.USER},function(html)
-        {
-            $("#workhbs").html(html)
-        });
-        $.post('/api/partials_JobSelect',{workspace_id:localStorage.WORKSPACE},function(html)
-        {
-            $("#compileModal").html(html)
-        });
-    });
-</script>
-
     <style type="text/css">
 
         .top-buffer { margin-top:20px; }
@@ -671,5 +662,139 @@
     </style>
 
 <div id="compileModal" >
-
+    {{> jobSelector}}
 </div>
+<ul data-bind="foreach: { data: files, as: 'id'}">
+    <li data-bind="text: name"></li>
+</ul>
+
+<script type="text/javascript">
+    //This is the knockout viewmodel for the page
+
+    function WorkspaceItemModel(name, id, ext){
+        var self = this;
+
+        self.name = name;
+        self.id = id;
+        self.ext = ext;
+
+    }
+
+    function FileItemModel(name, id , ext){
+        var self = this;
+
+        self.name = name;
+        self.id = id;
+        self.ext = ext;
+
+
+    }
+
+    function EditorViewModel(){
+        var self = this;
+
+        self.newWorkSpaceName = ko.observable("");
+
+        self.workSpaceIDs = ko.observableArray([]);
+
+        self.workSpaces = ko.observableArray([]);
+
+        self.editorText = ko.observable("");
+
+        self.currentFile = ko.observable("");
+
+        self.currentWorkSpace = ko.observable("");
+
+        self.files = ko.observableArray([]);
+
+        self.createNewWorkSpace = function(){
+
+            var workspace_name = self.newWorkSpaceName();
+            $.post('/api/v1/workspace',
+                    {
+                        name: workspace_name
+                    },
+                    function(workspace_id)
+                    {
+                        console.log("Created Workspace: " + workspace_id);
+                        self.updateWorkSpaces();
+                        //TODO update the user and workspace models
+                        self.setAsCurrentWorkSpace(workspace_id);
+                    }
+            );
+        }
+
+        self.updateWorkSpaces = function(){
+            console.log("Getting all the new workspaces :"  );
+            $.get('api/v1/workspaces',function (response) {
+                self.workSpaceIDs.removeAll();
+                self.workSpaces.removeAll();
+                for(var i = 0 ; i<response.length;i++){
+                    self.addWorkSpace(response[i]);
+                    self.workSpaceIDs.push(response[i]);
+                }
+                console.log(self.workSpaceIDs());
+            })
+        }
+
+        self.addFile = function(id){
+            //TODO: get the file object
+            $.get('/api/v1/file', {id:id}, function(response){
+                console.log(response);
+                self.files.push(new FileItemModel(response.name, response.id , response.ext));
+            });
+        }
+
+        self.updateFiles = function(){
+            var workspaceid = self.currentWorkSpace();
+            console.log("Getting all the files in this workspace" + workspaceid);
+            self.files.removeAll();
+            $.get('/api/v1/files', {id: workspaceid}, function (response) {
+                //TODO: call add file for each
+                console.log(response);
+                for(var i = 0; i<response.length; i++){
+                    self.addFile(response[i]);
+                }
+            });
+        }
+
+        self.addWorkSpace = function (id) {
+            $.getJSON('/api/v1/workspace', {workspace_id:id}, function (workspace) {
+                //if(err) console.log(err);
+                console.log(workspace);
+                self.workSpaces.push(new WorkspaceItemModel(workspace.name, workspace.id));
+            });
+        }
+
+        self.setAsCurrentWorkSpace = function(id){
+            //TODO -  find the correct workspace and set it to the current workspace
+            self.currentWorkSpace(id);
+            self.updateFiles();
+        }
+
+        self.setAsCurrentFile = function(file){
+            self.currentFile(file);
+        }
+
+        self.saveFile = function(text){
+            //TODO: Send the put command
+        }
+
+        self.compileLFR = function(fileid){
+            //TODO: Send file id that has to be compiled.
+        }
+
+        self.compileMINT = function(fileid){
+            //TODO: Send file id that has to be compiled
+        }
+
+        self.initPage = function(){
+            self.updateWorkSpaces();
+        }
+    }
+
+    var editorViewModel = new EditorViewModel();
+    ko.applyBindings(editorViewModel);
+
+    editorViewModel.initPage();
+</script>

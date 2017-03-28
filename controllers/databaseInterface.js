@@ -13,10 +13,16 @@ var mongoose    = require('mongoose');
 var fs          = require('fs');
 var AWS         = require('aws-sdk');
 var s3s         = require('s3-streams');
+
+var User        = require('../models/user');
+var Workspace   = require('../models/workspace');
+var File        = require('../models/file');
+
 AWS.config.update({
-    accessKeyId: process.env['AWSID'],
-    secretAccessKey: process.env['AWSKEY']
+    accessKeyId: process.env['NEPTUNE_AWSID'],
+    secretAccessKey: process.env['NEPTUNE_AWSKEY']
 });
+
 var s3          = new AWS.S3();
 
 exports.Create_User = function(req, res)
@@ -80,7 +86,7 @@ exports.Update_User_cs = function(req, res)
 
     function callback (err, numAffected) {}
 
-    res.send(0);
+    res.sendStatus(200);
 };
 exports.Query_User = function(req, res)
 {
@@ -155,8 +161,25 @@ exports.Delete_User = function(req, res)
     });
 };
 
+exports.getWorkspaces = function (req, res) {
+    User.findById(req.user._id, function (err, user) {
+        if(err) throw err;
+        res.send(user.workspaces);
+    });
+}
+
+exports.getWorkspace = function (req, res) {
+    var id = req.query.workspace_id;
+    Workspace.findById(id, function(err, workspace){
+        if(err) throw err;
+        console.log(workspace);
+        res.send({ name: workspace.name, id:workspace._id});
+    })
+}
+
 exports.Create_Workspace = function(req, res)
 {
+    var userid = req.user._id;
     var workspace_name = req.body.name;
     var Workspace = require('../models/workspace');
 
@@ -171,10 +194,19 @@ exports.Create_Workspace = function(req, res)
     });
 
     //newWorkspace.generateFiles_and_updateSchema();
-    return newWorkspace._id;
+    //TODO: Add the workspace to the current user
+    User.findByIdAndUpdate(userid, {$push: {workspaces: newWorkspace._id}},{safe: true, upsert: true},
+        function(err, user){
+        if(err) throw err;
+    });
+
+    res.sendStatus(200);
 };
+
 exports.Create_Workspace_cs = function(req, res)
 {
+    var userid = req.user._id;
+    console.log("user id: " + userid);
     var workspace_name = req.body.name;
     var Workspace = require('../models/workspace');
 
@@ -188,7 +220,19 @@ exports.Create_Workspace_cs = function(req, res)
         console.log('Workspace Name: %s',workspace_name);
     });
 
+    //TODO: Get the current user and add the new workspace to the person's profile get this from the session
     //newWorkspace.generateFiles_and_updateSchema();
+    User.findByIdAndUpdate(userid, {$push: {workspaces: newWorkspace._id}},{safe: true, upsert: true},
+        function(err, user){
+            if(err) throw err;
+    });
+
+    var user = User.findById(userid, function(err, user){
+        if(err){
+            console.err(err);
+        }
+        console.log(user.workspaces);
+    });
     res.send(newWorkspace._id);
 };
 exports.Query_Workspace = function(req, res)
@@ -206,72 +250,73 @@ exports.Query_Workspace = function(req, res)
 
     return fileSpace;
 };
-exports.Update_Workspace = function(req, res)
-{
-    var Workspace = require('../models/workspace');
 
-    var workspaceId         = req.body.workspace_id;
-    var update_type         = req.body.update_type;
-    var update_body         = req.body.update;
-
-    console.log('ATTEMPTING TO UPDATE WORKSPACE w/ ID [%s] BY PUSHING FILE ID: [%s]',workspaceId,update_body);
-
-    switch (update_type)
-    {
-        case 'add_file_s':
-            Workspace.findByIdAndUpdate(workspaceId, {
-                $push: { specify_files: update_body }
-            }, { 'new': true}, callback);
-            break;
-        case 'add_file_d':
-            Workspace.findByIdAndUpdate(workspaceId, {
-                $push: { design_files: update_body }
-            }, { 'new': true}, callback);
-            break;
-        case 'add_file_sol':
-            Workspace.findByIdAndUpdate(workspaceId, {
-                $push: { solution_files: update_body }
-            }, { 'new': true}, callback);
-            break;
-    }
-
-    function callback (err, numAffected) {}
-
-    return 0;
-};
-exports.Update_Workspace_cs = function(req, res)
-{
-    var Workspace = require('../models/workspace');
-
-    var workspaceId         = req.body.workspace_id;
-    var update_type         = req.body.update_type;
-    var update_body         = req.body.update;
-
-    console.log('ATTEMPTING TO UPDATE WORKSPACE w/ ID [%s] BY PUSHING FILE ID: [%s]',workspaceId,update_body);
-
-    switch (update_type)
-    {
-        case 'add_file_s':
-            Workspace.findByIdAndUpdate(workspaceId, {
-                $push: { specify_files: update_body }
-            }, { 'new': true}, callback);
-            break;
-        case 'add_file_d':
-            Workspace.findByIdAndUpdate(workspaceId, {
-                $push: { design_files: update_body }
-            }, { 'new': true}, callback);
-            break;
-        case 'add_file_sol':
-            Workspace.findByIdAndUpdate(workspaceId, {
-                $push: { solution_files: update_body }
-            }, { 'new': true}, callback);
-            break;
-    }
-
-    function callback (err, numAffected) {}
-
-    res.send(0);
-};
+// exports.Update_Workspace = function(req, res)
+// {
+//     var Workspace = require('../models/workspace');
+//
+//     var workspaceId         = req.body.workspace_id;
+//     var update_type         = req.body.update_type;
+//     var update_body         = req.body.update;
+//
+//     console.log('ATTEMPTING TO UPDATE WORKSPACE w/ ID [%s] BY PUSHING FILE ID: [%s]',workspaceId,update_body);
+//
+//     switch (update_type)
+//     {
+//         case 'add_file_s':
+//             Workspace.findByIdAndUpdate(workspaceId, {
+//                 $push: { specify_files: update_body }
+//             }, { 'new': true}, callback);
+//             break;
+//         case 'add_file_d':
+//             Workspace.findByIdAndUpdate(workspaceId, {
+//                 $push: { design_files: update_body }
+//             }, { 'new': true}, callback);
+//             break;
+//         case 'add_file_sol':
+//             Workspace.findByIdAndUpdate(workspaceId, {
+//                 $push: { solution_files: update_body }
+//             }, { 'new': true}, callback);
+//             break;
+//     }
+//
+//     function callback (err, numAffected) {}
+//
+//     return 0;
+// };
+// exports.Update_Workspace_cs = function(req, res)
+// {
+//     var Workspace = require('../models/workspace');
+//
+//     var workspaceId         = req.body.workspace_id;
+//     var update_type         = req.body.update_type;
+//     var update_body         = req.body.update;
+//
+//     console.log('ATTEMPTING TO UPDATE WORKSPACE w/ ID [%s] BY PUSHING FILE ID: [%s]',workspaceId,update_body);
+//
+//     switch (update_type)
+//     {
+//         case 'add_file_s':
+//             Workspace.findByIdAndUpdate(workspaceId, {
+//                 $push: { specify_files: update_body }
+//             }, { 'new': true}, callback);
+//             break;
+//         case 'add_file_d':
+//             Workspace.findByIdAndUpdate(workspaceId, {
+//                 $push: { design_files: update_body }
+//             }, { 'new': true}, callback);
+//             break;
+//         case 'add_file_sol':
+//             Workspace.findByIdAndUpdate(workspaceId, {
+//                 $push: { solution_files: update_body }
+//             }, { 'new': true}, callback);
+//             break;
+//     }
+//
+//     function callback (err, numAffected) {}
+//
+//     res.sendStatus(200);
+// };
 exports.Delete_Workspace = function(req, res)
 {
     var workspace_id = req.body.id;
@@ -324,8 +369,44 @@ exports.Create_File_cs = function(req, res)
     });
 
     newFile.createS3File_and_linkToMongoDB();
+    //TODO: Add file to current workspace , also send the current workspace id when doing this
+
     res.send(newFile._id);
 };
+
+exports.getFiles = function (req, res) {
+    var workspaceid = req.query.id;
+    if("" == workspaceid){
+        res.sendStatus(500);
+        return;
+    }
+    Workspace.findById(workspaceid, function(err, data){
+        if(err) console.log(err);
+        var retarray = [];
+        for(var i = 0; i<data.specify_files.length; i++){
+            retarray.push(data.specify_files[i]);
+        }
+        for(var i = 0; i<data.design_files.length; i++){
+            retarray.push(data.design_files[i]);
+        }
+        for(var i = 0; i<data.solution_files.length; i++){
+            retarray.push(data.solution_files[i]);
+        }
+        console.log(err);
+        res.send(retarray);
+    });
+};
+
+exports.getFile = function (req, res) {
+    var fileid = req.query.id;
+    console.log("requesting file id: " + fileid);
+    File.findById(fileid, function (err, data) {
+        if(err) console.log(err);
+        res.send({id: data._id, name: data.name, ext: data.file_extension, link:data.S3_path});
+    });
+
+};
+
 exports.Query_File = function(req, res)
 {
     var file_id = req.body.file_id;

@@ -22,23 +22,32 @@ userSchema.methods.validPassword = function(password)
     return bcrypt.compareSync(password, this.local.password);
 };
 
-userSchema.methods.generateWorkspaces_and_updateSchema = function generateWorkspaces_and_updateSchema(id)
+userSchema.methods.generateWorkspaces_and_updateSchema = function generateWorkspaces_and_updateSchema(user)
 {
-    var databaseInterface = require('../controllers/databaseInterface');
 
-    var body1 = {body:{name:'Playground'}};
-    var workspace_id1 = databaseInterface.Create_Workspace(body1);
-    {
-        var body11 = {body: {update_type: 'add_workspace', user_id: id , update: workspace_id1}};
-        databaseInterface.Update_User(body11);
-    }
-    var body2 ={body:{name:'Microfluidic Examples'}};
-    var workspace_id2 = databaseInterface.Create_Workspace(body2);
-    {
-        var body22 = {body: {update_type: 'add_workspace', user_id: id, update: workspace_id2}};
-        databaseInterface.Update_User(body22);
-    }
-    return;
+    var Workspace   = require('../models/workspace');
+
+    var playgroudworkspace = new Workspace();
+
+    playgroudworkspace.name = 'Playground';
+    playgroudworkspace.save();
+
+    playgroudworkspace.generateFiles_and_updateSchema(playgroudworkspace);
+
+    user.workspaces.push(playgroudworkspace._id);
+
+
+    var microfluidicexamples = new Workspace();
+
+    microfluidicexamples.name = "Microfluidic Examples";
+    microfluidicexamples.save();
+
+    microfluidicexamples.generateFiles_and_updateSchema(microfluidicexamples);
+
+    user.workspaces.push(microfluidicexamples._id);
+
+    user.save();
+
 };
 
 userSchema.pre('save', function(next)
@@ -54,10 +63,6 @@ userSchema.pre('save', function(next)
     next();
 });
 
-userSchema.post('save', function()
-{
-    userSchema.methods.generateWorkspaces_and_updateSchema(this._id);
-});
 
 var User = mongoose.model('User', userSchema);
 module.exports = User;

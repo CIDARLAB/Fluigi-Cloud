@@ -14,10 +14,10 @@ var fs          = require('fs');
 var AWS         = require('aws-sdk');
 var s3s         = require('s3-streams');
 AWS.config.update({
-    accessKeyId: process.env['AWSID'],
-    secretAccessKey: process.env['AWSKEY']
+    accessKeyId: process.env['NEPTUNE_AWSID'],
+    secretAccessKey: process.env['NEPTUNE_AWSKEY']
 });
-var s3          = new AWS.S3();
+var s3 = new AWS.S3();
 
 /*
  Amazon Web Services Management Exports
