@@ -134,11 +134,6 @@ function initializeEditor()
     var MainSession = ace.createEditSession('MainSession', "ace/mode/verilog");
     editor_specify.setSession(MainSession);
 
-    $.post('/api/Read_Bucket_Object', {Target_Object_KEY: localStorage.FILE}, function (data)
-    {
-        editor_specify.setValue(data);
-    });
-
     EDITOR = {editor: editor_specify, session: MainSession};
     return EDITOR;
 }

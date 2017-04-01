@@ -211,13 +211,13 @@
                 <div class="col-lg-8">
 
                     <!-- START: LFR EDITOR -->
-                    <div class = "row"> <label id="filename" for="editor_specify">File Name: <span data-bind="text: currentFile"/></label> </div>
-                    <div class = "row"> <label id="workspacename" for="editor_specify">Workspace: <span data-bind="text: currentWorkSpace.name"/></label></div>
+                    <div class = "row"> <label id="filename" for="editor_specify">File Name: <span data-bind="text: currentFileName"/></label> </div>
+                    <div class = "row"> <label id="workspacename" for="editor_specify">Workspace: <span data-bind="text: currentWorkSpaceName"/></label></div>
                     <div class="panel with-nav-tabs panel-default">
                         <div class="panel-heading">
 
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-success" onclick="var EDITOR = initializeEditor()"> Start Editor </button>
+                                        <!--<button type="button" class="btn btn-success" data-bind="click: initEditor"> Start Editor </button>-->
                                         <button type="button" class="btn btn-secondary" onclick="save(EDITOR.editor,EDITOR.session)"> Save </button>
                                         <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="togglelfr()"> Translate to MINT </button>
                                         <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="togglemint()"> Compile to Schematic</button>
@@ -664,6 +664,8 @@
 <div id="compileModal" >
     {{> jobSelector}}
 </div>
+<label data-bind="text: currentWorkSpace.name"/>
+<label data-bind="text: currentFile.name"/>
 <ul data-bind="foreach: { data: files, as: 'id'}">
     <li data-bind="text: name"></li>
 </ul>
@@ -680,12 +682,13 @@
 
     }
 
-    function FileItemModel(name, id , ext){
+    function FileItemModel(name, id , ext , link){
         var self = this;
 
         self.name = name;
         self.id = id;
         self.ext = ext;
+        self.link = link;
 
 
     }
@@ -693,17 +696,24 @@
     function EditorViewModel(){
         var self = this;
 
+        self.editorObject;
+
         self.newWorkSpaceName = ko.observable("");
 
         self.workSpaceIDs = ko.observableArray([]);
 
         self.workSpaces = ko.observableArray([]);
 
-        self.editorText = ko.observable("");
+        //self.editorText = ko.observable("");
 
-        self.currentFile = ko.observable("");
+        self.currentFile=  ko.observable("");
 
-        self.currentWorkSpace = ko.observable("");
+        self.currentWorkSpace =  ko.observable("");
+
+        //TODO: Clean up the number of fields that are being used
+
+        self.currentWorkSpaceName = ko.observable("");
+        self.currentFileName = ko.observable("");
 
         self.files = ko.observableArray([]);
 
@@ -741,15 +751,15 @@
             //TODO: get the file object
             $.get('/api/v1/file', {id:id}, function(response){
                 console.log(response);
-                self.files.push(new FileItemModel(response.name, response.id , response.ext));
+                self.files.push(new FileItemModel(response.name, response.id , response.ext, response.link));
             });
         }
 
         self.updateFiles = function(){
-            var workspaceid = self.currentWorkSpace();
-            console.log("Getting all the files in this workspace" + workspaceid);
+            var workspace = self.currentWorkSpace();
+            console.log("Getting all the files in this workspace" + workspace);
             self.files.removeAll();
-            $.get('/api/v1/files', {id: workspaceid}, function (response) {
+            $.get('/api/v1/files', {id: workspace.id}, function (response) {
                 //TODO: call add file for each
                 console.log(response);
                 for(var i = 0; i<response.length; i++){
@@ -766,14 +776,41 @@
             });
         }
 
-        self.setAsCurrentWorkSpace = function(id){
+        self.setAsCurrentWorkSpace = function(workspace){
             //TODO -  find the correct workspace and set it to the current workspace
-            self.currentWorkSpace(id);
+            self.currentWorkSpace(workspace);
+            self.currentWorkSpaceName(workspace.name);
             self.updateFiles();
         }
 
         self.setAsCurrentFile = function(file){
             self.currentFile(file);
+            self.currentFileName(file.name);
+            self.loadFile(file.link , file.ext)
+        }
+
+
+        self.loadFile = function(link, ext){
+            if(link == null){
+                console.error("Link for loading the file is null");
+                return;
+            }
+            switch(ext) {
+                case ".svg":
+                    //TODO: How to load the SVG ?
+                    break;
+                case ".eps":
+                    //TODO: How to load the EPS ?
+                    break;
+                default:
+                    //TODO: Load the text file
+                    //self.editorText();
+                    $.get(link, function(data){
+                        //TODO: Load this into ace
+                        console.log(data);
+                        self.editorObject.session.setValue(data);
+                    });
+            }
         }
 
         self.saveFile = function(text){
@@ -788,8 +825,26 @@
             //TODO: Send file id that has to be compiled
         }
 
+        self.initEditor = function(){
+            //TODO: Make the sessions more atomic keeping track of each of the files that being edited.
+
+            ////Initializing the editor//////
+            var editor_specify = ace.edit("editor_specify");
+            editor_specify.setTheme("ace/theme/crimson_editor");
+            editor_specify.setOptions({
+                fontFamily: "monospace",
+                fontSize: "12pt"
+            });
+            var MainSession = ace.createEditSession('MainSession', "ace/mode/verilog");
+            editor_specify.setSession(MainSession);
+
+            self.editorObject = {editor: editor_specify, session: MainSession};
+
+        }
+
         self.initPage = function(){
             self.updateWorkSpaces();
+            self.initEditor();
         }
     }
 
