@@ -91,29 +91,6 @@
                     </div>
                 </div>
 
-                <!--<div class="w3-card-4" style="width:25%; float: left; margin-right: 5%; margin-bottom: 30px;">-->
-                    <!--<header class="w3-container w3-light-grey">-->
-                        <!--<h3>Project 1</h3>-->
-                    <!--</header>-->
-                    <!--<div class="w3-container">-->
-                        <!--<br>-->
-                        <!--<button class="w3-button w3-block ">Open Project</button>-->
-                        <!--<hr>-->
-                    <!--</div>-->
-                <!--</div>-->
-
-
-                <!--<div class="w3-card-4" style="width:25%; float: left; margin-right: 5%; margin-bottom: 30px;">-->
-                    <!--<header class="w3-container w3-light-grey">-->
-                        <!--<h3>Start New Project</h3>-->
-                    <!--</header>-->
-                    <!--<div class="w3-container">-->
-                        <!--<br>-->
-                        <!--<button class="w3-button w3-block" onclick="window.open('/specify')">+</button>-->
-                        <!--<hr>-->
-                    <!--</div>-->
-                <!--</div>-->
-
             </div>
             <div class="w3-container">
 
@@ -123,8 +100,9 @@
             </header>
             <div class="w3-container">
             <br>
-            <button class="w3-button w3-block" onclick="window.open('/specify')">+</button>
-            <hr>
+            <!--<button class="w3-button w3-block" onclick="window.open('/specify')">+</button>-->
+            <a href="#new_workspace" data-target="#new_workspace" data-toggle="modal"><i class="fa fa-plus-square"></i>  </a>
+                <hr>
             </div>
             </div>
 
@@ -298,20 +276,14 @@
 </div>
 </body>
 
-
+{{>newWorkspace}}
 
 <script type="text/javascript">
-
-    // Class to represent a row in the seat reservations grid
-//    function SeatReservation(name, initialMeal) {
-//        var self = this;
-//        self.name = name;
-//        self.meal = ko.observable(initialMeal);
-//    }
 
     // Overall viewmodel for this screen, along with initial state
     function WorkspaceModel() {
         var self = this;
+        self.newWorkSpaceName = ko.observable("");
 
         self.workspaces = ko.observableArray([]);
 
@@ -331,6 +303,39 @@
         self.openProject = function(workspace){
             window.open("/specify?id="+workspace.projectId);
         };
+
+
+        self.createNewWorkSpace = function(){
+
+            var workspace_name = self.newWorkSpaceName();
+            $.post('/api/v1/workspace',
+                    {
+                        name: workspace_name
+                    },
+                    function(workspace_id)
+                    {
+                        console.log("Created Workspace: " + workspace_id);
+                        self.updateWorkSpaces();
+                        //TODO update the user and workspace models
+                        self.setAsCurrentWorkSpace(workspace_id);
+                    }
+            );
+        };
+
+        self.updateWorkSpaces = function(){
+            console.log("Getting all the new workspaces :"  );
+            $.get('api/v1/workspaces',function (response) {
+                self.workSpaceIDs.removeAll();
+                self.workSpaces.removeAll();
+                for(var i = 0 ; i<response.length;i++){
+                    self.addWorkSpace(response[i]);
+                    self.workSpaceIDs.push(response[i]);
+                }
+                console.log(self.workSpaceIDs());
+            });
+            location.reload();
+        };
+
     }
 
     function neptuneProject(projectid, projectname) {
@@ -340,6 +345,7 @@
     }
 
     ko.applyBindings(new WorkspaceModel());
+
 
 </script>
 
