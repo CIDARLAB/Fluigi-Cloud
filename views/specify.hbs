@@ -218,7 +218,7 @@
 
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <!--<button type="button" class="btn btn-success" data-bind="click: initEditor"> Start Editor </button>-->
-                                        <button type="button" class="btn btn-secondary" onclick="save(EDITOR.editor,EDITOR.session)"> Save </button>
+                                        <button type="button" class="btn btn-secondary" data-bind="click: saveFile"> Save </button>
                                         <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="togglelfr()"> Translate to MINT </button>
                                         <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="togglemint()"> Compile to Schematic</button>
                                         <!--<button type="button" class="btn btn-secondary" id="filename"> </button>-->
@@ -792,8 +792,35 @@
             }
         }
 
-        self.saveFile = function(text){
+        self.saveFile = function(){
             //TODO: Send the put command
+            $.ajax( {
+                url : '/api/v1/file',
+                type: 'PUT',
+                data: {
+                    fileid: (self.currentFile()).id,
+                    name: self.currentFileName(),
+                    text: self.editorObject.session.getValue()
+                },
+                success : function (response) {
+                    console.log(response);
+                }
+            });
+        }
+
+        self.deleteFile = function(){
+            //TODO: Send delete command
+            $.ajax( {
+                url : '/api/v1/file',
+                type: 'DELETE',
+                data: {
+                    workspaceid: (self.currentWorkSpace()).id,
+                    fileid: (self.currentFile()).id
+                },
+                success : function (response) {
+                    console.log(response);
+                }
+            });
         }
 
         self.compileLFR = function(fileid){

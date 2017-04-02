@@ -422,6 +422,18 @@ exports.Query_File = function(req, res)
         //res.send(file);
     });
 };
+
+exports.updateFile = function(req, res){
+    console.log("fileid: " + req.body.fileid);
+    console.log("name: " + req.body.name);
+    console.log("name: " + req.body.text);
+}
+
+exports.deleteFile = function(req, res){
+    console.log("workspaceid: " + req.body.workspaceid);
+    console.log("fileid: " + req.body.fileid);
+}
+
 exports.Update_File = function(req, res)
 {
     var fileId = req.body.id;

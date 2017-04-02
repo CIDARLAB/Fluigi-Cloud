@@ -146,6 +146,8 @@ app.use(function(req, res, next) {
     app.get('/api/v1/files', databaseController.getFiles);
     app.get('/api/v1/file', databaseController.getFile);
     app.post('/api/v1/file', databaseController.Create_File_cs);
+    app.put('/api/v1/file', databaseController.updateFile);
+    app.delete('api/v1/file', databaseController.deleteFile);
 
     app.post('/api/Create_File', databaseController.Create_File);
     app.post('/api/Update_File',databaseController.Update_File);
