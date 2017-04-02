@@ -3,10 +3,10 @@ var Schema = mongoose.Schema;
 
 var workspaceSchema = new Schema({
     name: String,
-    specify_files: [],
-    design_files: [],
-    solution_files: [],
-    other_files:[],
+    specify_files:  { type: [String], required: false },
+    design_files:   { type: [String], required: false },
+    solution_files: { type: [String], required: false },
+    other_files:    { type: [String], required: false },
     created_at: Date,
     updated_at: Date
 });
@@ -17,48 +17,38 @@ workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_
     var File = require('../models/file');
 
     var newfile = new File();
-
     newfile.name = 'myLFR.v';
     newfile.file_extension = '.v';
-
     newfile.save();
-
+    newfile.createS3File_and_linkToMongoDB();
     workspace.specify_files.push(newfile._id);
 
 
     var newfile = new File();
-
     newfile.name = 'defaultUCF.JSON';
     newfile.file_extension = '.JSON';
-
     newfile.save();
-
+    newfile.createS3File_and_linkToMongoDB();
     workspace.specify_files.push(newfile._id);
 
 
-
     var newfile = new File();
-
     newfile.name = 'myMINT.uf';
     newfile.file_extension = '.uf';
-
     newfile.save();
-
-    workspace.design_files.push(newfile._id);
+    newfile.createS3File_and_linkToMongoDB();
+    workspace.design_files.push(newfile._id.toString());
 
 
     var newfile = new File();
-
     newfile.name = 'defaultConfig.ini';
     newfile.file_extension = '.ini';
-
     newfile.save();
-
+    newfile.createS3File_and_linkToMongoDB();
     workspace.design_files.push(newfile._id);
 
 
     workspace.save();
-
 };
 
 workspaceSchema.pre('save', function(next)

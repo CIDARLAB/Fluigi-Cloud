@@ -11,12 +11,12 @@ var cookieParser = require('cookie-parser');        //Parses cookies
 var bodyParser   = require('body-parser');
 var fs           = require('fs');
 var morgan       = require('morgan');
-var session = require('express-session');
+var session      = require('express-session');
 var MongoStore   = require('connect-mongo')(session);
 
 global.Neptune_ROOT_DIR = __dirname;
 
-var configDB = process.env['NEPTUNE_MONGOURL'];
+var configDB = process.env['MONGOURL'];
 mongoose.connect(configDB); // connect to our database
 
 // set up our cookies and html information for login

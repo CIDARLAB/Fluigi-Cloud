@@ -11,8 +11,8 @@ var homeDir     = require('home-dir');
 var jsonfile    = require('jsonfile');
 var mongoose    = require('mongoose');
 var fs          = require('fs');
-var AWS         = require('aws-sdk');
 var s3s         = require('s3-streams');
+var AWS         = require('aws-sdk');
 AWS.config.update({
     accessKeyId: process.env['NEPTUNE_AWSID'],
     secretAccessKey: process.env['NEPTUNE_AWSKEY']
@@ -38,8 +38,7 @@ exports.Create_Bucket_Object = function(req, res)
         if (err) {
             console.log(err)
         } else {
-            console.log(data);
-            //res.send(data);
+            console.log('S3: ',data);
             return data;
         }
     });
@@ -182,13 +181,13 @@ exports.preCompileFileTransfer = function(req, res)
                 ResponseContentEncoding: 'utf-8',
                 ResponseContentType: 'string/utf-8'
             };
-            var path1 = path.join(global.Neptune_ROOT_DIR, "jobs", "job.txt");
+            var path1 = path.join(global.Neptune_ROOT_DIR, "jobs", "job.uf");
             s3.getObject(Parameters_mint,function(error,data){
                 var fd = fs.openSync(path1, 'w+');
                 fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
                 fs.closeSync(fd);
             });
-            var path2 = path.join(global.Neptune_ROOT_DIR, "jobs", "config.txt");
+            var path2 = path.join(global.Neptune_ROOT_DIR, "jobs", "config.ini");
             s3.getObject(Parameters_ini,function(error,data){
                 var fd = fs.openSync(path2, 'w+');
                 fs.writeSync(fd, data.Body, 0, data.Body.length, 0);

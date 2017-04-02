@@ -23,10 +23,17 @@
  */
 
 
-localStorage.USER       = '58d69c1c1cb52c6018d7fd5e';       // Current User Session
-localStorage.WORKSPACE  = '58d69c1c1cb52c6018d7fd5f';       // Current Selected Workspace Session
-localStorage.FILE       = 'hello_world_lfr.v';              // Working Set Job File
-localStorage.CONFIG     = 'default_constraint_file.JSON';   // Working Set Config File
+localStorage.JOB       = 'mint.uf';              // Working Set Job File
+localStorage.CONFIG     = 'config.ini';   // Working Set Config File
+
+
+function initiate_LocalStorage()
+{
+    $.get('api/v1/workspaces',function (workspace_list)
+    {
+        localStorage.WORKSPACE = workspace_list[0];
+    })
+}
 
 function stage_job(job_id)
 {
@@ -53,7 +60,7 @@ function newFile_cs(workspace_id)
      });
 }
 
-function newWorkspace_cs(wordspace_name)
+function newWorkspace_cs()
 {
     var workspace_name = (document.getElementById('setwrk_in').value);
     $.post('/api/v1/workspace',
@@ -150,13 +157,13 @@ function dojob(editor,session,jobtype)
     switch (jobtype)
     {
         case 'lfr':
-            $.post('/api/preCompileFileTransfer',{transferType:'lfr',job:localStorage.JOB,config:localStorage.CONFIG},function(data){
-                $.post('/api/translate');
+            $.post('/api/preCompileFileTransfer',{transferType:'lfr',job:'lfr.v',config:'ucf.json'},function(data){
+                $.post('/api/translate',{workspace: '58e05a0d1590c21a0cc16060'});
             });
             break;
         case 'mint':
-            $.post('/api/preCompileFileTransfer',{transferType:'mint',job:localStorage.JOB,config:localStorage.CONFIG},function(data){
-                $.post('/api/compile');
+            $.post('/api/preCompileFileTransfer',{transferType:'mint',job:'mint.uf',config:'config.ini'},function(data){
+                $.post('/api/compile',{workspace: '58e05a0d1590c21a0cc16060'});
             });
             break;
 

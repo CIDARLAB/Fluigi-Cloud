@@ -161,22 +161,22 @@ exports.Delete_User = function(req, res)
     });
 };
 
-exports.getWorkspaces = function (req, res) {
+exports.getWorkspaces = function (req, res)
+{
     User.findById(req.user._id, function (err, user) {
         if(err) throw err;
         res.send(user.workspaces);
     });
-}
-
-exports.getWorkspace = function (req, res) {
+};
+exports.getWorkspace = function (req, res)
+{
     var id = req.query.workspace_id;
     Workspace.findById(id, function(err, workspace){
         if(err) throw err;
         console.log(workspace);
         res.send({ name: workspace.name, id:workspace._id});
     })
-}
-
+};
 exports.Create_Workspace = function(req, res)
 {
     var userid = req.user._id;
@@ -202,7 +202,6 @@ exports.Create_Workspace = function(req, res)
 
     res.sendStatus(200);
 };
-
 exports.Create_Workspace_cs = function(req, res)
 {
     var userid = req.user._id;
@@ -250,7 +249,32 @@ exports.Query_Workspace = function(req, res)
 
     return fileSpace;
 };
+exports.Update_Workspace = function(req, res)
+{
+    var workspaceId      = req.body.workspace_id;
+    var update_body      = req.body.update;
+    var update_type      = req.body.update_type;
 
+    console.log('ATTEMPTING TO UPDATE WORKSPACE w/ ID [%s] BY PUSHING FILE ID: [%s]',workspaceId,update_body);
+
+    switch (update_type)
+    {
+        case 'add_file_d':
+                Workspace.findByIdAndUpdate(workspaceId, {
+                    $push: { design_files: update_body }
+                }, { 'new': true}, callback);
+
+            break;
+        case 'add_file_sol':
+                Workspace.findByIdAndUpdate(workspaceId, {
+                    $push: { solution_files: update_body }
+                }, { 'new': true}, callback);
+            break;
+    }
+
+    function callback (err, numAffected) {}
+    return 0;
+};
 // exports.Update_Workspace = function(req, res)
 // {
 //     var Workspace = require('../models/workspace');
@@ -343,8 +367,7 @@ exports.Create_File = function(req, res)
 
     newFile.save(function(err) {
         if(err) throw err;
-        console.log('New File');
-        console.log('File Name: %s',file_name);
+        console.log('New file model created: %s',file_name);
     });
 
     newFile.createS3File_and_linkToMongoDB();
@@ -364,8 +387,7 @@ exports.Create_File_cs = function(req, res)
 
     newFile.save(function(err) {
         if(err) throw err;
-        console.log('New File');
-        console.log('File Name: %s',file_name);
+        console.log('New file model created: %s',file_name);
     });
 
     newFile.createS3File_and_linkToMongoDB();
@@ -373,8 +395,8 @@ exports.Create_File_cs = function(req, res)
 
     res.send(newFile._id);
 };
-
-exports.getFiles = function (req, res) {
+exports.getFiles = function (req, res)
+{
     var workspaceid = req.query.id;
     if("" == workspaceid){
         res.sendStatus(500);
@@ -396,8 +418,8 @@ exports.getFiles = function (req, res) {
         res.send(retarray);
     });
 };
-
-exports.getFile = function (req, res) {
+exports.getFile = function (req, res)
+{
     var fileid = req.query.id;
     console.log("requesting file id: " + fileid);
     File.findById(fileid, function (err, data) {
@@ -406,7 +428,6 @@ exports.getFile = function (req, res) {
     });
 
 };
-
 exports.Query_File = function(req, res)
 {
     var file_id = req.body.file_id;
