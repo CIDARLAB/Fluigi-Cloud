@@ -16,7 +16,7 @@ var MongoStore   = require('connect-mongo')(session);
 
 global.Neptune_ROOT_DIR = __dirname;
 
-var configDB = process.env['MONGOURL'];
+var configDB = process.env['NEPTUNE_MONGOURL'];
 mongoose.connect(configDB); // connect to our database
 
 // set up our cookies and html information for login
@@ -114,7 +114,7 @@ app.use(function(req, res, next) {
 
 /************** AMAZON WEB SERVICES S3 FILE STORAGE  ***************/
 {
-    app.post('/api/Create_Bucket_Object',AWS_S3_Controller.Create_Bucket_Object);
+    //app.post('/api/Create_Bucket_Object',AWS_S3_Controller.Create_Bucket_Object);
     app.post('/api/Read_Bucket_Object'  ,AWS_S3_Controller.Read_Bucket_Object);
     app.post('/api/Update_Bucket_Object',AWS_S3_Controller.Update_Bucket_Object);
     app.post('/api.Delete_Bucket_Object',AWS_S3_Controller.Delete_Bucket_Object);
@@ -145,21 +145,16 @@ app.use(function(req, res, next) {
     //app.post('/api/Create_File_cs',databaseController.Create_File_cs);
     app.get('/api/v1/files', databaseController.getFiles);
     app.get('/api/v1/file', databaseController.getFile);
-    app.post('/api/v1/file', databaseController.Create_File_cs);
+    app.post('/api/v1/file', databaseController.createFile);
     app.put('/api/v1/file', databaseController.updateFile);
-    app.delete('api/v1/file', databaseController.deleteFile);
+    app.delete('/api/v1/file', databaseController.deleteFile);
 
-    app.post('/api/Create_File', databaseController.Create_File);
-    app.post('/api/Update_File',databaseController.Update_File);
-    app.post('/api/Query_File', databaseController.Query_File);
-    app.post('/api/Delete_File',databaseController.Delete_File);
-}
+    app.get('/api/v1/fs', AWS_S3_Controller.getS3Text);
 
-/*************** Partials **************/
-{
-    app.post('/api/partials_FileNavBar',partialController.FileNavigationBar);
-    app.post('/api/partials_JobSelect',partialController.JobSelector);
-    app.post('/api/partials_WorkspaceNavBar',partialController.WorkspaceNavigationBar);
+    // app.post('/api/Create_File', databaseController.Create_File);
+    // app.post('/api/Update_File',databaseController.Update_File);
+    // app.post('/api/Query_File', databaseController.Query_File);
+    // app.post('/api/Delete_File',databaseController.Delete_File);
 }
 
 /************** Redirects **************/

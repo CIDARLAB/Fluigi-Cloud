@@ -219,11 +219,13 @@ exports.Create_Workspace_cs = function(req, res)
         console.log('Workspace Name: %s',workspace_name);
     });
 
+    newWorkspace.generateFiles_and_updateSchema();
+
     //TODO: Get the current user and add the new workspace to the person's profile get this from the session
     //newWorkspace.generateFiles_and_updateSchema();
     User.findByIdAndUpdate(userid, {$push: {workspaces: newWorkspace._id}},{safe: true, upsert: true},
         function(err, user){
-            if(err) throw err;
+            if(err) { res.sendStatus(500); throw err; }
     });
 
     var user = User.findById(userid, function(err, user){
@@ -352,6 +354,17 @@ exports.Delete_Workspace = function(req, res)
     });
 };
 
+exports.createFile = function(req, res){
+    var file_name = req.body.file_name;
+    var file_ext  = req.body.ext;
+    var workspace_id = req.body.workspaceid;
+
+    Workspace.findById(workspace_id,function(err, data){
+        if(err) { console.error(err); throw err; }
+        data.createFile(file_name,file_ext);
+        res.sendStatus(200);
+    });
+}
 
 exports.Create_File = function(req, res)
 {
@@ -403,7 +416,15 @@ exports.getFiles = function (req, res)
         return;
     }
     Workspace.findById(workspaceid, function(err, data){
-        if(err) console.log(err);
+        if(err) {
+            console.log(err);
+            res.sendStatus(500);
+            return;
+        }
+        if(null==data){
+            res.sendStatus(404);
+            return;
+        }
         var retarray = [];
         for(var i = 0; i<data.specify_files.length; i++){
             retarray.push(data.specify_files[i]);
@@ -421,6 +442,7 @@ exports.getFiles = function (req, res)
 exports.getFile = function (req, res)
 {
     var fileid = req.query.id;
+    if(null==fileid){ res.sendStatus(400)}
     console.log("requesting file id: " + fileid);
     File.findById(fileid, function (err, data) {
         if(err) console.log(err);
@@ -445,20 +467,62 @@ exports.Query_File = function(req, res)
 };
 
 exports.updateFile = function(req, res){
+
+    console.log("Updating the file:");
     console.log("fileid: " + req.body.fileid);
     console.log("name: " + req.body.name);
     console.log("name: " + req.body.text);
+    //TODO: Check for file access permissions
+    File.findById(req.body.fileid, function(err, data){
+        if(err){ console.err(err); res.sendStatus(500); throw err; }
+        var Target_Bucket_ID  = process.env['NEPTUNE_S3_BUCKET_ID'];
+        var Target_Object_KEY = data._id.toString();
+        var Target_Object_STREAM = req.body.text;
+
+        var Parameters = {
+            Bucket: Target_Bucket_ID,
+            Key: Target_Object_KEY,
+            Body: Target_Object_STREAM
+        };
+
+        s3.upload(Parameters, function(err, data) {
+            if (err) {
+                console.log(err);
+                res.sendStatus(500);
+                throw err;
+            } else {
+                console.log(data);
+                res.sendStatus(200);
+            }
+        });
+    });
 }
 
 exports.deleteFile = function(req, res){
-    console.log("workspaceid: " + req.body.workspaceid);
+
+    var workspaceid = req.query.workspaceid;
+    var fileid = req.body.fileid;
+    console.log("Deleting the file:");
+    console.log("workspaceid: " + workspaceid);
     console.log("fileid: " + req.body.fileid);
+    if(null==workspaceid){ res.sendStatus(400); return; }
+    File.findByIdAndRemove(fileid, function(err, data){
+        if(err) { console.err(err); res.sendStatus(500); throw err; }
+        //Remove entry in workspace
+        //TODO: need to remove the file from the workspace id
+        Workspace.findByIdAndUpdate(workspaceid,{
+            $pull:{}
+        }, function(err, data){
+            if(err){ console.err(err); res.sendStatus(500); throw err; }
+            res.sendStatus(200);
+        })
+    });
 }
 
 exports.Update_File = function(req, res)
 {
     var fileId = req.body.id;
-    var File = require('../models/file');
+
 
     File.findById(fileId, function(err, file)
     {

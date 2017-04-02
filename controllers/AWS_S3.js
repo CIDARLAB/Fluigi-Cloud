@@ -17,29 +17,31 @@ AWS.config.update({
     accessKeyId: process.env['NEPTUNE_AWSID'],
     secretAccessKey: process.env['NEPTUNE_AWSKEY']
 });
+var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
+
 var s3 = new AWS.S3();
 
 /*
  Amazon Web Services Management Exports
  */
-exports.Create_Bucket_Object = function(req, res)
+exports.Create_Bucket_Object = function(file,text)
 {
-    var Target_Bucket_ID  = req.body.Target_Bucket_ID;
-    var Target_Object_KEY = req.body.Target_Object_KEY;
-    var Target_Object_BODY = req.body.Target_Object_BODY;
 
+    var Target_Object_KEY = file._id.toString();
+    var Target_Object_BODY = text;
     var Parameters = {
-        Bucket: Target_Bucket_ID,
+        Bucket: Target_BUCKET_ID,
         Key: Target_Object_KEY,
-        Body: Target_Object_BODY
+        Body: Target_Object_BODY,
+        ACL: "public-read"
     };
 
-    s3.putObject(Parameters, function(err, data) {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log('S3: ',data);
-            return data;
+    s3.upload(Parameters,function (err, data)
+    {
+        if (err) console.log(err);
+        else {
+            file.S3_path = data.Location;
+            file.save();
         }
     });
 
@@ -198,6 +200,22 @@ exports.preCompileFileTransfer = function(req, res)
     }
 };
 
+
+exports.getS3Text = function(req, res){
+
+    var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
+    var Target_Object_KEY = req.query.id.toString();
+    var Parameters = {
+        Bucket: Target_BUCKET_ID,
+        Key: Target_Object_KEY,
+        ResponseContentEncoding: 'utf-8',
+        ResponseContentType: 'string/utf-8'
+    };
+    s3.getObject(Parameters,function(err,data){
+        if(err){ console.err(err); res.send(500); throw err; }
+        res.send(data.Body);
+    });
+}
 
 exports.redirectToSpecify = function(req,res)
 {

@@ -25,6 +25,7 @@
     "mongoose": "~4.9.2",
     "morgan": "~1.6.1",
     "node-cmd": "~1.1.1",
+    "node-dir": "^0.1.16",
     "passport": "~0.1.17",
     "passport-local": "~0.1.6",
     "replace": "^0.3.0",

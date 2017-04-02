@@ -87,7 +87,7 @@ exports.compileMint = function(req, res)
     });
 
     par_terminal.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
+        console.log("child process exited with code" +code);
     if (code == 0) {
 
         var read_flow = fs.createReadStream(svgloc_flow);
@@ -122,5 +122,5 @@ exports.compileMint = function(req, res)
         res.send({terminalStatus: 'Failure'});
         res.end();
     }
-});
+    });
 };

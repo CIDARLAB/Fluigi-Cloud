@@ -178,7 +178,7 @@
                             <a href="#new_workspace" data-target="#new_workspace" data-toggle="modal"><i class="fa fa-plus-square"></i> New Project <span class="fa plus-square-o"></span></a>
                         </li>
                         <li id="new_File">
-                            <a href="#new_file" data-target="#new_file" data-toggle="modal"><i class="fa fa-plus-square"></i> New File <span class="fa plus-square"></span></a>
+                            <a href="#new_file" data-target="#new_file" data-bind="visible: currentWorkSpaceName" data-toggle="modal"><i class="fa fa-plus-square"></i> New File <span class="fa plus-square"></span></a>
                         </li>
                     </ul>
                 </div>
@@ -221,8 +221,8 @@
                                         <button type="button" class="btn btn-secondary" data-bind="click: saveFile"> Save </button>
                                         <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="togglelfr()"> Translate to MINT </button>
                                         <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="togglemint()"> Compile to Schematic</button>
-                                        <!--<button type="button" class="btn btn-secondary" id="filename"> </button>-->
-                                        <!--<button type="button" class="btn btn-secondary" id="workspacename"> </button>-->
+                                        <!--<button type="button" class="btn btn-secondary" data-bind="click: deleteFile"> Delete </button>-->
+                                        <button type="button" class="btn btn-secondary" data-bind="click: downloadFile"> Download </button>
                                     </div>
 
                                     <script type="text/javascript">
@@ -326,11 +326,11 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label for="setfile_in">File name: </label>
-                                <input type="text" class="form-control" id="setfile_in">
+                                <input type="text" class="form-control" id="setfile_in" data-bind="value: newFileName">
                             </div>
                             <div class="form-group">
                                 <label for="setext_in">File type/extension: </label>
-                                <input type="text" class="form-control" id="setext_in">
+                                <input type="text" class="form-control" id="setext_in" data-bind="value: newFileExt">
                             </div>
                             Please carefully enter the name and extension of your new file.
                             The file name can be anything.
@@ -343,7 +343,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal"> Cancel </button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="newFile_cs(localStorage.WORKSPACE)"> Create File </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: createFile"> Create File </button>
                         </div>
                         </div>
                     </div>
@@ -650,6 +650,25 @@
 </ul>
 
 <script type="text/javascript">
+
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(window.location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    };
+
+    function containsObject(obj, list) {
+        var i;
+        for (i = 0; i < list.length; i++) {
+            if (list[i] === obj) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     //This is the knockout viewmodel for the page
 
     function WorkspaceItemModel(name, id, ext){
@@ -689,6 +708,9 @@
 
         self.currentWorkSpace =  ko.observable("");
 
+        self.newFileExt = ko.observable("");
+        self.newFileName = ko.observable("");
+
         //TODO: Clean up the number of fields that are being used
 
         self.currentWorkSpaceName = ko.observable("");
@@ -707,7 +729,6 @@
                     {
                         console.log("Created Workspace: " + workspace_id);
                         self.updateWorkSpaces();
-                        //TODO update the user and workspace models
                         self.setAsCurrentWorkSpace(workspace_id);
                     }
             );
@@ -727,7 +748,6 @@
         }
 
         self.addFile = function(id){
-            //TODO: get the file object
             $.get('/api/v1/file', {id:id}, function(response){
                 console.log(response);
                 self.files.push(new FileItemModel(response.name, response.id , response.ext, response.link));
@@ -739,7 +759,6 @@
             console.log("Getting all the files in this workspace" + workspace);
             self.files.removeAll();
             $.get('/api/v1/files', {id: workspace.id}, function (response) {
-                //TODO: call add file for each
                 console.log(response);
                 for(var i = 0; i<response.length; i++){
                     self.addFile(response[i]);
@@ -765,12 +784,12 @@
         self.setAsCurrentFile = function(file){
             self.currentFile(file);
             self.currentFileName(file.name);
-            self.loadFile(file.link , file.ext)
+            self.loadFile(file.id , file.ext)
         }
 
 
-        self.loadFile = function(link, ext){
-            if(link == null){
+        self.loadFile = function(id, ext){
+            if(id == null){
                 console.error("Link for loading the file is null");
                 return;
             }
@@ -784,12 +803,24 @@
                 default:
                     //TODO: Load the text file
                     //self.editorText();
-                    $.get(link, function(data){
+                    $.get('/api/v1/fs',{ id:id }, function(data){
                         //TODO: Load this into ace
                         console.log(data);
                         self.editorObject.session.setValue(data);
                     });
             }
+        }
+
+        self.createFile =function(){
+            //TODO:
+            $.post('/api/v1/file', {
+                workspaceid: (self.currentWorkSpace()).id,
+                ext: self.newFileExt(),
+                file_name: self.newFileName()
+            },
+            function(response){
+                console.log(response);
+            });
         }
 
         self.saveFile = function(){
@@ -804,6 +835,7 @@
                 },
                 success : function (response) {
                     console.log(response);
+                    //self.updateFiles();
                 }
             });
         }
@@ -821,6 +853,10 @@
                     console.log(response);
                 }
             });
+        }
+
+        self.downloadFile = function(){
+            window.open((self.currentFile()).link, '_blank');
         }
 
         self.compileLFR = function(fileid){
@@ -851,6 +887,19 @@
         self.initPage = function(){
             self.updateWorkSpaces();
             self.initEditor();
+            setTimeout(function(){
+                var setid = getUrlParameter("id");
+                console.log("ids: " + self.workSpaceIDs());
+                if(containsObject(setid, self.workSpaceIDs())){
+                    console.log("Setting the current workspace: " +  setid);
+                    for (var i = 0; i < (self.workSpaces()).length; i++) {
+                        if (((self.workSpaces())[i]).id === setid) {
+                            self.setAsCurrentWorkSpace((self.workSpaces())[i]);
+                        }
+                    }
+
+                }
+            }, 1000);
         }
     }
 
