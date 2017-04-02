@@ -23,12 +23,11 @@
     <script src="../javascripts/common/knockout-3.4.2.js"></script>
 
   <style>
-    body         { padding-top:0px; word-wrap:break-word; }
+    body         { padding-top:0px; word-wrap:break-word; font-size: 15px!important; }
   </style>
-    {{>topBar}}
 </head>
 <body>
-
+{{>topBar}}
 
 <div class="navbar navbar-default sidebar" style="float: left; clear: both; position: fixed; height: 100%; width: 150px;  padding-left: 20px; border: none;">
     <br>
@@ -67,9 +66,9 @@
         <!--Title-->
         <div class="text-center">
             <div class="well" style="height: 70px;">
-                <h4 style="text-align: left"> <i class="fa fa-tasks" aria-hidden="true"></i>  Projects
+                <h5 style="text-align: left"> <i class="fa fa-tasks" aria-hidden="true"></i>  Projects
                 <a href="#myprojects" class="btn" style="float: right" data-toggle="collapse">Show/Hide <span class="caret"></span></a>
-                </h4>
+                </h5>
             </div>
         </div>
         <!--Body-->
@@ -81,7 +80,7 @@
                 <div class="w3-card-4" style="width:25%; float: left; margin-right: 5%; margin-bottom: 30px;">
                     <header class="w3-container w3-light-grey">
                         <br>
-                        <h3 data-bind="text: projectName">Project 1</h3>
+                        <p data-bind="text: projectName">Project 1</p>
                         <br>
                     </header>
                     <div class="w3-container">
@@ -96,7 +95,7 @@
 
             <div class="w3-card-4" style="width:25%; float: left; margin-right: 5%; margin-bottom: 30px;">
             <header class="w3-container w3-light-grey">
-            <h3>Start New Project</h3>
+            <p>Start New Project</p>
             </header>
             <div class="w3-container">
             <br>
@@ -118,9 +117,9 @@
         <!--Title-->
         <div class="text-center">
             <div class="well" style="height: 70px;">
-                <h4 style="text-align: left"> <i class="fa fa-question-circle" aria-hidden="true"></i>  Help / Microfluidic Fabrication Workflow Overview
+                <h5 style="text-align: left"> <i class="fa fa-question-circle" aria-hidden="true"></i>  Help / Microfluidic Fabrication Workflow Overview
                     <a href="#helpme" class="btn" style="float: right" data-toggle="collapse">Show/Hide <span class="caret"></span></a>
-                </h4>
+                </h5>
             </div>
         </div>
         <!--Body-->
