@@ -1,7 +1,6 @@
 var express = require("express");
 var path = require('path');
 var app = express();
-var http = require('http').Server(app);
 var dotenv = require('dotenv');
 dotenv.load();
 
@@ -75,7 +74,6 @@ app.use(function(req, res, next) {
     app.get('/control', isLoggedIn, viewsController.openControlPage);
     app.get('/specify', isLoggedIn, viewsController.openSpecifyPage);
     app.get('/design', isLoggedIn, viewsController.openDesignPage);
-    app.get('/solutions', isLoggedIn, viewsController.openDesignPage);
     app.get('/signup', viewsController.openSignupPage);
     app.get('/login', viewsController.openLoginPage);
     app.get('/profile', isLoggedIn, viewsController.openProfilePage);
@@ -111,12 +109,10 @@ app.use(function(req, res, next) {
     app.post('/api/Query_User', databaseController.Query_User);
     app.post('/api/Delete_User',databaseController.Delete_User);
 
-    app.post('/api/Create_Workspace', databaseController.Create_Workspace);
-
     app.get('/api/v1/workspaces', databaseController.getWorkspaces);
     app.get('/api/v1/jobs', databaseController.getJobs);
     app.get('/api/v1/workspace', databaseController.getWorkspace);
-    app.post('/api/v1/workspace', databaseController.Create_Workspace_cs);
+    app.post('/api/v1/workspace', databaseController.createWorkspace);
 
     app.get('/api/v1/files', databaseController.getFiles);
     app.get('/api/v1/jobfiles', databaseController.getJobFiles);
@@ -129,13 +125,8 @@ app.use(function(req, res, next) {
     app.get('/api/v1/fs', AWS_S3_Controller.getS3Text);
 
 
-    app.get('/api/v1/jobs', databaseController.getJobs);
     app.get('/api/v1/job', databaseController.getJob);
 
-    // app.post('/api/Create_File', databaseController.Create_File);
-    // app.post('/api/Update_File',databaseController.Update_File);
-    // app.post('/api/Query_File', databaseController.Query_File);
-    // app.post('/api/Delete_File',databaseController.Delete_File);
 }
 
 /************** Redirects **************/
@@ -153,8 +144,7 @@ app.use(function(req, res, next) {
 
 /*******************************************************/
 
-    app.listen(8080, function(){console.log("Starting application")});
-
+app.listen(8080, function(){console.log("Starting application")});
 
 /**************** SOCKETIO-REDIS ****************/
 var io = require('socket.io')(3000);
@@ -174,4 +164,3 @@ io.sockets.on('connection', function(socket) {
         socket.join(jobid);
     })
 });
-

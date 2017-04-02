@@ -56,14 +56,12 @@ workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_
     newfile.createAndUploadDefaultS3File();
     this.specify_files.push(newfile._id);
 
-
     var newfile = new File();
     newfile.name = 'myMINT.uf';
     newfile.file_extension = '.uf';
     newfile.save();
     newfile.createAndUploadDefaultS3File();
     this.design_files.push(newfile._id.toString());
-
 
     var newfile = new File();
     newfile.name = 'defaultConfig.ini';

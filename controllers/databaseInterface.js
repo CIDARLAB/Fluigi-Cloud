@@ -7,12 +7,10 @@ var express     = require('express');
 var cmd         = require('node-cmd');
 var path        = require('path');
 var mkdirp      = require('mkdirp');
-var homeDir     = require('home-dir');
 var jsonfile    = require('jsonfile');
 var mongoose    = require('mongoose');
 var fs          = require('fs');
 var AWS         = require('aws-sdk');
-var s3s         = require('s3-streams');
 
 var User        = require('../models/user');
 var Workspace   = require('../models/workspace');
@@ -54,6 +52,7 @@ exports.Create_User = function(req, res)
     });
     res.send(id_temp);
 };
+
 exports.Update_User = function(req, res)
 {
     var User = require('../models/user');
@@ -72,6 +71,7 @@ exports.Update_User = function(req, res)
 
     return 0;
 };
+
 exports.Update_User_cs = function(req, res)
 {
     var User = require('../models/user');
@@ -89,6 +89,7 @@ exports.Update_User_cs = function(req, res)
 
     res.sendStatus(200);
 };
+
 exports.Query_User = function(req, res)
 {
     // We can effectively add logic for searching and all else here
@@ -150,6 +151,7 @@ exports.Query_User = function(req, res)
 
 
 };
+
 exports.Delete_User = function(req, res)
 {
     var user_id = req.body.id;
@@ -177,13 +179,6 @@ exports.getJobs = function (req, res)
         res.send(user.jobs);
     });
 };
-
-exports.getJob = function (req, res) {
-    Job.findById(req.query.job_id, function (err, job) {
-        console.log(req.query.job_id);
-    });
-
-}
 
 exports.getWorkspace = function (req, res)
 {
@@ -221,7 +216,7 @@ exports.Create_Workspace = function(req, res)
     res.sendStatus(200);
 };
 
-exports.Create_Workspace_cs = function(req, res)
+exports.createWorkspace = function(req, res)
 {
     var userid = req.user._id;
     console.log("user id: " + userid);
@@ -623,75 +618,3 @@ exports.getJob = function (req, res)
         res.send({ name: job.name, id:job._id});
     })
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* NOTES , MEMOS, DEPRECATED CODE */
-/*
-// User.findById(userId, function(err, user)
-// {
-//     if(err) throw err;
-//     switch(update_type)
-//     {
-//         case 'username':
-//             console.log('Username updated!');
-//             break;
-//         case 'password':
-//             console.log('Password updated!');
-//             break;
-//         case 'add_workspace':
-//             User.update({_id: userId}, {$push: {$workspaces: update}}, function(err)
-//             {
-//                 if(err) console.log(err);
-//                 else    console.log(update);
-//             });
-//             break;
-//         case 'newWorkspace':
-//             var workspace = req.body.workspace;
-//             break;
-//     }
-// });
-
- // User.update({_id: userId}, {$push: {workspaces: update}}, function(err)
- // {
- //     if(err) console.log(err);
- //     else    console.log(update);
- // });
-
- // User.findById(userId, function (err,user)
- // {
- //     if(err) throw err;
- //     user.local.workspaces.push(update_body);
- //     console.log('FOUND USER:');
- //     console.log(user);
- //     user.update();
- // });
-
-
- // var workspaceId = req.body.id;
- // var Workspace = require('../Models/workspace');
- //
- // Workspace.findById(userId, function(err, user)
- // {
- //     if(err) throw err;
- //
- //     var update_type = req.body.update_type;
- //     switch(update_type)
- //     {
- //         case '1':
- //             break;
- //         case '2':
- //             break;
- //     }
- // });
-*/

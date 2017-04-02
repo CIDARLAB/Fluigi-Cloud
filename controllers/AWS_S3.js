@@ -209,8 +209,6 @@ exports.preMMFileTransfer = function(req, res, next)
 
     var lfrpath     = req.body.sourcefileid;
     var ucfpath     = req.body.configfileid;
-    var lfrname     = req.body.sourcefilename;
-    var ucfname     = req.body.configfilename;
 
     var Parameters_lfr = {
         Bucket: Target_Bucket_ID,
