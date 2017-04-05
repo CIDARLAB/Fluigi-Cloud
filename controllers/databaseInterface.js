@@ -445,7 +445,8 @@ exports.getFile = function (req, res)
     if(null==fileid){ res.sendStatus(400)}
     console.log("requesting file id: " + fileid);
     File.findById(fileid, function (err, data) {
-        if(err) console.log(err);
+        if(err) { console.log(err); res.sendStatus(500); }
+        if(null == data ) { res.sendStatus(400); console.log("Cannot find data with given fileid: "  + fileid); return;}
         res.send({id: data._id, name: data.name, ext: data.file_extension, link:data.S3_path});
     });
 
@@ -500,7 +501,7 @@ exports.updateFile = function(req, res){
 
 exports.deleteFile = function(req, res){
 
-    var workspaceid = req.query.workspaceid;
+    var workspaceid = req.body.workspaceid;
     var fileid = req.body.fileid;
     console.log("Deleting the file:");
     console.log("workspaceid: " + workspaceid);
@@ -509,11 +510,24 @@ exports.deleteFile = function(req, res){
     File.findByIdAndRemove(fileid, function(err, data){
         if(err) { console.err(err); res.sendStatus(500); throw err; }
         //Remove entry in workspace
-        //TODO: need to remove the file from the workspace id
-        Workspace.findByIdAndUpdate(workspaceid,{
-            $pull:{}
-        }, function(err, data){
+        Workspace.findById(workspaceid, function(err, data){
             if(err){ console.err(err); res.sendStatus(500); throw err; }
+            var index = data.specify_files.indexOf(fileid);
+            if (index > -1) {
+                data.specify_files.splice(index, 1);
+                console.log("Deleted Specify File");
+            }
+            var index = data.design_files.indexOf(fileid);
+            if (index > -1) {
+                data.design_files.splice(index, 1);
+                console.log("Deleted design File");
+            }
+            var index = data.solution_files.indexOf(fileid);
+            if (index > -1) {
+                data.solution_files.splice(index, 1);
+                console.log("Deleted solution File");
+            }
+            data.save();
             res.sendStatus(200);
         })
     });

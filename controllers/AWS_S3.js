@@ -48,7 +48,7 @@ exports.Create_Bucket_Object = function(file,text)
 };
 exports.Read_Bucket_Object = function(req, res)
 {
-    var Target_Bucket_ID = 'neptune.primary.fs';
+    var Target_Bucket_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
     var Target_Object_KEY = req.body.Target_Object_KEY;
     var Parameters = {
         Bucket: Target_Bucket_ID,
@@ -89,7 +89,7 @@ exports.Read_Bucket_Object = function(req, res)
 };
 exports.Update_Bucket_Object = function(req, res)
 {
-    var Target_Bucket_ID  = 'neptune.primary.fs';//req.body.Target_Bucket_ID;
+    var Target_Bucket_ID  = process.env['NEPTUNE_S3_BUCKET_ID'];//req.body.Target_Bucket_ID;
     var Target_Object_KEY = req.body.Target_Object_KEY;
     var Target_Object_STREAM = req.body.Target_Object_STREAM;
 
@@ -132,7 +132,7 @@ exports.Delete_Bucket_Object = function(req, res)
 
 exports.preCompileFileTransfer = function(req, res)
 {
-    var Target_Bucket_ID = 'neptune.primary.fs';
+    var Target_Bucket_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
 
     var transferType = req.body.transferType;
     switch (transferType)
