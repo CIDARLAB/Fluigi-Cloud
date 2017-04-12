@@ -219,8 +219,7 @@
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <!--<button type="button" class="btn btn-success" data-bind="click: initEditor"> Start Editor </button>-->
                                         <button type="button" class="btn btn-secondary" data-bind="click: saveFile"> Save </button>
-                                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="togglelfr()"> Translate to MINT </button>
-                                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectFile" onclick="togglemint()"> Compile to Schematic</button>
+                                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#selectConfig"> Compile </button>
                                         <button type="button" class="btn btn-secondary" data-bind="click: deleteFile"> Delete </button>
                                         <button type="button" class="btn btn-secondary" data-bind="click: downloadFile"> Download </button>
                                     </div>
@@ -315,40 +314,8 @@
                 <!-- END: UPLOAD FORM, UCF SUMMARY, INI SUMMARY -->
 
                 <!-- ALL MODALS BELOW HERE -->
-                <!-- FILE PREVIEW MODAL -->
-                <div id="new_file" class="modal fade" role="dialog">
-                    <div class="modal-dialog">
-                        <!-- Modal content-->
-                        <div class="modal-content">
-                            <div class="modal-header modal-header-primary">
-                            <h4 class="modal-title">Enter your file name and type:</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="setfile_in">File name: </label>
-                                <input type="text" class="form-control" id="setfile_in" data-bind="value: newFileName">
-                            </div>
-                            <div class="form-group">
-                                <label for="setext_in">File type/extension: </label>
-                                <input type="text" class="form-control" id="setext_in" data-bind="value: newFileExt">
-                            </div>
-                            Please carefully enter the name and extension of your new file.
-                            The file name can be anything.
-                            The file extension must be input correctly, follow the example:
-                                LFR: '.v'
-                                UCF: '.json'
-                                MINT:'.uf'
-                                INI :'.ini'
-                            Apologies for the awkward implementation. Soon to be improved :)
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal"> Cancel </button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: createFile"> Create File </button>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-
+                {{>newFileModal}}
+`
                 {{>newWorkspace}}
 
                 <div class="modal fade" id="preview_dashboard" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
@@ -641,8 +608,10 @@
     </style>
 
 <div id="compileModal" >
-    {{> jobSelector}}
+    {{> jobSelector }}
+    {{> compileModal }}
 </div>
+
 <label data-bind="text: currentWorkSpace.name"/>
 <label data-bind="text: currentFile.name"/>
 <ul data-bind="foreach: { data: files, as: 'id'}">
@@ -715,6 +684,7 @@
 
         self.currentWorkSpaceName = ko.observable("");
         self.currentFileName = ko.observable("");
+        self.currentConfigFile = ko.observable("");
 
         self.files = ko.observableArray([]);
 
@@ -861,12 +831,54 @@
             window.open((self.currentFile()).link, '_blank');
         }
 
-        self.compileLFR = function(fileid){
-            //TODO: Send file id that has to be compiled.
+        self.compileLFR = function(){
+            console.log("Compiling lfr");
+            $.post('/api/v1/mushroommapper', {
+                        sourcefileid: (self.currentFile()).id,
+                        configfileid: (self.currentConfigFile()).id,
+                    },
+                    function(response){
+                        //TODO - Connect to fluigicad's console output based on job id.
+                        console.log(response);
+                    });
+
         }
 
-        self.compileMINT = function(fileid){
-            //TODO: Send file id that has to be compiled
+        self.compileMINT = function(){
+            console.log("Compiling mint");
+            console.log("Compiling lfr");
+            $.post('/api/v1/fluigi', {
+                        sourcefileid: (self.currentFile()).id,
+                        configfileid: (self.currentConfigFile()).id,
+                    },
+                    function(response){
+                        //TODO - Connect to fluigicad's console output based on job id.
+                        console.log(response);
+                    });
+        }
+
+        self.compile = function(){
+            //TODO: Send file id that has to be compiled.
+            var currentfile = self.currentFile();
+            var currentconfigfile = self.currentConfigFile();
+            switch (currentfile.ext){
+                case ".uf":
+                    console.log("Config file :" + currentconfigfile.ext);
+                    if(!(".ini" === currentconfigfile.ext)){
+                        toastr.error("Invalid Configuration File");
+                        return;
+                    }
+                    self.compileMINT();
+                    break;
+                case ".v":
+                    console.log("Config file :" + currentconfigfile.ext);
+                    if(!(".JSON" === currentconfigfile.ext )){
+                        toastr.error("Invalid Configuration File");
+                        return;
+                    }
+                    self.compileLFR();
+            }
+
         }
 
         self.initEditor = function(){
