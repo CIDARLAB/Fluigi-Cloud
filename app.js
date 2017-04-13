@@ -184,9 +184,6 @@ app.use(function(req, res, next) {
 }
 
 
-
-app.post('/api/v1/mushroommapper',[AWS_S3_Controller.preMMFileTransfer,translateController.translate]);
-app.post('/api/v1/fluigi',        [AWS_S3_Controller.preFluigiFileTransfer,compileController.compile]);
 /*******************************************************/
 
 
