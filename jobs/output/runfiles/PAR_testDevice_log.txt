@@ -1,0 +1,576 @@
+Beginning Place and Route
+PAR iteration 1
+Initial Place
+Initial Temp
+Initial Temp = 3.071709319158417E10
+-> Temp = 1.5358546595792086E10
+-> Temp = 7.679273297896043E9
+-> Temp = 3.8396366489480214E9
+-> Temp = 1.9198183244740107E9
+-> Temp = 1.7278364920266097E9
+-> Temp = 1.5550528428239486E9
+-> Temp = 7.775264214119743E8
+-> Temp = 6.997737792707769E8
+-> Temp = 6.297964013436992E8
+-> Temp = 5.668167612093294E8
+-> Temp = 5.1013508508839643E8
+-> Temp = 4.591215765795568E8
+-> Temp = 4.132094189216012E8
+-> Temp = 3.7188847702944106E8
+-> Temp = 3.3469962932649696E8
+-> Temp = 3.012296663938473E8
+-> Temp = 2.7110669975446254E8
+-> Temp = 2.439960297790163E8
+-> Temp = 2.1959642680111465E8
+-> Temp = 1.9763678412100318E8
+-> Temp = 1.7787310570890287E8
+-> Temp = 1.600857951380126E8
+-> Temp = 1.4407721562421134E8
+-> Temp = 1.2966949406179021E8
+-> Temp = 1.1670254465561119E8
+-> Temp = 1.0503229019005007E8
+-> Temp = 9.452906117104506E7
+-> Temp = 8.507615505394056E7
+-> Temp = 7.656853954854651E7
+-> Temp = 6.891168559369186E7
+-> Temp = 6.202051703432267E7
+-> Temp = 5.58184653308904E7
+-> Temp = 5.023661879780136E7
+-> Temp = 4.5212956918021224E7
+-> Temp = 4.06916612262191E7
+-> Temp = 3.6622495103597194E7
+-> Temp = 3.2960245593237475E7
+-> Temp = 2.9664221033913728E7
+-> Temp = 2.6697798930522356E7
+-> Temp = 2.402801903747012E7
+-> Temp = 2.162521713372311E7
+-> Temp = 1.94626954203508E7
+-> Temp = 1.751642587831572E7
+-> Temp = 1.5764783290484149E7
+-> Temp = 1.4188304961435735E7
+-> Temp = 1.2769474465292161E7
+-> Temp = 1.1492527018762946E7
+-> Temp = 1.0343274316886652E7
+-> Temp = 9308946.885197988
+-> Temp = 8378052.19667819
+-> Temp = 7540246.977010371
+-> Temp = 6786222.279309334
+-> Temp = 6107600.051378401
+-> Temp = 5496840.046240561
+-> Temp = 4947156.041616505
+-> Temp = 4452440.437454855
+-> Temp = 4007196.3937093695
+-> Temp = 3606476.7543384326
+-> Temp = 3245829.078904589
+-> Temp = 2921246.17101413
+-> Temp = 2629121.5539127174
+-> Temp = 2366209.3985214457
+-> Temp = 2129588.458669301
+-> Temp = 1916629.6128023711
+-> Temp = 1724966.651522134
+-> Temp = 1552469.9863699207
+-> Temp = 1397222.9877329287
+-> Temp = 1257500.6889596358
+-> Temp = 1131750.6200636723
+-> Temp = 1018575.558057305
+-> Temp = 916718.0022515745
+-> Temp = 825046.2020264171
+-> Temp = 742541.5818237754
+-> Temp = 668287.4236413979
+-> Temp = 601458.6812772581
+-> Temp = 541312.8131495323
+-> Temp = 487181.5318345791
+-> Temp = 438463.37865112117
+-> Temp = 394617.04078600905
+-> Temp = 355155.33670740813
+-> Temp = 319639.80303666735
+-> Temp = 287675.8227330006
+-> Temp = 258908.24045970055
+-> Temp = 233017.4164137305
+-> Temp = 209715.67477235745
+-> Temp = 188744.1072951217
+-> Temp = 169869.69656560954
+-> Temp = 152882.7269090486
+-> Temp = 137594.45421814374
+-> Temp = 123835.00879632938
+-> Temp = 111451.50791669644
+-> Temp = 100306.3571250268
+-> Temp = 90275.72141252412
+-> Temp = 81248.1492712717
+-> Temp = 73123.33434414453
+-> Temp = 65811.00090973008
+-> Temp = 59229.90081875707
+-> Temp = 53306.910736881364
+-> Temp = 47976.21966319323
+-> Temp = 43178.59769687391
+-> Temp = 38860.73792718652
+-> Temp = 34974.66413446787
+-> Temp = 31477.197721021086
+-> Temp = 28329.47794891898
+-> Temp = 25496.53015402708
+-> Temp = 22946.877138624375
+-> Temp = 20652.18942476194
+-> Temp = 18586.970482285746
+-> Temp = 16728.273434057173
+-> Temp = 15055.446090651456
+-> Temp = 13549.90148158631
+-> Temp = 12194.911333427679
+-> Temp = 11585.165766756294
+-> Temp = 11005.90747841848
+-> Temp = 9905.316730576631
+-> Temp = 9410.0508940478
+-> Temp = 8939.548349345408
+-> Temp = 8492.570931878137
+-> Temp = 8067.94238528423
+-> Temp = 7664.545266020018
+-> Temp = 7281.3180027190165
+-> Temp = 6917.252102583066
+-> Temp = 6571.389497453912
+-> Temp = 6242.820022581216
+-> Temp = 5930.679021452155
+-> Temp = 5634.145070379547
+-> Temp = 5352.43781686057
+-> Temp = 5084.815926017541
+-> Temp = 4830.5751297166635
+-> Temp = 4589.04637323083
+-> Temp = 4359.594054569288
+-> Temp = 4141.6143518408235
+-> Temp = 3934.533634248782
+-> Temp = 3737.806952536343
+-> Temp = 3550.9166049095256
+-> Temp = 3373.3707746640493
+-> Temp = 3204.7022359308467
+-> Temp = 3044.467124134304
+-> Temp = 2892.2437679275886
+-> Temp = 2747.631579531209
+-> Temp = 2610.2500005546485
+-> Temp = 2479.737500526916
+-> Temp = 2355.75062550057
+-> Temp = 2237.9630942255417
+-> Temp = 2126.0649395142646
+-> Temp = 2019.7616925385512
+-> Temp = 1918.7736079116235
+-> Temp = 1822.8349275160422
+-> Temp = 1731.69318114024
+-> Temp = 1645.108522083228
+-> Temp = 1562.8530959790667
+-> Temp = 1484.7104411801133
+-> Temp = 1410.4749191211076
+-> Temp = 1339.9511731650523
+-> Temp = 1272.9536145067996
+-> Temp = 1209.3059337814595
+-> Temp = 1148.8406370923865
+-> Temp = 1091.398605237767
+-> Temp = 1036.8286749758786
+-> Temp = 984.9872412270846
+-> Temp = 935.7378791657303
+-> Temp = 888.9509852074438
+-> Temp = 844.5034359470716
+-> Temp = 802.278264149718
+-> Temp = 762.1643509422321
+-> Temp = 724.0561333951205
+-> Temp = 687.8533267253645
+-> Temp = 653.4606603890962
+-> Temp = 620.7876273696414
+-> Temp = 589.7482460011594
+-> Temp = 560.2608337011014
+-> Temp = 532.2477920160463
+-> Temp = 505.635402415244
+-> Temp = 480.35363229448177
+-> Temp = 456.3359506797577
+-> Temp = 433.5191531457698
+-> Temp = 411.8431954884813
+-> Temp = 391.2510357140572
+-> Temp = 371.68848392835434
+-> Temp = 353.1040597319366
+-> Temp = 335.44885674533975
+-> Temp = 318.67641390807273
+-> Temp = 302.7425932126691
+-> Temp = 287.6054635520356
+-> Temp = 273.2251903744338
+-> Temp = 259.5639308557121
+-> Temp = 246.5857343129265
+-> Temp = 234.25644759728016
+-> Temp = 222.54362521741615
+-> Temp = 211.41644395654532
+-> Temp = 200.84562175871804
+-> Temp = 190.80334067078212
+-> Temp = 181.263173637243
+-> Temp = 172.20001495538085
+-> Temp = 163.5900142076118
+-> Temp = 155.4105134972312
+-> Temp = 147.63998782236962
+-> Temp = 140.25798843125114
+-> Temp = 133.24508900968857
+-> Temp = 126.58283455920413
+-> Temp = 120.25369283124392
+-> Temp = 114.24100818968172
+-> Temp = 108.52895778019763
+-> Temp = 103.10250989118774
+-> Temp = 97.94738439662835
+-> Temp = 93.05001517679693
+-> Temp = 88.39751441795708
+-> Temp = 83.97763869705922
+-> Temp = 79.77875676220626
+-> Temp = 75.78981892409594
+-> Temp = 72.00032797789115
+-> Temp = 68.40031157899658
+-> Temp = 64.98029600004675
+-> Temp = 61.73128120004441
+-> Temp = 58.64471714004218
+-> Temp = 55.71248128304007
+-> Temp = 52.92685721888807
+-> Temp = 50.28051435794366
+-> Temp = 47.766488640046475
+-> Temp = 45.37816420804415
+-> Temp = 43.10925599764194
+-> Temp = 40.953793197759836
+-> Temp = 38.90610353787184
+-> Temp = 36.96079836097825
+-> Temp = 35.11275844292934
+-> Temp = 33.35712052078287
+-> Temp = 31.689264494743725
+-> Temp = 30.104801270006536
+-> Temp = 28.59956120650621
+-> Temp = 27.169583146180898
+-> Temp = 25.811103988871853
+-> Temp = 24.520548789428258
+-> Temp = 23.294521349956845
+-> Temp = 22.129795282459003
+-> Temp = 21.023305518336052
+-> Temp = 19.972140242419247
+-> Temp = 18.973533230298283
+-> Temp = 18.024856568783367
+-> Temp = 17.123613740344197
+-> Temp = 16.267433053326986
+-> Temp = 15.454061400660636
+-> Temp = 14.681358330627605
+-> Temp = 13.947290414096225
+-> Temp = 13.249925893391413
+-> Temp = 12.587429598721842
+-> Temp = 11.958058118785749
+-> Temp = 11.360155212846461
+-> Temp = 10.792147452204137
+-> Temp = 10.25254007959393
+-> Temp = 9.739913075614233
+-> Temp = 9.252917421833521
+-> Temp = 8.790271550741844
+-> Temp = 8.350757973204752
+-> Temp = 7.933220074544514
+-> Temp = 7.536559070817288
+-> Temp = 7.159731117276423
+-> Temp = 6.801744561412602
+-> Temp = 6.461657333341972
+-> Temp = 6.138574466674872
+-> Temp = 5.831645743341128
+-> Temp = 5.540063456174072
+-> Temp = 5.263060283365368
+-> Temp = 4.9999072691971
+-> Temp = 4.749911905737244
+-> Temp = 4.512416310450382
+-> Temp = 4.286795494927863
+-> Temp = 4.07245572018147
+-> Temp = 3.868832934172396
+-> Temp = 3.675391287463776
+-> Temp = 3.4916217230905873
+-> Temp = 3.3170406369360577
+-> Temp = 3.1511886050892546
+-> Temp = 2.993629174834792
+-> Temp = 2.843947716093052
+-> Temp = 2.7017503302883994
+-> Temp = 2.5666628137739793
+-> Temp = 2.4383296730852804
+-> Temp = 2.316413189431016
+-> Temp = 2.200592529959465
+-> Temp = 2.0905629034614917
+-> Temp = 1.986034758288417
+-> Temp = 1.886733020373996
+Final Temp = 1.886733020373996
+Overlap =0
+Placement Complete
+Time Elapsed: 0:0:4.489072256
+RUNNING CLEANUP
+Moving target
+sp Y = 1005 tp Y 1003 deltaY = 2
+Moving target
+sp Y = 1011 tp Y 1012 deltaY = -1
+Moving target
+sp Y = 1008 tp Y 1009 deltaY = -1
+moving source
+sp Y = 1005 tp Y 1005 deltaY = 0
+moving source
+sp Y = 1011 tp Y 1011 deltaY = 0
+Moving target
+sp Y = 1011 tp Y 1011 deltaY = 0
+moving source
+sp Y = 1008 tp Y 1008 deltaY = 0
+Moving target
+sp Y = 1014 tp Y 698 deltaY = 316
+moving source
+sp Y = 1011 tp Y 1011 deltaY = 0
+Moving target
+sp X = 1833 tp X 2041 deltaX = -208
+In channel cleanup, undo X
+Moving target
+sp Y = 698 tp Y 698 deltaY = 0
+moving source
+sp Y = 1014 tp Y 698 deltaY = 316
+moving source
+sp X = 1833 tp X 2041 deltaX = -208
+In channel cleanup, undo X
+moving source
+sp Y = 698 tp Y 698 deltaY = 0
+grid width: 1440
+grid length: 877
+Routing Channel controlChannel0 on Layer control
+Routing Successful
+Routing Channel flowChannel0 on Layer flow
+Routing Successful
+Routing Channel flowChannel1 on Layer flow
+Routing Successful
+Routing Channel flowChannel2 on Layer flow
+Routing Successful
+Routing Channel flowChannel3 on Layer flow
+Routing Successful
+Routing Channel flowChannel4 on Layer flow
+Routing Successful
+Routing Channel flowChannel5 on Layer flow
+Routing Successful
+Decomposing Channel controlChannel0
+sInd 0tInd 2
+s x:1049 y: 748
+p x:1049 y: 748
+s x:1049 y: 748
+p x:1049 y: 597
+Source pin: 0 Target pin: 2
+Decomposed Channel:
+Source x: 1049 y: 748
+Target: 1049 y: 597
+Path start:
+Path end
+s x:1049 y: 597
+p x:841 y: 597
+Source pin: 3 Target pin: 1
+Decomposed Channel:
+Source x: 1049 y: 597
+Target: 841 y: 597
+Path start:
+Path end
+s x:841 y: 597
+p x:841 y: 137
+Source pin: 0 Target pin: 2
+Decomposed Channel:
+Source x: 841 y: 597
+Target: 841 y: 137
+Path start:
+Path end
+Decomposing Channel flowChannel0
+Decomposing Channel flowChannel1
+sInd 1tInd 1
+s x:129 y: 592
+p x:129 y: 592
+s x:129 y: 592
+p x:334 y: 592
+Source pin: 1 Target pin: 3
+Decomposed Channel:
+Source x: 129 y: 592
+Target: 334 y: 592
+Path start:
+Path end
+s x:334 y: 592
+p x:334 y: 444
+Source pin: 0 Target pin: 2
+Decomposed Channel:
+Source x: 334 y: 592
+Target: 334 y: 444
+Path start:
+Path end
+s x:334 y: 444
+p x:385 y: 444
+Source pin: 1 Target pin: 1
+Decomposed Channel:
+Source x: 334 y: 444
+Target: 385 y: 444
+Path start:
+Path end
+Decomposing Channel flowChannel2
+Decomposing Channel flowChannel3
+Decomposing Channel flowChannel4
+Decomposing Channel flowChannel5
+sInd 1tInd 1
+s x:847 y: 131
+p x:847 y: 131
+s x:847 y: 131
+p x:1365 y: 131
+Source pin: 1 Target pin: 3
+Decomposed Channel:
+Source x: 847 y: 131
+Target: 1365 y: 131
+Path start:
+Path end
+s x:1365 y: 131
+p x:1365 y: 498
+Source pin: 2 Target pin: 0
+Decomposed Channel:
+Source x: 1365 y: 131
+Target: 1365 y: 498
+Path start:
+Path end
+s x:1365 y: 498
+p x:1315 y: 498
+Source pin: 3 Target pin: 1
+Decomposed Channel:
+Source x: 1365 y: 498
+Target: 1315 y: 498
+Path start:
+Path end
+s x:1315 y: 498
+p x:1315 y: 547
+Source pin: 2 Target pin: 0
+Decomposed Channel:
+Source x: 1315 y: 498
+Target: 1315 y: 547
+Path start:
+Path end
+s x:1315 y: 547
+p x:846 y: 547
+Source pin: 3 Target pin: 1
+Decomposed Channel:
+Source x: 1315 y: 547
+Target: 846 y: 547
+Path start:
+Path end
+s x:846 y: 547
+p x:846 y: 447
+Source pin: 0 Target pin: 2
+Decomposed Channel:
+Source x: 846 y: 547
+Target: 846 y: 447
+Path start:
+Path end
+s x:846 y: 447
+p x:847 y: 447
+Source pin: 1 Target pin: 1
+Decomposed Channel:
+Source x: 846 y: 447
+Target: 847 y: 447
+Path start:
+Path end
+Routing Complete
+Time Elapsed: 0:0:6.584400222
+Spacing violation SV3 : controlChannel0_c2 fDevice1_YMixer
+fDevice1_YMixer minX 797 maxX 1159 minY 291 maxY 597
+controlChannel0_c2 minX 790 maxX 892 minY 86 maxY 648
+fDevice1_YMixer controlChannel0_c2 : Left overlap by 45
+fDevice1_YMixer controlChannel0_c2 : Right overlap by 319
+fDevice1_YMixer controlChannel0_c2 : Bottom overlap by 461
+fDevice1_YMixer controlChannel0_c2 : Top overlap by 307
+Spacing violation SV3 : controlChannel0_c1 fDevice1_YMixer
+fDevice1_YMixer minX 797 maxX 1159 minY 291 maxY 597
+controlChannel0_c1 minX 790 maxX 1100 minY 546 maxY 648
+fDevice1_YMixer controlChannel0_c1 : Left overlap by 253
+fDevice1_YMixer controlChannel0_c1 : Right overlap by 319
+fDevice1_YMixer controlChannel0_c1 : Bottom overlap by 1
+fDevice1_YMixer controlChannel0_c1 : Top overlap by 307
+Spacing violation SV2 : controlChannel0_c0 fDevice1_YMixer
+controlChannel0_c0 minX 998 maxX 1100 minY 546 maxY 799
+fDevice1_YMixer minX 797 maxX 1159 minY 291 maxY 597
+controlChannel0_c0 fDevice1_YMixer : Left overlap by 111
+controlChannel0_c0 fDevice1_YMixer : Right overlap by 253
+controlChannel0_c0 fDevice1_YMixer : Bottom overlap by 458
+controlChannel0_c0 fDevice1_YMixer : Top overlap by 1
+Spacing violation SV2 : flowChannel5_c1 outPort0
+flowChannel5_c1 minX 1314 maxX 1416 minY 80 maxY 549
+outPort0 minX 1261 maxX 1365 minY 392 maxY 496
+flowChannel5_c1 outPort0 : Left overlap by 1
+flowChannel5_c1 outPort0 : Right overlap by 105
+flowChannel5_c1 outPort0 : Bottom overlap by 107
+flowChannel5_c1 outPort0 : Top overlap by 366
+Beginning Place and Route
+PAR iteration 2
+Initial Place
+Initial Temp
+Initial Temp = 4.929140929448816E9
+-> Temp = 2.464570464724408E9
+-> Temp = 1.232285232362204E9
+-> Temp = 1.1090567091259837E9
+-> Temp = 9.981510382133853E8
+-> Temp = 8.983359343920468E8
+-> Temp = 8.085023409528421E8
+-> Temp = 7.276521068575579E8
+-> Temp = 6.548868961718022E8
+-> Temp = 5.893982065546219E8
+-> Temp = 5.304583858991597E8
+-> Temp = 4.7741254730924374E8
+-> Temp = 4.296712925783194E8
+-> Temp = 3.8670416332048744E8
+-> Temp = 3.480337469884387E8
+-> Temp = 3.132303722895949E8
+-> Temp = 2.819073350606354E8
+-> Temp = 2.5371660155457187E8
+-> Temp = 2.283449413991147E8
+-> Temp = 2.0551044725920323E8
+-> Temp = 1.849594025332829E8
+-> Temp = 1.664634622799546E8
+-> Temp = 1.4981711605195916E8
+-> Temp = 1.3483540444676325E8
+-> Temp = 1.2135186400208692E8
+-> Temp = 1.0921667760187823E8
+-> Temp = 9.82950098416904E7
+-> Temp = 8.846550885752137E7
+-> Temp = 7.961895797176923E7
+-> Temp = 7.16570621745923E7
+-> Temp = 6.449135595713307E7
+-> Temp = 5.804222036141977E7
+-> Temp = 5.223799832527779E7
+-> Temp = 4.701419849275001E7
+-> Temp = 4.231277864347501E7
+-> Temp = 3.808150077912751E7
+-> Temp = 3.427335070121476E7
+-> Temp = 3.0846015631093286E7
+-> Temp = 2.776141406798396E7
+-> Temp = 2.4985272661185563E7
+-> Temp = 2.2486745395067006E7
+-> Temp = 2.0238070855560306E7
+-> Temp = 1.8214263770004276E7
+-> Temp = 1.639283739300385E7
+-> Temp = 1.4753553653703464E7
+-> Temp = 1.3278198288333118E7
+-> Temp = 1.1950378459499806E7
+-> Temp = 1.0755340613549827E7
+-> Temp = 9679806.552194845
+-> Temp = 8711825.89697536
+-> Temp = 7840643.307277825
+-> Temp = 7056578.976550043
+-> Temp = 6350921.078895039
+-> Temp = 5715828.971005535
+-> Temp = 5144246.073904982
+-> Temp = 4629821.466514484
+-> Temp = 4166839.319863036
+-> Temp = 3750155.3878767323
+-> Temp = 3375139.849089059
+-> Temp = 3037625.8641801532
+-> Temp = 2733863.277762138
+-> Temp = 2460476.949985924
+-> Temp = 2214429.254987332
+-> Temp = 1992986.329488599
+-> Temp = 1793687.6965397391
+-> Temp = 1614318.9268857653
+-> Temp = 1452887.0341971887
+-> Temp = 1307598.3307774698
+-> Temp = 1176838.4976997229
+-> Temp = 1059154.6479297506
+-> Temp = 953239.1831367756
+-> Temp = 857915.2648230981
+-> Temp = 772123.7383407883
+-> Temp = 694911.3645067095
+-> Temp = 625420.2280560386
+-> Temp = 562878.2052504348
+-> Temp = 506590.38472539134
+-> Temp = 455931.34625285224
+-> Temp = 410338.211627567
+-> Temp = 369304.3904648103
+-> Temp = 332373.95141832926
+-> Temp = 299136.5562764963
+-> Temp = 269222.9006488467
+-> Temp = 242300.61058396
