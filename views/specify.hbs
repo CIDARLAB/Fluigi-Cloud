@@ -757,7 +757,6 @@
             self.loadFile(file.id , file.ext)
         }
 
-
         self.loadFile = function(id, ext){
             if(id == null){
                 console.error("Link for loading the file is null");
@@ -836,6 +835,7 @@
             $.post('/api/v1/mushroommapper', {
                         sourcefileid: (self.currentFile()).id,
                         configfileid: (self.currentConfigFile()).id,
+                        workspace:    (self.currentWorkSpace()).id
                     },
                     function(response){
                         //TODO - Connect to fluigicad's console output based on job id.
@@ -850,6 +850,7 @@
             $.post('/api/v1/fluigi', {
                         sourcefileid: (self.currentFile()).id,
                         configfileid: (self.currentConfigFile()).id,
+                        workspace:    (self.currentWorkSpace()).id,
                     },
                     function(response){
                         //TODO - Connect to fluigicad's console output based on job id.
