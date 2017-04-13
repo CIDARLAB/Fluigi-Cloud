@@ -22,6 +22,7 @@ exports.translate = function(req, res)
     console.log('UCF PATH: %s',ucf_path);
     console.log('OUT PATH: %s',out_path);
 
+    var name     = req.body.NAME;
 
     var par_terminal = require('child_process').spawn(
         'java', ['-jar', MM_BINARY_PATH, '-l', lfr_path, '-u', ucf_path , '-uf', out_path], {cwd: cwd}
