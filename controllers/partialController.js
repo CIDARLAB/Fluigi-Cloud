@@ -139,3 +139,81 @@ exports.JobSelector = function(req,res)
         });
     });
 };
+
+exports.JobFileNavigationBar = function(req,res)
+{
+    fs.readFile('./partials/JobFileNavigationBar.hbs', 'utf8',function (err,data)
+    {
+        var template = Handlebars.compile(data);
+        var id = req.body.job_id;
+        var Job = require('../models/job');
+        var fileSpace = {};
+
+        Job.findById(id,{svg_files:1 ,eps_files:1}, function (err,job)
+        {
+            if(err) throw err;
+            fileSpace = {svg_files: job.svg_files, eps_files: job.eps_files};
+            var jobspace = fileSpace;
+
+            var length_svg = jobspace.svg_files.length;
+            var length_eps  = jobspace.eps_files.length;
+            var files = [];
+            for (var i = 0; i < length_svg; i++) files.push(fileSpace.svg_files[i]);
+            for (var i = 0; i < length_eps; i++) files.push(fileSpace.eps_files[i]);
+
+            var File = require('../models/file');
+            File.find({
+                '_id': { $in: files}
+            }, function(err, docs)
+            {
+                var json = [];
+                for (var i = 0; i < docs.length; i++)
+                {
+                    var singleStage = {id: docs[i]._id, name: docs[i].name};
+                    json.push(singleStage);
+                }
+                var wrapper = {objects: json};
+                var final_html = template(wrapper);
+                res.send(final_html);
+            });
+        });
+    });
+};
+
+exports.JobNavigationBar = function(req,res)
+{
+    fs.readFile('./partials/jobNavigationBar.hbs', 'utf8',function (err,data)
+    {
+        var template = Handlebars.compile(data);
+
+        var id = req.body.user_id;
+        var User = require('../models/user');
+        var fileSpace = {};
+        User.findById(id,{jobs: 1}, function (err,user)
+        {
+            if(err) throw err;
+            fileSpace = {spaces: user.jobs};
+            var jobspace = fileSpace;
+
+            var length = jobspace.spaces.length;
+            var files = [];
+            for (var i = 0; i < length; i++) files.push(fileSpace.spaces[i]);
+
+            var Job = require('../models/job');
+            Job.find({
+                '_id': { $in: files}
+            }, function(err, docs)
+            {
+                var json = [];
+                for (var i = 0; i < docs.length; i++)
+                {
+                    var singleStage = {id: docs[i]._id, name: docs[i].name};
+                    json.push(singleStage);
+                }
+                var wrapper = {objects: json};
+                var final_html = template(wrapper);
+                res.send(final_html);
+            });
+        });
+    });
+};

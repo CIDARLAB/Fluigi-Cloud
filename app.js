@@ -62,8 +62,6 @@ app.use(function(req, res, next) {
     var viewsController             = require('./controllers/views');
     var writeController             = require('./controllers/fileWrite');
     var workspaceController         = require('./controllers/workspace');
-    var compileMintController       = require('./controllers/compileMint');
-    //var translateLFRController    = require('./controllers/translateLFR');
     var translateController         = require('./controllers/translate');
     var compileController           = require('./controllers/compile');
     var AWS_S3_Controller           = require('./controllers/AWS_S3');
@@ -151,6 +149,9 @@ app.use(function(req, res, next) {
 
     app.get('/api/v1/fs', AWS_S3_Controller.getS3Text);
 
+
+    app.get('/api/v1/job', databaseController.getJob);
+
     // app.post('/api/Create_File', databaseController.Create_File);
     // app.post('/api/Update_File',databaseController.Update_File);
     // app.post('/api/Query_File', databaseController.Query_File);
@@ -164,10 +165,10 @@ app.use(function(req, res, next) {
 
 /**************** USHROOM MAPPER & FLUIGI ****************/
 {
-    app.post('/api/compileMint', compileMintController.compileMint);
     app.post('/api/translate', translateController.translate);
     app.post('/api/compile', compileController.compile);
-    //app.post('/api/translateLFR', translateLFRController.translateLFR);
+    app.post('/api/v1/mushroommapper',[AWS_S3_Controller.preMMFileTransfer,translateController.translate]);
+    app.post('/api/v1/fluigi',        [AWS_S3_Controller.preFluigiFileTransfer,compileController.compile]);
 }
 
 /**************** WORKSPACE INITIATION AND MAINTAINENCE ****************/
@@ -183,11 +184,6 @@ app.use(function(req, res, next) {
     app.post('/api/findHome', workspaceController.findHome);
 }
 
-
-
-app.post('/api/v1/mushroommapper',[AWS_S3_Controller.preMMFileTransfer,translateController.translate]);
-app.post('/api/v1/fluigi',        [AWS_S3_Controller.preFluigiFileTransfer,compileController.compile]);
 /*******************************************************/
 
-
-app.listen(8080, function(){console.log("Starting application")});
+    app.listen(8080, function(){console.log("Starting application")});

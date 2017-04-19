@@ -17,6 +17,7 @@ var s3s         = require('s3-streams');
 var User        = require('../models/user');
 var Workspace   = require('../models/workspace');
 var File        = require('../models/file');
+var Job         = require('../models/job');
 
 AWS.config.update({
     accessKeyId: process.env['NEPTUNE_AWSID'],
@@ -271,6 +272,11 @@ exports.Update_Workspace = function(req, res)
                 Workspace.findByIdAndUpdate(workspaceId, {
                     $push: { solution_files: update_body }
                 }, { 'new': true}, callback);
+            break;
+        case 'add_job':
+            Workspace.findByIdAndUpdate(workspaceId, {
+                $push: { jobs: update_body }
+            }, { 'new': true}, callback);
             break;
     }
 
@@ -573,6 +579,91 @@ exports.Delete_File = function(req, res)
         }
     });
 };
+
+// exports.Create_File = function(parameters)
+// {
+//     var file_name = parameters.file_name;
+//     var file_ext  = parameters.ext;
+//
+//     var newFile = File({
+//         name: file_name,
+//         file_extension: file_ext
+//     });
+//
+//     newFile.save(function(err) {
+//         if(err) throw err;
+//         console.log('New file model created: %s',file_name);
+//     });
+//
+//     newFile.createS3File_and_linkToMongoDB();
+//     return newFile._id;
+// }
+exports.Create_Job = function(user_id)
+{
+    var Job = require('../models/job');
+
+    var newJob = Job();
+
+    newJob.save(function(err) {
+        if(err) throw err;
+        console.log('New job model created: %s',newJob._id);
+    });
+
+    newJob.addJobToUser(user_id);
+    return newJob._id;
+};
+exports.Update_Job = function(parameters)
+{
+    var job_id           = parameters.job_id;
+    var update_body      = parameters.update_body;
+    var update_type      = parameters.update_type;
+
+    console.log('ATTEMPTING TO UPDATE JOB w/ ID [%s] BY PUSHING FILE ID: [%s]',job_id,update_body);
+
+    switch (update_type)
+    {
+        case 'add_file_svg':
+            Job.findByIdAndUpdate(job_id, {
+                $push: { svg_files: update_body }
+            }, { 'new': true}, callback);
+
+            break;
+        case 'add_file_eps':
+            Job.findByIdAndUpdate(job_id, {
+                $push: { eps_files: update_body }
+            }, { 'new': true}, callback);
+            break;
+        case 'add_file_other':
+            Job.findByIdAndUpdate(job_id, {
+                $push: { other_files: update_body }
+            }, { 'new': true}, callback);
+            break;
+    }
+
+    function callback (err, numAffected) {}
+    return 0;
+};
+exports.getJob= function (req, res)
+{
+    var id = req.query.job_id;
+    Job.findById(id, function(err, job){
+        if(err) throw err;
+        console.log(jon);
+        res.send({ name: jo.name, id:workspace._id});
+    })
+};
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* NOTES , MEMOS, DEPRECATED CODE */
 /*

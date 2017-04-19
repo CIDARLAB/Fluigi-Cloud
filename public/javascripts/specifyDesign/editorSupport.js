@@ -1016,8 +1016,6 @@ function color_ui()
     document.getElementById(ini_id).style.color = 'green';
 }
 
-// ALL NEW FLUIGI CLOUD FUNCTIONS SHOULD GO DOWN HERE
-
 function newFile(filetype)
 {
     var filename = (document.getElementById('new_file_name').value);

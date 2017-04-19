@@ -12,7 +12,8 @@ var workspaceSchema = new Schema({
     updated_at: Date
 });
 
-workspaceSchema.methods.createFile = function createFile(filename, ext){
+workspaceSchema.methods.createFile = function createFile(filename, ext)
+{
 
     var newfile = new File();
     newfile.name = filename;
@@ -36,13 +37,10 @@ workspaceSchema.methods.createFile = function createFile(filename, ext){
             this.other_files.push(newfile._id);
     }
     this.save();
-}
+};
 
 workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_and_updateSchema()
 {
-    //var databaseInterface = require('../controllers/databaseInterface');
-
-
     var newfile = new File();
     newfile.name = 'myLFR.v';
     newfile.file_extension = '.v';
@@ -90,7 +88,6 @@ workspaceSchema.pre('save', function(next)
 
     next();
 });
-
 
 var Workspace = mongoose.model('Workspace', workspaceSchema);
 module.exports = Workspace;

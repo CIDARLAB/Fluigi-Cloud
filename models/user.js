@@ -9,7 +9,8 @@ var userSchema = new Schema({
         created_at   : Date,
         updated_at   : Date
     },
-    workspaces   : { type: [String], required: false }
+    workspaces   : { type: [String], required: false },
+    jobs         : { type: [String], required: false }
 });
 
 userSchema.methods.generateHash = function(password)
@@ -28,26 +29,31 @@ userSchema.methods.generateWorkspaces_and_updateSchema = function generateWorksp
     var Workspace   = require('../models/workspace');
 
     var playgroudworkspace = new Workspace();
-
     playgroudworkspace.name = 'Playground';
     playgroudworkspace.save();
-
     playgroudworkspace.generateFiles_and_updateSchema(playgroudworkspace);
-
     user.workspaces.push(playgroudworkspace._id);
 
 
     var microfluidicexamples = new Workspace();
-
     microfluidicexamples.name = "Microfluidic Examples";
     microfluidicexamples.save();
-
     microfluidicexamples.generateFiles_and_updateSchema(microfluidicexamples);
-
     user.workspaces.push(microfluidicexamples._id);
 
     user.save();
 
+};
+
+userSchema.methods.createJob = function createJob(next)
+{
+    var Job = require('./job');
+    // Created job model, and updates user with id of new object.
+    var newJob = new Job();
+    newJob.save();
+    this.jobs.push(newJob._id);
+    this.save();
+    next(newJob._id);
 };
 
 userSchema.pre('save', function(next)
