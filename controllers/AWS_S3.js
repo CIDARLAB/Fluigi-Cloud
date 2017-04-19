@@ -7,12 +7,14 @@ var express     = require('express');
 var cmd         = require('node-cmd');
 var path        = require('path');
 var mkdirp      = require('mkdirp');
-var homeDir     = require('home-dir');
+//var homeDir     = require('home-dir');
 var jsonfile    = require('jsonfile');
 var mongoose    = require('mongoose');
 var fs          = require('fs');
-var s3s         = require('s3-streams');
+//var s3s         = require('s3-streams');
 var AWS         = require('aws-sdk');
+var db          = require('./databaseInterface');
+
 AWS.config.update({
     accessKeyId: process.env['NEPTUNE_AWSID'],
     secretAccessKey: process.env['NEPTUNE_AWSKEY']
@@ -207,7 +209,8 @@ exports.preMMFileTransfer = function(req, res, next)
 
     var lfrpath     = req.body.sourcefileid;
     var ucfpath     = req.body.configfileid;
-    //var workspace   = req.body.workspace;
+    var lfrname     = req.body.sourcefilename;
+    var ucfname     = req.body.configfilename;
 
     var Parameters_lfr = {
         Bucket: Target_Bucket_ID,
@@ -221,17 +224,28 @@ exports.preMMFileTransfer = function(req, res, next)
         ResponseContentEncoding: 'utf-8',
         ResponseContentType: 'string/utf-8'
     };
-    var path1 = path.join(global.Neptune_ROOT_DIR, "jobs", "job.txt");
+
+    var id = db.Create_Job();
+    req.body.jobid = id;
+    var jobdir = './jobs/tmp__' + id;
+
+    if (!fs.existsSync(jobdir))
+        fs.mkdirSync(jobdir);
+    else console.log('ERROR: Unique Dir Already Exists!');
+
+    var path1 = path.join(global.Neptune_ROOT_DIR, jobdir, lfrname);
     s3.getObject(Parameters_lfr,function(error,data){
         var fd = fs.openSync(path1, 'w+');
         fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
         fs.closeSync(fd);
 
-        var path2 = path.join(global.Neptune_ROOT_DIR, "jobs", "config.txt");
+        var path2 = path.join(global.Neptune_ROOT_DIR, jobdir, ucfname);
         s3.getObject(Parameters_ucf,function(error,data){
             var fd = fs.openSync(path2, 'w+');
             fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
             fs.closeSync(fd);
+
+            req.body.jobdir = jobdir;
 
             next();
         });
@@ -240,11 +254,17 @@ exports.preMMFileTransfer = function(req, res, next)
 };
 exports.preFluigiFileTransfer = function(req, res, next)
 {
+    var User        = require('../models/user');
+    var Workspace   = require('../models/workspace');
+
     var Target_Bucket_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
 
     var mintpath = req.body.sourcefileid;
     var inipath = req.body.configfileid;
-    //var workspace   = req.body.workspace;
+    var mintname = req.body.sourcefilename;
+    var ininame = req.body.configfilename;
+    var workspace_id = req.body.workspace;
+    var email = req.body.user;
 
     var Parameters_mint = {
         Bucket: Target_Bucket_ID,
@@ -258,22 +278,46 @@ exports.preFluigiFileTransfer = function(req, res, next)
         ResponseContentEncoding: 'utf-8',
         ResponseContentType: 'string/utf-8'
     };
-    var path1 = path.join(global.Neptune_ROOT_DIR, "jobs", "job.uf");
-    s3.getObject(Parameters_mint,function(error,data){
-        var fd = fs.openSync(path1, 'w+');
-        fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
-        fs.closeSync(fd);
+
+    User.findOne({ 'local.email' :  email }, function(err, user)
+    {
+        // below I am querying user, then creating job, waiting for id, then updating user.
+        // Maybe...
+        // Better to create job, wait for id, then query user and update? Or maybe not?
+        if(err) { console.error(err); throw err; }
+        user.createJob(function callback(id)
+        {
+            console.log('CALLBACK WORKING...');
+            var jobdir = './jobs/tmp__' + id;
+            req.body.jobid = id.toString();
+
+            var update = {body:{workspace_id: workspace_id,update: id, update_type: 'add_job'}};
+            db.Update_Workspace(update);
+
+            if (!fs.existsSync(jobdir))
+                fs.mkdirSync(jobdir);
+            else console.log('ERROR: Unique Dir Already Exists!');
+
+            var path1 = path.join(global.Neptune_ROOT_DIR, jobdir, mintname);
+            s3.getObject(Parameters_mint,function(error,data)
+            {
+                var fd = fs.openSync(path1, 'w+');
+                fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
+                fs.closeSync(fd);
+
+                var path2 = path.join(global.Neptune_ROOT_DIR, jobdir, ininame);
+                s3.getObject(Parameters_ini,function(error,data)
+                {
+                    var fd = fs.openSync(path2, 'w+');
+                    fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
+                    fs.closeSync(fd);
+
+                    req.body.jobdir = jobdir;
+                    next();
+                });
+            });
+        });
     });
-    var path2 = path.join(global.Neptune_ROOT_DIR, "jobs", "config.ini");
-    s3.getObject(Parameters_ini,function(error,data){
-        var fd = fs.openSync(path2, 'w+');
-        fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
-        fs.closeSync(fd);
-    });
-
-    next();
-
-
 };
 
 
@@ -292,7 +336,7 @@ exports.getS3Text = function(req, res)
         if(err){ console.err(err); res.send(500); throw err; }
         res.send(data.Body);
     });
-}
+};
 
 exports.redirectToSpecify = function(req,res)
 {

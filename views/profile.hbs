@@ -25,6 +25,13 @@
   <style>
     body         { padding-top:0px; word-wrap:break-word; font-size: 15px!important; }
   </style>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            localStorage.Email = document.getElementById('userEmail').getAttribute("email")
+        });
+
+    </script>
 </head>
 <body>
 {{>topBar}}
