@@ -131,6 +131,7 @@ app.use(function(req, res, next) {
     //app.post('/api/Create_Workspace_cs', databaseController.Create_Workspace_cs);
 
     app.get('/api/v1/workspaces', databaseController.getWorkspaces);
+    app.get('/api/v1/jobs', databaseController.getJobs);
     app.get('/api/v1/workspace', databaseController.getWorkspace);
     app.post('/api/v1/workspace', databaseController.Create_Workspace_cs);
 
@@ -142,6 +143,7 @@ app.use(function(req, res, next) {
 
     //app.post('/api/Create_File_cs',databaseController.Create_File_cs);
     app.get('/api/v1/files', databaseController.getFiles);
+    app.get('/api/v1/jobfiles', databaseController.getJobFiles);
     app.get('/api/v1/file', databaseController.getFile);
     app.post('/api/v1/file', databaseController.createFile);
     app.put('/api/v1/file', databaseController.updateFile);
