@@ -290,72 +290,7 @@ exports.Update_Workspace = function(req, res)
     function callback (err, numAffected) {}
     return 0;
 };
-// exports.Update_Workspace = function(req, res)
-// {
-//     var Workspace = require('../models/workspace');
-//
-//     var workspaceId         = req.body.workspace_id;
-//     var update_type         = req.body.update_type;
-//     var update_body         = req.body.update;
-//
-//     console.log('ATTEMPTING TO UPDATE WORKSPACE w/ ID [%s] BY PUSHING FILE ID: [%s]',workspaceId,update_body);
-//
-//     switch (update_type)
-//     {
-//         case 'add_file_s':
-//             Workspace.findByIdAndUpdate(workspaceId, {
-//                 $push: { specify_files: update_body }
-//             }, { 'new': true}, callback);
-//             break;
-//         case 'add_file_d':
-//             Workspace.findByIdAndUpdate(workspaceId, {
-//                 $push: { design_files: update_body }
-//             }, { 'new': true}, callback);
-//             break;
-//         case 'add_file_sol':
-//             Workspace.findByIdAndUpdate(workspaceId, {
-//                 $push: { solution_files: update_body }
-//             }, { 'new': true}, callback);
-//             break;
-//     }
-//
-//     function callback (err, numAffected) {}
-//
-//     return 0;
-// };
-// exports.Update_Workspace_cs = function(req, res)
-// {
-//     var Workspace = require('../models/workspace');
-//
-//     var workspaceId         = req.body.workspace_id;
-//     var update_type         = req.body.update_type;
-//     var update_body         = req.body.update;
-//
-//     console.log('ATTEMPTING TO UPDATE WORKSPACE w/ ID [%s] BY PUSHING FILE ID: [%s]',workspaceId,update_body);
-//
-//     switch (update_type)
-//     {
-//         case 'add_file_s':
-//             Workspace.findByIdAndUpdate(workspaceId, {
-//                 $push: { specify_files: update_body }
-//             }, { 'new': true}, callback);
-//             break;
-//         case 'add_file_d':
-//             Workspace.findByIdAndUpdate(workspaceId, {
-//                 $push: { design_files: update_body }
-//             }, { 'new': true}, callback);
-//             break;
-//         case 'add_file_sol':
-//             Workspace.findByIdAndUpdate(workspaceId, {
-//                 $push: { solution_files: update_body }
-//             }, { 'new': true}, callback);
-//             break;
-//     }
-//
-//     function callback (err, numAffected) {}
-//
-//     res.sendStatus(200);
-// };
+
 exports.Delete_Workspace = function(req, res)
 {
     var workspace_id = req.body.id;

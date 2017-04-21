@@ -60,13 +60,9 @@ app.use(function(req, res, next) {
 /**************** CONTROLLERS ****************/
 {
     var viewsController             = require('./controllers/views');
-    var writeController             = require('./controllers/fileWrite');
-    var workspaceController         = require('./controllers/workspace');
-    var translateController         = require('./controllers/translate');
-    var compileController           = require('./controllers/compile');
-    var AWS_S3_Controller           = require('./controllers/AWS_S3');
+    var compileController           = require('./controllers/process');
     var databaseController          = require('./controllers/databaseInterface');
-    var partialController           = require('./controllers/partialController');
+    var AWS_S3_Controller           = require('./controllers/AWS_S3');
 }
 
 /*********************   VIEWS   *********************/
@@ -105,20 +101,6 @@ app.use(function(req, res, next) {
     }
 }
 
-/*************************** FILE WRITE ********************/
-{
-    app.post('/api/writeToFile',writeController.writeToFile);
-}
-
-/************** AMAZON WEB SERVICES S3 FILE STORAGE  ***************/
-{
-    //app.post('/api/Create_Bucket_Object',AWS_S3_Controller.Create_Bucket_Object);
-    app.post('/api/Read_Bucket_Object'  ,AWS_S3_Controller.Read_Bucket_Object);
-    app.post('/api/Update_Bucket_Object',AWS_S3_Controller.Update_Bucket_Object);
-    app.post('/api.Delete_Bucket_Object',AWS_S3_Controller.Delete_Bucket_Object);
-    app.post('/api/preCompileFileTransfer',AWS_S3_Controller.preCompileFileTransfer);
-}
-
 /************** Mongoose DataBase Calls **************/
 {
     app.post('/api/Create_User', databaseController.Create_User);
@@ -128,22 +110,15 @@ app.use(function(req, res, next) {
     app.post('/api/Delete_User',databaseController.Delete_User);
 
     app.post('/api/Create_Workspace', databaseController.Create_Workspace);
-    //app.post('/api/Create_Workspace_cs', databaseController.Create_Workspace_cs);
 
     app.get('/api/v1/workspaces', databaseController.getWorkspaces);
     app.get('/api/v1/jobs', databaseController.getJobs);
     app.get('/api/v1/workspace', databaseController.getWorkspace);
     app.post('/api/v1/workspace', databaseController.Create_Workspace_cs);
 
-
-    // app.post('/api/Update_Workspace',databaseController.Update_Workspace);
-    // app.post('/api/Update_Workspace_cs',databaseController.Update_Workspace_cs);
-    app.post('/api/Query_Workspace', databaseController.Query_Workspace);
-    app.post('/api/Delete_Workspace',databaseController.Delete_Workspace);
-
-    //app.post('/api/Create_File_cs',databaseController.Create_File_cs);
     app.get('/api/v1/files', databaseController.getFiles);
     app.get('/api/v1/jobfiles', databaseController.getJobFiles);
+
     app.get('/api/v1/file', databaseController.getFile);
     app.post('/api/v1/file', databaseController.createFile);
     app.put('/api/v1/file', databaseController.updateFile);
@@ -167,24 +142,11 @@ app.use(function(req, res, next) {
 
 /**************** USHROOM MAPPER & FLUIGI ****************/
 {
-    app.post('/api/translate', translateController.translate);
-    app.post('/api/compile', compileController.compile);
-    app.post('/api/v1/mushroommapper',[AWS_S3_Controller.preMMFileTransfer,translateController.translate]);
+    app.post('/api/v1/mushroommapper',[AWS_S3_Controller.preMMFileTransfer,compileController.translate]);
     app.post('/api/v1/fluigi',        [AWS_S3_Controller.preFluigiFileTransfer,compileController.compile]);
 }
 
-/**************** WORKSPACE INITIATION AND MAINTAINENCE ****************/
-{
-    app.post('/api/clearFiles', workspaceController.clearFiles);
-    app.post('/api/generateUCF', workspaceController.generateUCF);
-    app.post('/api/getFile', workspaceController.getFile);
-    app.post('/api/download', workspaceController.download);
-    app.post('/api/parseDir', workspaceController.parseDir);
-    app.post('/api/getProjects', workspaceController.getProjects);
-    app.post('/api/makeProject', workspaceController.makeProject);
-    app.post('/api/scanFiles', workspaceController.scanFiles);
-    app.post('/api/findHome', workspaceController.findHome);
-}
+/*******************************************************/
 
 /*******************************************************/
 
