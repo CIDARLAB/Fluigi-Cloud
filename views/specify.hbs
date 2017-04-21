@@ -784,9 +784,11 @@
                 default:
                     //TODO: Load the text file
                     //self.editorText();
+                    NProgress.start();
                     $.get('/api/v1/fs',{ id:id }, function(data){
                         //TODO: Load this into ace
                         console.log(data);
+                        NProgress.done();
                         self.editorObject.session.setValue(data);
                     });
             }
