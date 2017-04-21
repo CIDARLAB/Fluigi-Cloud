@@ -193,6 +193,10 @@
                 {{>newWorkspace}}
             </div>
 
+            <div class="row">
+
+            </div>
+
         </div>
     </div>
 </body>
@@ -372,7 +376,7 @@
     function EditorViewModel()
     {
         var self = this;
-
+        /* self.editorText = ko.observable("");*/
         self.editorObject;
 
         self.newWorkSpaceName       = ko.observable("");
@@ -380,25 +384,24 @@
         self.workSpaces             = ko.observableArray([]);
         self.jobs                   = ko.observableArray([]);
         self.jobIDs                 = ko.observableArray([]);
-        /* self.editorText = ko.observable("");*/
 
         self.currentFile            =  ko.observable("");
         self.currentWorkSpace       =  ko.observable("");
+        self.currentUser            =  ko.observable("");
+        self.currentJob             =  ko.observable("");
 
         self.newFileExt             = ko.observable("");
         self.newFileName            = ko.observable("");
 
-        //TODO: Clean up the number of fields that are being used
-
         self.currentWorkSpaceName   = ko.observable("");
         self.currentFileName        = ko.observable("");
         self.currentConfigFile      = ko.observable("");
+        self.currentJobName         = ko.observable("");
 
         self.files                  = ko.observableArray([]);
         self.jobFiles               = ko.observableArray([]);
 
-        self.createNewWorkSpace = function()
-        {
+        self.createNewWorkSpace = function() {
             var workspace_name = self.newWorkSpaceName();
             NProgress.start();
             $.post('/api/v1/workspace',
@@ -425,6 +428,19 @@
                     self.workSpaceIDs.push(response[i]);
                 }
                 console.log(self.workSpaceIDs());
+            })
+        };
+
+        self.updateJobs = function(){
+            console.log("Getting all the new jobs :"  );
+            $.get('api/v1/jobs',function (response) {
+                self.jobIDs.removeAll();
+                self.jobs.removeAll();
+                for(var i = 0 ; i<response.length;i++){
+                    self.addJob(response[i]);
+                    self.jobIDs.push(response[i]);
+                }
+                console.log(self.jobIDs());
             })
         };
 
@@ -458,6 +474,19 @@
             });
         };
 
+        self.updateJobFiles = function(){
+            var job = self.currentJob();
+
+            console.log("Getting all the files in this job" + job);
+            self.files.removeAll();
+            $.get('/api/v1/jopbfiles', {id: job.id}, function (response) {
+                console.log(response);
+                for(var i = 0; i<response.length; i++){
+                    self.addJobFile(response[i]);
+                }
+            });
+        };
+
         self.addWorkSpace = function (id) {
             NProgress.start();
             $.getJSON('/api/v1/workspace', {workspace_id:id}, function (workspace) {
@@ -480,6 +509,12 @@
             self.currentWorkSpace(workspace);
             self.currentWorkSpaceName(workspace.name);
             self.updateFiles();
+        };
+
+        self.setAsCurrentJob = function(job){
+            self.currentJob(job);
+            self.currentJobName(job.name);
+            self.updateJobFiles();
         };
 
         self.setAsCurrentFile = function(file){
@@ -654,19 +689,22 @@
 
         self.initPage = function(){
             self.updateWorkSpaces();
+            self.updateJobs();
             self.initEditor();
             setTimeout(function(){
                 var setid = getUrlParameter("id");
                 console.log("ids: " + self.workSpaceIDs());
-                if(containsObject(setid, self.workSpaceIDs())){
+                console.log("job_ids: " + self.jobIDs());
+                if(containsObject(setid, self.workSpaceIDs()))
+                {
                     console.log("Setting the current workspace: " +  setid);
                     for (var i = 0; i < (self.workSpaces()).length; i++) {
                         if (((self.workSpaces())[i]).id === setid) {
                             self.setAsCurrentWorkSpace((self.workSpaces())[i]);
                         }
                     }
-
                 }
+                self.setAsCurrentJob((self.jobs()[0]));
             }, 1000);
         };
     }

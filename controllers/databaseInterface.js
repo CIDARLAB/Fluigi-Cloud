@@ -169,6 +169,13 @@ exports.getWorkspaces = function (req, res)
         res.send(user.workspaces);
     });
 };
+exports.getJobs = function (req, res)
+{
+    User.findById(req.user._id, function (err, user) {
+        if(err) throw err;
+        res.send(user.jobs);
+    });
+};
 exports.getWorkspace = function (req, res)
 {
     var id = req.query.workspace_id;
@@ -445,6 +452,40 @@ exports.getFiles = function (req, res)
         res.send(retarray);
     });
 };
+exports.getJobFiles = function (req, res)
+{
+    var jobid = req.query.id;
+    if("" == jobid){
+        res.sendStatus(500);
+        return;
+    }
+    Job.findById(jobid, function(err, data){
+        if(err) {
+            console.log(err);
+            res.sendStatus(500);
+            return;
+        }
+        if(null==data){
+            res.sendStatus(404);
+            return;
+        }
+        var retarray = [];
+        for(var i = 0; i<data.svg_files.length; i++){
+            retarray.push(data.svg_files[i]);
+        }
+        for(var i = 0; i<data.eps_files.length; i++){
+            retarray.push(data.eps_files[i]);
+        }
+        for(var i = 0; i<data.log_files.length; i++){
+            retarray.push(data.log_files[i]);
+        }
+        for(var i = 0; i<data.other_files.length; i++){
+            retarray.push(data.other_files[i]);
+        }
+        console.log(err);
+        res.send(retarray);
+    });
+};
 exports.getFile = function (req, res)
 {
     var fileid = req.query.id;
@@ -648,8 +689,8 @@ exports.getJob= function (req, res)
     var id = req.query.job_id;
     Job.findById(id, function(err, job){
         if(err) throw err;
-        console.log(jon);
-        res.send({ name: jo.name, id:workspace._id});
+        console.log(job);
+        res.send({ name: job.name, id:job._id});
     })
 };
 

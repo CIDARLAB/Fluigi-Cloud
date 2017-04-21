@@ -59,7 +59,7 @@ exports.compile = function(req, res)
         var workspace_id = req.body.workspace;
         var file_id_array = [];
 
-        var longpath = path.join(out_path,'runfiles');
+        var longpath = out_path;//path.join(out_path,'runfiles');
         dir.readFiles(longpath,
             function(err, content, filename, next)
             {
