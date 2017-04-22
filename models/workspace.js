@@ -19,7 +19,7 @@ workspaceSchema.methods.createFile = function createFile(filename, ext)
     newfile.name = filename;
     newfile.file_extension = ext;
     newfile.save();
-    newfile.createS3File_and_linkToMongoDB();
+    newfile.createAndUploadDefaultS3File();
     switch (ext){
         case ".v":
             this.specify_files.push(newfile._id);
@@ -45,7 +45,7 @@ workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_
     newfile.name = 'myLFR.v';
     newfile.file_extension = '.v';
     newfile.save();
-    newfile.createS3File_and_linkToMongoDB();
+    newfile.createAndUploadDefaultS3File();
     this.specify_files.push(newfile._id);
 
 
@@ -53,7 +53,7 @@ workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_
     newfile.name = 'defaultUCF.JSON';
     newfile.file_extension = '.JSON';
     newfile.save();
-    newfile.createS3File_and_linkToMongoDB();
+    newfile.createAndUploadDefaultS3File();
     this.specify_files.push(newfile._id);
 
 
@@ -61,7 +61,7 @@ workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_
     newfile.name = 'myMINT.uf';
     newfile.file_extension = '.uf';
     newfile.save();
-    newfile.createS3File_and_linkToMongoDB();
+    newfile.createAndUploadDefaultS3File();
     this.design_files.push(newfile._id.toString());
 
 
@@ -69,7 +69,7 @@ workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_
     newfile.name = 'defaultConfig.ini';
     newfile.file_extension = '.ini';
     newfile.save();
-    newfile.createS3File_and_linkToMongoDB();
+    newfile.createAndUploadDefaultS3File();
     this.design_files.push(newfile._id);
 
 

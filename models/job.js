@@ -4,38 +4,25 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var File = require('../models/file')
 
 var jobSchema = new Schema
 ({
-    eps_files: { type: [String], required: false },
-    svg_files: { type: [String], required: false },
-    log_files: { type: [String], required: false },
-    other_files: { type: [String], required: false },
+    files: { type: [String], required: false },
     created_at: Date,
     updated_at: Date
 });
 
 
-jobSchema.methods.createFile = function createFile(filename, ext)
+jobSchema.methods.createFile = function createFile(filename, ext, text)
 {
     var newfile = new File();
     newfile.name = filename;
     newfile.file_extension = ext;
     newfile.save();
-    newfile.createS3File_and_linkToMongoDB();
-    switch (ext){
-        case ".svg":
-            this.svg_files.push(newfile._id);
-            break;
-        case ".eps":
-            this.eps_files.push(newfile._id);
-            break;
-        case ".txt":
-            this.log_files.push(newfile._id);
-            break;
-        default:
-            this.other_files.push(newfile._id);
-    }
+    newfile.createAndUploadS3File(text);
+    this.files.push(newfile._id);
+
     this.save();
 };
 
