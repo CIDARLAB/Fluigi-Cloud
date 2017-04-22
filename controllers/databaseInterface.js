@@ -396,7 +396,7 @@ exports.Create_File = function(req, res)
         console.log('New file model created: %s',file_name);
     });
 
-    newFile.createS3File_and_linkToMongoDB();
+    newFile.createAndUploadDefaultS3File();
     return newFile._id;
 };
 exports.Create_File_cs = function(req, res)
@@ -416,7 +416,7 @@ exports.Create_File_cs = function(req, res)
         console.log('New file model created: %s',file_name);
     });
 
-    newFile.createS3File_and_linkToMongoDB();
+    newFile.createAndUploadDefaultS3File();
     //TODO: Add file to current workspace , also send the current workspace id when doing this
 
     res.send(newFile._id);
@@ -636,7 +636,7 @@ exports.Delete_File = function(req, res)
 //         console.log('New file model created: %s',file_name);
 //     });
 //
-//     newFile.createS3File_and_linkToMongoDB();
+//     newFile.createAndUploadDefaultS3File();
 //     return newFile._id;
 // }
 exports.Create_Job = function(user_id)

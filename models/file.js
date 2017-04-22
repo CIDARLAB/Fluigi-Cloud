@@ -20,7 +20,7 @@ var fileSchema = new Schema
     updated_at: Date
 });
 
-fileSchema.methods.createS3File_and_linkToMongoDB = function createS3File_and_linkToMongoDB()
+fileSchema.methods.createAndUploadDefaultS3File = function createS3File_and_linkToMongoDB()
 {
     var dateFormat  = require('dateformat');
     var now = new Date();
@@ -49,6 +49,37 @@ fileSchema.methods.createS3File_and_linkToMongoDB = function createS3File_and_li
         }
     });
 };
+
+fileSchema.methods.createAndUploadS3File = function createAndUploadS3File(text){
+
+    var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
+    var Target_Object_KEY = this._id.toString();
+
+    //TODO:This is a shitty fix incase there is no text present, this should be more elegant
+    if("" == text){
+        text = "null";
+    }
+
+    var Parameters = {
+        Bucket: Target_BUCKET_ID,
+        Key: Target_Object_KEY,
+        Body: text,
+        ACL: "public-read"
+    };
+
+    var me = this;
+
+    s3.upload(Parameters, function (err, data)
+    {
+        if (err) { console.log(err); throw err; }
+        else {
+            me.S3_path = data.Location;
+            me.save();
+            console.log("Uploaded non-default file to file path: "+ me.S3_path);
+        }
+    });
+
+}
 
 fileSchema.methods.updateS3File = function updateS3File()
 {

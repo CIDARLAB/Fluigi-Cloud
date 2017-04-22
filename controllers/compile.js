@@ -4,7 +4,6 @@
 
 var cmd = require('node-cmd');
 var exports = module.exports;
-// var multer = require('multer');
 var express = require('express');
 var fs = require('fs');
 const readline = require('readline');
@@ -12,6 +11,7 @@ const path = require('path');
 var dir = require('node-dir');
 var AWS_S3 = require('./AWS_S3');
 var remove = require('rimraf');
+var Job = require('../models/job')
 
 
 exports.compile = function(req, res)
@@ -55,75 +55,51 @@ exports.compile = function(req, res)
 
     par_terminal.on('close', function (data)
     {
-        var databaseInterface = require('./databaseInterface');
-        var workspace_id = req.body.workspace;
-        var file_id_array = [];
+
+        // On closing read all the files and then start doing stuff
 
         var longpath = out_path;//path.join(out_path,'runfiles');
-        dir.readFiles(longpath,
-            function(err, content, filename, next)
-            {
-                if (err) throw err;
-                var createFile_body ={body:{file_name: path.basename(filename),file_ext:path.extname(filename)}};
-                var file_id = databaseInterface.Create_File(createFile_body);
-                {
-                    file_id_array.push(file_id);
-                    var parameters;
-                    if (path.extname(filename) == '.svg')       parameters = {update_type: 'add_file_svg', job_id: jobid , update_body: file_id.toString()};
-                    else if (path.extname(filename) == '.eps')  parameters = {update_type: 'add_file_eps', job_id: jobid , update_body: file_id.toString()};
-                    else                                        parameters = {update_type: 'add_file_other', job_id: jobid , update_body: file_id.toString()};
-                    databaseInterface.Update_Job(parameters);
-                }
-                next();
-            },
-            function(err, files)
-            {
-                if (err) throw err;
-                for (var j = 0; j < files.length-1; j++)
-                {
-                    (function(j)
-                    {
-                        fs.readFile(files[j],'utf8', function (err,data)
-                        {
-                            var addFileToS3_body = {body: {Target_Object_KEY: file_id_array[j].toString(), Target_Object_STREAM: data}};
-                            AWS_S3.Update_Bucket_Object(addFileToS3_body);
 
-                            if (j == files.length-2)
-                            {
-                                remove(jobdir, function ()
-                                {
-                                    console.log('Fluigi Proccess Complete');
-                                    console.log('Temporary Directory Removed: ' + jobdir);
-                                });
-                            }
-                        });
-                    })(j)
-                }
+        var files_array = [];
+
+        dir.readFiles(longpath, function(err, content, filename, next)
+            {
+                if (err) throw err;
+                //console.log("content: " + content);
+
+                files_array.push({
+                    name: path.basename(filename),
+                    content: content,
+                    ext: path.extname(filename)
+                });
+
+                next();
+            }
+        );
+
+        Job.findById(jobid, function(err, data){
+
+            if (err){ res.sendStatus(500); throw err; }
+
+            for(i = 0; i<files_array.length; i++){
+                console.log("filename: " + files_array[i].name);
+                data.createFile(files_array[i].name, files_array[i].name, files_array[i].content);
+            }
+
+            data.files.push();
+            data.save();
+
+            //Delete the directory
+            remove(jobdir, function(){
+                console.log("Removed the directory: " + jobdir);
+                console.log("Fluigi is complete !")
             });
+
+        });
     });
+
     res.sendStatus(200);
 };
-
-
-//var addFileToWorkspace_body = {body: {update_type: 'add_file_sol', workspace_id: workspace_id , update: file_id.toString()}};
-//databaseInterface.Update_Workspace(addFileToWorkspace_body);
-
-//
-// fs.readFile(logpath,'utf8',function (err,data)
-// {
-//     var createFile_body ={body:{file_name: path.basename(logpath),file_ext:path.extname(logpath)}};
-//     var file_id = databaseInterface.Create_File(createFile_body);
-//     var addFileToWorkspace_body = {body: {update_type: 'add_file_sol', workspace_id: workspace_id , update: file_id.toString()}};
-//     databaseInterface.Update_Workspace(addFileToWorkspace_body);
-//
-//     var addFileToS3_body = {body: {Target_Object_KEY: file_id_array[j].toString(), Target_Object_STREAM: data}};
-//     AWS_S3.Update_Bucket_Object(addFileToS3_body);
-//     remove(jobdir, function ()
-//     {
-//         console.log('Fluigi Proccess Complete');
-//         console.log('Temporary Directory Removed: ' + jobdir);
-//     });
-// });
 
 
 

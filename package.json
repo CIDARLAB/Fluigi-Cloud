@@ -29,6 +29,7 @@
     "passport": "~0.1.17",
     "passport-local": "~0.1.6",
     "replace": "^0.3.0",
+    "rimraf": "^2.6.1",
     "s3-streams": "0.3.0",
     "session": "^0.1.0",
     "slash": "^1.0.0",
