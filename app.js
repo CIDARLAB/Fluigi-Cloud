@@ -157,7 +157,7 @@ app.use(function(req, res, next) {
 /**************** SOCKETIO-REDIS ****************/
 var io = require('socket.io')(3000);
 var redis = require('socket.io-redis');
-io.adapter(redis({ host: 'localhost', port: 6379 }));
+io.adapter(redis({ host: process.env['NEPTUNE_REDIS_HOST'], port: process.env['NEPTUNE_REDIS_PORT'] }));
 
 io.sockets.on('connection', function(socket) {
     console.log('A new socket connection has started');
