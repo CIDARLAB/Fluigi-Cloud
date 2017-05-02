@@ -33,7 +33,9 @@
     "s3-streams": "0.3.0",
     "session": "^0.1.0",
     "slash": "^1.0.0",
-    "socket.io": "^1.4.8"
+    "socket.io": "^1.4.8",
+    "socket.io-emitter": "^2.0.0",
+    "socket.io-redis": "^4.0.0"
   },
   "scripts": {
     "start": "node app.js"

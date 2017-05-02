@@ -12,7 +12,7 @@ var dir = require('node-dir');
 var AWS_S3 = require('./AWS_S3');
 var remove = require('rimraf');
 var Job = require('../models/job')
-
+var io_emitter = require('socket.io-emitter')({ host: 'localhost', port: 6379 });
 
 exports.compile = function(req, res)
 {
@@ -42,6 +42,7 @@ exports.compile = function(req, res)
         fs.appendFile(logpath, data.toString(), function (err) {
             if (err) throw err;
         });
+        io_emitter.to(jobid).emit('stdout', data.toString());
         console.log(data.toString());
     });
 
@@ -98,7 +99,7 @@ exports.compile = function(req, res)
         });
     });
 
-    res.sendStatus(200);
+    res.status(200).send(jobid);
 };
 
 

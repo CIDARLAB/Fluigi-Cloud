@@ -1,6 +1,7 @@
 var express = require("express");
 var path = require('path');
 var app = express();
+var http = require('http').Server(app);
 var dotenv = require('dotenv');
 dotenv.load();
 
@@ -151,3 +152,24 @@ app.use(function(req, res, next) {
 /*******************************************************/
 
     app.listen(8080, function(){console.log("Starting application")});
+
+
+/**************** SOCKETIO-REDIS ****************/
+var io = require('socket.io')(3000);
+var redis = require('socket.io-redis');
+io.adapter(redis({ host: 'localhost', port: 6379 }));
+
+io.sockets.on('connection', function(socket) {
+    console.log('A new socket connection has started');
+    socket.on('all', function(data) {
+        socket.broadcast.emit('message', data);
+    });
+
+    //On the monitor event, join an ongoing job's channel
+    //TODO: Need to check if this belongs to the user
+    socket.on('monitor', function (jobid) {
+        console.log('job: ' + jobid + ' is now being monitored');
+        socket.join(jobid);
+    })
+});
+

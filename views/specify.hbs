@@ -50,10 +50,8 @@
     <script src="/javascripts/styles/raphael-min.js"></script>
     <script src="/javascripts/styles/morris.min.js"></script>
     <script src="/javascripts/styles/sb-admin-2.js"></script>
-    <script type="text/javascript" src="../javascripts/specifyDesign/editorSupport.js"></script>
-    <script type="test/javascript" src="../javascripts/specifyDesign/init_specify.js"></script>
-    <script type="text/javascript" src="../javascripts/specifyDesign/fileNavigator.js"></script>
     <script src="/javascripts/common/knockout-3.4.2.js"></script>
+    <script src="/javascripts/common/socket.io.js"></script>
 
 
     <script src='/javascripts/common/nprogress.js'></script>
@@ -319,6 +317,13 @@
 </ul>
 
 <script type="text/javascript">
+
+    var socket =  io("http://"+window.location.hostname+':3000'); //This is gonna connects it to the server
+
+    socket.on('stdout', function (data) {
+       console.log(data.toString());
+    });
+
 
     function getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -606,11 +611,7 @@
 
         self.compileLFR = function(){
             console.log("Compiling lfr");
-//<<<<<<< 95628c569097213b59e857e7601bd3ef7be85e0f
             NProgress.start();
-//=======
-            //$.get('/api/v1/file',{id:(self.currentFile()).id},function)
-//>>>>>>> Git Issue #10 Complete
             $.post('/api/v1/mushroommapper', {
                         sourcefileid: (self.currentFile()).id,
                         sourcefilename: (self.currentFile()).name,
@@ -642,7 +643,8 @@
                     function(response){
                         //TODO - Connect to fluigicad's console output based on job id.
                         NProgress.done();
-                        console.log(response);
+                        console.log("jobid: " + response);
+                        socket.emit('monitor', response);
                     });
         };
 
