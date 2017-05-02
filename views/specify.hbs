@@ -425,7 +425,7 @@
         self.updateWorkSpaces = function(){
             console.log("Getting all the new workspaces :"  );
             NProgress.start();
-            $.get('api/v1/workspaces',function (response) {
+            $.get('/api/v1/workspaces',function (response) {
                 self.workSpaceIDs.removeAll();
                 self.workSpaces.removeAll();
                 for(var i = 0 ; i<response.length;i++){
@@ -438,7 +438,7 @@
 
         self.updateJobs = function(){
             console.log("Getting all the new jobs :"  );
-            $.get('api/v1/jobs',function (response) {
+            $.get('/api/v1/jobs',function (response) {
                 self.jobIDs.removeAll();
                 self.jobs.removeAll();
                 for(var i = 0 ; i<response.length;i++){

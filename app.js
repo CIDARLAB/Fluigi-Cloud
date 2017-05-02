@@ -75,6 +75,7 @@ app.use(function(req, res, next) {
     app.get('/control', isLoggedIn, viewsController.openControlPage);
     app.get('/specify', isLoggedIn, viewsController.openSpecifyPage);
     app.get('/design', isLoggedIn, viewsController.openDesignPage);
+    app.get('/solutions', isLoggedIn, viewsController.openDesignPage);
     app.get('/signup', viewsController.openSignupPage);
     app.get('/login', viewsController.openLoginPage);
     app.get('/profile', isLoggedIn, viewsController.openProfilePage);
@@ -128,6 +129,7 @@ app.use(function(req, res, next) {
     app.get('/api/v1/fs', AWS_S3_Controller.getS3Text);
 
 
+    app.get('/api/v1/jobs', databaseController.getJobs);
     app.get('/api/v1/job', databaseController.getJob);
 
     // app.post('/api/Create_File', databaseController.Create_File);

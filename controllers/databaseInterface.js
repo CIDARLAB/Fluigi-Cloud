@@ -169,6 +169,7 @@ exports.getWorkspaces = function (req, res)
         res.send(user.workspaces);
     });
 };
+
 exports.getJobs = function (req, res)
 {
     User.findById(req.user._id, function (err, user) {
@@ -176,6 +177,14 @@ exports.getJobs = function (req, res)
         res.send(user.jobs);
     });
 };
+
+exports.getJob = function (req, res) {
+    Job.findById(req.query.job_id, function (err, job) {
+        console.log(req.query.job_id);
+    });
+
+}
+
 exports.getWorkspace = function (req, res)
 {
     var id = req.query.workspace_id;
@@ -185,6 +194,7 @@ exports.getWorkspace = function (req, res)
         res.send({ name: workspace.name, id:workspace._id});
     })
 };
+
 exports.Create_Workspace = function(req, res)
 {
     var userid = req.user._id;
@@ -210,6 +220,7 @@ exports.Create_Workspace = function(req, res)
 
     res.sendStatus(200);
 };
+
 exports.Create_Workspace_cs = function(req, res)
 {
     var userid = req.user._id;
@@ -244,6 +255,7 @@ exports.Create_Workspace_cs = function(req, res)
     });
     res.send(newWorkspace._id);
 };
+
 exports.Query_Workspace = function(req, res)
 {
     var Workspace = require('../models/workspace');
@@ -259,6 +271,7 @@ exports.Query_Workspace = function(req, res)
 
     return fileSpace;
 };
+
 exports.Update_Workspace = function(req, res)
 {
     var workspaceId      = req.body.workspace_id;
@@ -334,6 +347,7 @@ exports.Create_File = function(req, res)
     newFile.createAndUploadDefaultS3File();
     return newFile._id;
 };
+
 exports.Create_File_cs = function(req, res)
 {
     var file_name = req.body.file_name;
@@ -356,6 +370,7 @@ exports.Create_File_cs = function(req, res)
 
     res.send(newFile._id);
 };
+
 exports.getFiles = function (req, res)
 {
     var workspaceid = req.query.id;
@@ -387,6 +402,7 @@ exports.getFiles = function (req, res)
         res.send(retarray);
     });
 };
+
 exports.getJobFiles = function (req, res)
 {
     var jobid = req.query.id;
@@ -421,6 +437,7 @@ exports.getJobFiles = function (req, res)
         res.send(retarray);
     });
 };
+
 exports.getFile = function (req, res)
 {
     var fileid = req.query.id;
@@ -433,6 +450,7 @@ exports.getFile = function (req, res)
     });
 
 };
+
 exports.Query_File = function(req, res)
 {
     var file_id = req.body.file_id;
@@ -535,6 +553,7 @@ exports.Update_File = function(req, res)
         }
     });
 };
+
 exports.Delete_File = function(req, res)
 {
     var fileId = req.body.id;
@@ -556,24 +575,6 @@ exports.Delete_File = function(req, res)
     });
 };
 
-// exports.Create_File = function(parameters)
-// {
-//     var file_name = parameters.file_name;
-//     var file_ext  = parameters.ext;
-//
-//     var newFile = File({
-//         name: file_name,
-//         file_extension: file_ext
-//     });
-//
-//     newFile.save(function(err) {
-//         if(err) throw err;
-//         console.log('New file model created: %s',file_name);
-//     });
-//
-//     newFile.createAndUploadDefaultS3File();
-//     return newFile._id;
-// }
 exports.Create_Job = function(user_id)
 {
     var Job = require('../models/job');
@@ -588,6 +589,7 @@ exports.Create_Job = function(user_id)
     newJob.addJobToUser(user_id);
     return newJob._id;
 };
+
 exports.Update_Job = function(parameters)
 {
     var job_id           = parameters.job_id;
