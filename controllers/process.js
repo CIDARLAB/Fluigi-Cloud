@@ -65,36 +65,38 @@ exports.compile = function(req, res)
 
         // io_emitter.sockets.in(jobid).leave(jobid);
         // On closing read all the files and then start doing stuff
+    });
 
-        var longpath = out_path;//path.join(out_path,'runfiles');
+    par_terminal.on('exit', function (data)
+    {
+        var longpath = out_path;
 
         var files_array = [];
 
         dir.readFiles(longpath, function(err, content, filename, next)
-            {
-                if (err) throw err;
-                //console.log("content: " + content);
+        {
+            if (err) throw err;
 
-                files_array.push({
-                    name: path.basename(filename),
-                    content: content,
-                    ext: path.extname(filename)
-                });
+            files_array.push({
+                name: path.basename(filename),
+                content: content,
+                ext: path.extname(filename)
+            });
 
-                next();
-            }
-        );
-
+            next();
+        });
         Job.findById(jobid, function(err, data){
 
             if (err){ res.sendStatus(500); throw err; }
 
-            for(i = 0; i<files_array.length; i++){
+            // Todo: Figure out why N*N file id's are being pushed to the job model, rather than just N.
+            for(var i = 0; i<files_array.length; i++){
                 console.log("filename: " + files_array[i].name);
-                data.createFile(files_array[i].name, files_array[i].name, files_array[i].content);
+                data.createFile(files_array[i].name, files_array[i].ext, files_array[i].content);
             }
-
-            data.files.push();
+            data.prune(files_array.length);
+            data.name = req.body.jobname;
+            //data.files.push();
             data.save();
 
             //Delete the directory

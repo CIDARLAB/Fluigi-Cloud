@@ -421,18 +421,10 @@ exports.getJobFiles = function (req, res)
             return;
         }
         var retarray = [];
-        for(var i = 0; i<data.svg_files.length; i++){
-            retarray.push(data.svg_files[i]);
+        for(var i = 0; i<data.files.length; i++){
+            retarray.push(data.files[i]);
         }
-        for(var i = 0; i<data.eps_files.length; i++){
-            retarray.push(data.eps_files[i]);
-        }
-        for(var i = 0; i<data.log_files.length; i++){
-            retarray.push(data.log_files[i]);
-        }
-        for(var i = 0; i<data.other_files.length; i++){
-            retarray.push(data.other_files[i]);
-        }
+
         console.log(err);
         res.send(retarray);
     });
@@ -586,7 +578,7 @@ exports.Create_Job = function(user_id)
         console.log('New job model created: %s',newJob._id);
     });
 
-    newJob.addJobToUser(user_id);
+    //newJob.addJobToUser(user_id);
     return newJob._id;
 };
 
@@ -621,7 +613,8 @@ exports.Update_Job = function(parameters)
     function callback (err, numAffected) {}
     return 0;
 };
-exports.getJob= function (req, res)
+
+exports.getJob = function (req, res)
 {
     var id = req.query.job_id;
     Job.findById(id, function(err, job){

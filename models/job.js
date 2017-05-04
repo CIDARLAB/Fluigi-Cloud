@@ -4,15 +4,32 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var File = require('../models/file')
+var File = require('../models/file');
 
 var jobSchema = new Schema
 ({
+    name: String,
     files: { type: [String], required: false },
     created_at: Date,
     updated_at: Date
 });
 
+jobSchema.methods.addName = function createFile(name)
+{
+    this.name = name;
+    this.save();
+};
+
+jobSchema.methods.prune = function createFile(length)
+{
+    var clean = [];
+    for (var i = 0; i < length; i++)
+    {
+        clean[i] = this.files[i];
+    }
+    this.files = clean;
+    this.save();
+};
 
 jobSchema.methods.createFile = function createFile(filename, ext, text)
 {
@@ -22,7 +39,7 @@ jobSchema.methods.createFile = function createFile(filename, ext, text)
     newfile.save();
     newfile.createAndUploadS3File(text);
     this.files.push(newfile._id);
-
+    console.log('Job model pushing file id to self array: ', newfile._id);
     this.save();
 };
 

@@ -176,6 +176,10 @@
                             <div id="editor_specify" style="height:690px"></div>
                         </div>
 
+                        <div class="panel-footer" >
+                            <div id="solution_viewer" style="height:400px"></div>
+                        </div>
+
                     </div>
                     <div class="text-center"></div>
                 </div>
@@ -300,9 +304,11 @@
     </style>
 
 <div id="compileModal" >
-    {{> jobSelector }}
+
     {{> compileModal }}
 </div>
+
+<!-- {> jobSelector }-->
 
 <label data-bind="text: currentWorkSpace.name"/>
 <label data-bind="text: currentFile.name"/>
@@ -312,7 +318,7 @@
 
 <script type="text/javascript">
 
-    var socket =  io("http://"+window.location.hostname+':3000'); //This is gonna connects it to the server
+    var socket =  io("http://" + window.location.hostname + ':3000'); //This is gonna connects it to the server
 
     socket.on('stdout', function (data) {
        console.log(data.toString());
@@ -481,10 +487,9 @@
 
         self.updateJobFiles = function(){
             var job = self.currentJob();
-
             console.log("Getting all the files in this job" + job);
-            self.files.removeAll();
-            $.get('/api/v1/jopbfiles', {id: job.id}, function (response) {
+            self.jobFiles.removeAll();
+            $.get('/api/v1/jobfiles', {id: job.id}, function (response) {
                 console.log(response);
                 for(var i = 0; i<response.length; i++){
                     self.addJobFile(response[i]);
@@ -495,16 +500,19 @@
         self.addWorkSpace = function (id) {
             NProgress.start();
             $.getJSON('/api/v1/workspace', {workspace_id:id}, function (workspace) {
-                //if(err) console.log(err);
                 console.log(workspace);
                 NProgress.done();
+                console.log('Binding workspace name: ',workspace.name);
                 self.workSpaces.push(new WorkspaceItemModel(workspace.name, workspace.id));
             });
         };
 
         self.addJob = function (id) {
+            NProgress.start();
             $.getJSON('/api/v1/job', {job_id:id}, function (job) {
                 console.log(job);
+                NProgress.done();
+                console.log('Binding job name: ',job.name);
                 self.jobs.push(new JobItemModel(job.name, job.id));
             });
         };
@@ -710,6 +718,8 @@
             }, 1000);
         };
     }
+
+
 
     var editorViewModel = new EditorViewModel();
     ko.applyBindings(editorViewModel);

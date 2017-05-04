@@ -50,6 +50,7 @@ userSchema.methods.createJob = function createJob(next)
     var Job = require('./job');
     // Created job model, and updates user with id of new object.
     var newJob = new Job();
+    newJob.name = '';
     newJob.save();
     this.jobs.push(newJob._id);
     this.save();

@@ -225,9 +225,11 @@ exports.preMMFileTransfer = function(req, res, next)
         ResponseContentType: 'string/utf-8'
     };
 
+    var jobdir = './jobs/tmp__' + id;
+    var jobname = 'Fluigi_job_' +id;
     var id = db.Create_Job();
     req.body.jobid = id;
-    var jobdir = './jobs/tmp__' + id;
+
 
     if (!fs.existsSync(jobdir))
         fs.mkdirSync(jobdir);
@@ -246,7 +248,7 @@ exports.preMMFileTransfer = function(req, res, next)
             fs.closeSync(fd);
 
             req.body.jobdir = jobdir;
-
+            req.body.jobname = jobname;
             next();
         });
     });
@@ -281,14 +283,15 @@ exports.preFluigiFileTransfer = function(req, res, next)
 
     User.findOne({ 'local.email' :  email }, function(err, user)
     {
-        // below I am querying user, then creating job, waiting for id, then updating user.
-        // Maybe...
-        // Better to create job, wait for id, then query user and update? Or maybe not?
+
         if(err) { console.error(err); throw err; }
         user.createJob(function callback(id)
         {
-            console.log('CALLBACK WORKING...');
             var jobdir = './jobs/tmp__' + id;
+            var max = 10000;
+            var min = 1;
+            var nameid = Math.floor(Math.random() * (max - min + 1)) + min;
+            var jobname = 'Fluigi_job_' + nameid;
             req.body.jobid = id.toString();
 
             var update = {body:{workspace_id: workspace_id,update: id, update_type: 'add_job'}};
@@ -313,6 +316,7 @@ exports.preFluigiFileTransfer = function(req, res, next)
                     fs.closeSync(fd);
 
                     req.body.jobdir = jobdir;
+                    req.body.jobname = jobname;
                     next();
                 });
             });
