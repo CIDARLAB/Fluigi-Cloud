@@ -34,6 +34,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/js/bootstrap-tour.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script type="text/javascript" src="../javascripts/svg-pan-zoom.min.js"></script>
 
     <!--Local files-->
 
@@ -144,6 +145,8 @@
 
                     <div class = "row"> <label id="filename" for="editor_specify">File Name: <span data-bind="text: currentFileName"/></label> </div>
                     <div class = "row"> <label id="workspacename" for="editor_specify">Workspace: <span data-bind="text: currentWorkSpaceName"/></label></div>
+                    <div class = "row"> <label id="jobname" for="editor_specify">Job: <span data-bind="text: currentJobName"/></label></div>
+                    <div class = "row"> <label id="solutionname" for="editor_specify">Solution: <span data-bind="text: currentJobFileName"/></label></div>
                     <div class="panel with-nav-tabs panel-default">
                         <div class="panel-heading">
 
@@ -400,6 +403,7 @@
         self.currentWorkSpace       =  ko.observable("");
         self.currentUser            =  ko.observable("");
         self.currentJob             =  ko.observable("");
+        self.currentJobFile         =  ko.observable("");
 
         self.newFileExt             = ko.observable("");
         self.newFileName            = ko.observable("");
@@ -408,6 +412,7 @@
         self.currentFileName        = ko.observable("");
         self.currentConfigFile      = ko.observable("");
         self.currentJobName         = ko.observable("");
+        self.currentJobFileName     = ko.observable("");
 
         self.files                  = ko.observableArray([]);
         self.jobFiles               = ko.observableArray([]);
@@ -518,7 +523,6 @@
         };
 
         self.setAsCurrentWorkSpace = function(workspace){
-            //TODO -  find the correct workspace and set it to the current workspace
             self.currentWorkSpace(workspace);
             self.currentWorkSpaceName(workspace.name);
             self.updateFiles();
@@ -536,6 +540,17 @@
             self.loadFile(file.id , file.ext)
         };
 
+        self.setAsCurrentJobFile = function(jobFile){
+            //TODO: Filter for log and text based files, and toss those into editor if they are clicked on (self.loadFile, commented out below, should do the trick)
+
+            self.currentJobFile(jobFile);
+            self.currentJobFileName(jobFile.name);
+
+            //TODO: using jobFile.link, pull svg from s3, and then display it!
+
+            self.loadFile(jobFile.id , jobFile.ext)
+        };
+
         self.loadFile = function(id, ext){
             if(id == null){
                 console.error("Link for loading the file is null");
@@ -544,9 +559,17 @@
             switch(ext) {
                 case ".svg":
                     //TODO: How to load the SVG ?
+                    $.get('/api/v1/fs',{ id:id }, function(data){
+                        //TODO: Load svg to a div
+                        console.log(data);
+                        NProgress.done();
+                        document.getElementById('solution_viewer').innerHTML = data;
+                    });
+                    window.open((self.currentJobFile()).link, '_blank');
                     break;
                 case ".eps":
                     //TODO: How to load the EPS ?
+                    window.open((self.currentJobFile()).link, '_blank');
                     break;
                 default:
                     //TODO: Load the text file
@@ -718,8 +741,6 @@
             }, 1000);
         };
     }
-
-
 
     var editorViewModel = new EditorViewModel();
     ko.applyBindings(editorViewModel);
