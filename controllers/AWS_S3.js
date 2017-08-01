@@ -223,15 +223,20 @@ exports.preMMFileTransfer = function(req, res, next)
         ResponseContentType: 'string/utf-8'
     };
 
+
+    var id = db.Create_Job();
     var jobdir = './jobs/tmp__' + id;
     var jobname = 'Fluigi_job_' +id;
-    var id = db.Create_Job();
     req.body.jobid = id;
 
 
     if (!fs.existsSync(jobdir))
         fs.mkdirSync(jobdir);
     else console.log('ERROR: Unique Dir Already Exists!');
+
+    var lfrname = req.body.sourcefilename;
+    var ucfname = req.body.configfilename;
+
 
     var path1 = path.join(global.Neptune_ROOT_DIR, jobdir, lfrname);
     s3.getObject(Parameters_lfr,function(error,data){

@@ -50,8 +50,8 @@ workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_
 
 
     var newfile = new File();
-    newfile.name = 'defaultUCF.JSON';
-    newfile.file_extension = '.JSON';
+    newfile.name = 'defaultUCF.json';
+    newfile.file_extension = '.json';
     newfile.save();
     newfile.createAndUploadDefaultS3File();
     this.specify_files.push(newfile._id);

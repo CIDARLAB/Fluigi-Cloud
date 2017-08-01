@@ -126,6 +126,8 @@ exports.translate = function(req, res)
     var cwd             = path.join(global.Neptune_ROOT_DIR, jobdir);
     var logpath         = path.join(global.Neptune_ROOT_DIR, jobdir,"log.txt");
 
+
+
     console.log('TRANSLATING!');
     console.log('LFR PATH: %s',lfr_path);
     console.log('UCF PATH: %s',ucf_path);
@@ -153,6 +155,9 @@ exports.translate = function(req, res)
 
     par_terminal.on('close', function (data)
     {
+        var folderpath = path.join(cwd,'testMINT.uf');
+        fs.rename(folderpath,out_path);
+
         var databaseInterface = require('./databaseInterface');
         var workspace_id = req.body.workspace;
 
@@ -165,6 +170,10 @@ exports.translate = function(req, res)
             fs.readFile(out_path,'utf8',function (err,data)
             {
                 var AWS_S3 = require('./AWS_S3');
+
+                console.log(data);
+                console.log('***');
+                console.log(file_id.toString());
 
                 var addFileToS3_body = {body: {Target_Object_KEY: file_id.toString(), Target_Object_STREAM: data}};
                 AWS_S3.Update_Bucket_Object(addFileToS3_body,function(){

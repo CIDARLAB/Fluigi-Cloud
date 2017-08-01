@@ -26,10 +26,11 @@ userSchema.methods.validPassword = function(password)
 userSchema.methods.generateWorkspaces_and_updateSchema = function generateWorkspaces_and_updateSchema(user)
 {
 
+    console.log('Grrr');
     var Workspace   = require('../models/workspace');
 
     var playgroudworkspace = new Workspace();
-    playgroudworkspace.name = 'Playground';
+    playgroudworkspace.name = 'Dogs';
     playgroudworkspace.save();
     playgroudworkspace.generateFiles_and_updateSchema(playgroudworkspace);
     user.workspaces.push(playgroudworkspace._id);
