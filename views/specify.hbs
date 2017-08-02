@@ -204,7 +204,7 @@
 <script src="/javascripts/styles/jquery.mousewheel.min.js"></script>
 <link href="/javascripts/styles/jquery.terminal-0.10.12.min.css" rel="stylesheet"/>
 
-    <script type="text/javascript">
+<script type="text/javascript">
         $(document).ready(function() {
             Terminal = $('#terminal').terminal(function(command, term) {
                 if (command !== '') {
@@ -227,7 +227,7 @@
         });
     </script>
 
-    </html>
+</html>
 
     <style type="text/css">
 
@@ -307,7 +307,6 @@
     </style>
 
 <div id="compileModal" >
-
     {{> compileModal }}
 </div>
 
@@ -526,18 +525,32 @@
             self.currentWorkSpace(workspace);
             self.currentWorkSpaceName(workspace.name);
             self.updateFiles();
+            setTimeout(function()
+            {
+                console.log("Setting the first file in current workspace");
+                var setfile_index = 0;
+                for (var j = 0; j < (self.files()).length; j++) {
+                    if ( !( typeof (self.files()[j]) === 'undefined' ) && ( j === setfile_index) ) {
+                        self.setAsCurrentFile(self.files()[j]);
+                    }
+                }
+            }, 750);
         };
 
         self.setAsCurrentJob = function(job){
-            self.currentJob(job);
-            self.currentJobName(job.name);
-            self.updateJobFiles();
+            if ( !( typeof job === 'undefined' ) ) {
+                self.currentJob(job);
+                self.currentJobName(job.name);
+                self.updateJobFiles();
+            }
         };
 
         self.setAsCurrentFile = function(file){
-            self.currentFile(file);
-            self.currentFileName(file.name);
-            self.loadFile(file.id , file.ext)
+            if ( !( typeof file === 'undefined' ) ) {
+                self.currentFile(file);
+                self.currentFileName(file.name);
+                self.loadFile(file.id, file.ext)
+            }
         };
 
         self.setAsCurrentJobFile = function(jobFile){
@@ -655,6 +668,8 @@
                         //TODO - Connect to fluigicad's console output based on job id.
                         NProgress.done();
                         console.log(response);
+                        console.log('Meeeeep');
+                        self.setAsCurrentWorkSpace(self.currentWorkSpace());
                     });
 
         };
@@ -676,6 +691,8 @@
                         NProgress.done();
                         console.log("jobid: " + response);
                         socket.emit('monitor', response);
+                        self.setAsCurrentWorkSpace(self.currentWorkSpace());
+                        self.setAsCurrentJob(self.currentJob());
                     });
         };
 
@@ -686,7 +703,7 @@
             switch (currentfile.ext){
                 case ".uf":
                     console.log("Config file :" + currentconfigfile.ext);
-                    if(!(".ini" === currentconfigfile.ext)){
+                    if(!(".INI" === currentconfigfile.ext || ".ini" === currentconfigfile.ext )){
                         toastr.error("Invalid Configuration File");
                         return;
                     }
@@ -694,7 +711,7 @@
                     break;
                 case ".v":
                     console.log("Config file :" + currentconfigfile.ext);
-                    if(!(".JSON" === currentconfigfile.ext )){
+                    if(!(".JSON" === currentconfigfile.ext || ".json" === currentconfigfile.ext )){
                         toastr.error("Invalid Configuration File");
                         return;
                     }
@@ -717,27 +734,36 @@
             editor_specify.setSession(MainSession);
 
             self.editorObject = {editor: editor_specify, session: MainSession};
-
         };
 
         self.initPage = function(){
             self.updateWorkSpaces();
             self.updateJobs();
             self.initEditor();
-            setTimeout(function(){
-                var setid = getUrlParameter("id");
-                console.log("ids: " + self.workSpaceIDs());
-                console.log("job_ids: " + self.jobIDs());
-                if(containsObject(setid, self.workSpaceIDs()))
-                {
-                    console.log("Setting the current workspace: " +  setid);
-                    for (var i = 0; i < (self.workSpaces()).length; i++) {
-                        if (((self.workSpaces())[i]).id === setid) {
-                            self.setAsCurrentWorkSpace((self.workSpaces())[i]);
-                        }
+            setTimeout(function()
+            {
+                var setindex_workspace = 0;
+                var setjob_index       = 0;
+                var setfile_index      = 0;
+                console.log("Setting the first workspace");
+                for (var i = 0; i < (self.workSpaces()).length; i++) {
+                    if ( !( typeof (self.workSpaces()[i]) === 'undefined' ) && ( i === setindex_workspace) )  {
+                        self.setAsCurrentWorkSpace((self.workSpaces())[i]);
                     }
                 }
-                self.setAsCurrentJob((self.jobs()[0]));
+                //self.updateFiles();
+                if ( !( typeof (self.jobs()[setjob_index ]) === 'undefined' ) ) {
+                    self.setAsCurrentJob((self.jobs()[setjob_index ]));
+                }
+                setTimeout(function()
+                {
+                    console.log("Setting the first file in current workspace");
+                    for (var j = 0; j < (self.files()).length; j++) {
+                        if ( !( typeof (self.files()[j]) === 'undefined' ) && ( j === setfile_index) ) {
+                            self.setAsCurrentFile(self.files()[j]);
+                        }
+                    }
+                }, 1000);
             }, 1000);
         };
     }
@@ -746,4 +772,17 @@
     ko.applyBindings(editorViewModel);
 
     editorViewModel.initPage();
+
+    //                if(containsObject(setid, self.workSpaceIDs()))
+    //                {
+    //                    for (var i = 0; i < (self.workSpaces()).length; i++) {
+    //                        console.log("Setting the current workspace: " +  setid);
+    //                        if ( !( typeof (self.workSpaces()[j]) === 'undefined' ) && ( ((self.workSpaces())[i]).id === setid) )  {
+    //                            self.setAsCurrentWorkSpace((self.workSpaces())[i]);
+    //                            self.updateFiles();
+    //                        }
+    //                    }
+    //                }
+
+
 </script>

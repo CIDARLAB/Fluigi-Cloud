@@ -325,7 +325,7 @@ exports.createFile = function(req, res){
 exports.Create_File = function(req, res)
 {
     var file_name = req.body.file_name;
-    var file_ext  = req.body.ext;
+    var file_ext  = req.body.file_ext;
 
     var File = require('../models/file');
 

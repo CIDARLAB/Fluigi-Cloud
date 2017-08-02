@@ -106,6 +106,7 @@ exports.compile = function(req, res)
             });
 
         });
+        res.sendStatus(data);
     });
 
     res.status(200).send(jobid);
@@ -125,7 +126,6 @@ exports.translate = function(req, res)
     var out_path        = path.join(global.Neptune_ROOT_DIR, jobdir, outputname);
     var cwd             = path.join(global.Neptune_ROOT_DIR, jobdir);
     var logpath         = path.join(global.Neptune_ROOT_DIR, jobdir,"log.txt");
-
 
 
     console.log('TRANSLATING!');
@@ -181,8 +181,9 @@ exports.translate = function(req, res)
                 })
             });
         }
+        res.sendStatus(data);
     });
-
+    //res.status(200).send(jobid);
 };
 
 
