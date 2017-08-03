@@ -330,6 +330,13 @@
     //This signals the end of the output
     socket.on('EOP', function(data){
         //TODO: Figure out how to close the monitoring
+        editorViewModel.updateJobs();
+        setTimeout(function() {
+            //self.jobs()[0]
+            editorViewModel.setAsCurrentJob(editorViewModel.currentJob());
+        },1000);
+
+
         console.log(data);
     });
 
@@ -666,10 +673,9 @@
                     },
                     function(response){
                         //TODO - Connect to fluigicad's console output based on job id.
-                        NProgress.done();
-                        console.log(response);
-                        console.log('Meeeeep');
+                        console.log("jobid: " + response);
                         self.setAsCurrentWorkSpace(self.currentWorkSpace());
+                        NProgress.done();
                     });
 
         };
@@ -688,11 +694,10 @@
                     },
                     function(response){
                         //TODO - Connect to fluigicad's console output based on job id.
-                        NProgress.done();
                         console.log("jobid: " + response);
                         socket.emit('monitor', response);
-                        self.setAsCurrentWorkSpace(self.currentWorkSpace());
-                        self.setAsCurrentJob(self.currentJob());
+                        NProgress.done();
+                        //self.setAsCurrentWorkSpace(self.currentWorkSpace());
                     });
         };
 
@@ -753,7 +758,7 @@
                 }
                 //self.updateFiles();
                 if ( !( typeof (self.jobs()[setjob_index ]) === 'undefined' ) ) {
-                    self.setAsCurrentJob((self.jobs()[setjob_index ]));
+                    self.setAsCurrentJob((self.jobs()[setjob_index]));
                 }
                 setTimeout(function()
                 {
@@ -772,17 +777,5 @@
     ko.applyBindings(editorViewModel);
 
     editorViewModel.initPage();
-
-    //                if(containsObject(setid, self.workSpaceIDs()))
-    //                {
-    //                    for (var i = 0; i < (self.workSpaces()).length; i++) {
-    //                        console.log("Setting the current workspace: " +  setid);
-    //                        if ( !( typeof (self.workSpaces()[j]) === 'undefined' ) && ( ((self.workSpaces())[i]).id === setid) )  {
-    //                            self.setAsCurrentWorkSpace((self.workSpaces())[i]);
-    //                            self.updateFiles();
-    //                        }
-    //                    }
-    //                }
-
 
 </script>

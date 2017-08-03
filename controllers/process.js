@@ -106,9 +106,8 @@ exports.compile = function(req, res)
             });
 
         });
-        res.sendStatus(data);
+        //res.sendStatus(200);
     });
-
     res.status(200).send(jobid);
 };
 
@@ -181,7 +180,7 @@ exports.translate = function(req, res)
                 })
             });
         }
-        res.sendStatus(data);
+        res.sendStatus(200);
     });
     //res.status(200).send(jobid);
 };
