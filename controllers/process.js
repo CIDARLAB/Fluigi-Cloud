@@ -2,16 +2,16 @@
  * Created by kestas on 3/24/2017.
  */
 
-var cmd = require('node-cmd');
-var exports = module.exports;
-var express = require('express');
-var fs = require('fs');
-const readline = require('readline');
-const path = require('path');
-var dir = require('node-dir');
-var AWS_S3 = require('./AWS_S3');
-var remove = require('rimraf');
-var Job = require('../models/job');
+var cmd         = require('node-cmd');
+var exports     = module.exports;
+var express     = require('express');
+var fs          = require('fs');
+const readline  = require('readline');
+const path      = require('path');
+var dir         = require('node-dir');
+var AWS_S3      = require('./AWS_S3');
+var remove      = require('rimraf');
+var Job         = require('../models/job');
 
 //var REDIS_HOST = ;
 //var REDIS_PORT = ]process.env['NEPTUNE_REDIS_PORT';
@@ -170,14 +170,18 @@ exports.translate = function(req, res)
             {
                 var AWS_S3 = require('./AWS_S3');
 
+                console.log('*** Start File Output ***');
                 console.log(data);
-                console.log('***');
+                console.log('*** End File Output ***');
                 console.log(file_id.toString());
 
                 var addFileToS3_body = {body: {Target_Object_KEY: file_id.toString(), Target_Object_STREAM: data}};
-                AWS_S3.Update_Bucket_Object(addFileToS3_body,function(){
-                    remove(jobdir);
-                })
+                AWS_S3.Update_Bucket_Object(addFileToS3_body,function(data){});
+
+                remove(cwd, function(data){
+                    console.log("Removed the directory: " + cwd);
+                    console.log("MM is complete !");
+                });
             });
         }
         res.sendStatus(200);

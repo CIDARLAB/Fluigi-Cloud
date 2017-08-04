@@ -45,3 +45,6 @@ jspm_packages
 # JAR Files
 .jobs/*
 
+# Temp download folder
+.downloads/*
+
