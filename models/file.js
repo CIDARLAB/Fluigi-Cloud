@@ -1,8 +1,9 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-
+var mongoose    = require('mongoose');
+var Schema      = mongoose.Schema;
 var AWS         = require('aws-sdk');
 var AWS_S3      = require('../controllers/AWS_S3');
+var fs          = require('fs');
+var path        = require('path');
 
 AWS.config.update({
     accessKeyId: process.env['NEPTUNE_AWSID'],
@@ -20,7 +21,142 @@ var fileSchema = new Schema
     updated_at: Date
 });
 
-fileSchema.methods.createAndUploadDefaultS3File = function createS3File_and_linkToMongoDB()
+fileSchema.methods.createAndUploadDefaultS3File = function createS3File_and_linkToMongoDB(type)
+{
+    var dateFormat  = require('dateformat');
+    var now = new Date();
+    var timeStamp = dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT");
+    var text = '';
+    var me = this;
+
+    switch (type)
+    {
+        case 'default':
+            text = '// Created By:__________ \n// Created On: ' + timeStamp;
+            var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
+            var Target_Object_KEY = me._id.toString();
+            var Target_Object_BODY = text;
+
+            var Parameters = {
+                Bucket: Target_BUCKET_ID,
+                Key: Target_Object_KEY,
+                Body: Target_Object_BODY,
+                ACL: "public-read"
+            };
+            s3.upload(Parameters,function (err, data)
+            {
+                if (err) { console.log(err); throw err; }
+                else {
+                    me.S3_path = data.Location;
+                    me.save();
+                    console.log("updated file path: "+ me.S3_path);
+                }
+            });
+            break;
+        case 'lfr':
+            fs.readFile(path.join(global.Neptune_ROOT_DIR,'content','lfr.v'),function(err, data){
+                if (err) console.log( err );
+                text = data;
+                var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
+                var Target_Object_KEY = me._id.toString();
+                var Target_Object_BODY = text;
+
+                var Parameters = {
+                    Bucket: Target_BUCKET_ID,
+                    Key: Target_Object_KEY,
+                    Body: Target_Object_BODY,
+                    ACL: "public-read"
+                };
+                s3.upload(Parameters,function (err, data)
+                {
+                    if (err) { console.log(err); throw err; }
+                    else {
+                        me.S3_path = data.Location;
+                        me.save();
+                        console.log("updated file path: "+ me.S3_path);
+                    }
+                });
+            });
+            break;
+        case 'ucf':
+            fs.readFile(path.join(global.Neptune_ROOT_DIR,'content','ucf.json'),function(err, data){
+                if (err) console.log( err );
+                text = data;
+                var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
+                var Target_Object_KEY = me._id.toString();
+                var Target_Object_BODY = text;
+
+                var Parameters = {
+                    Bucket: Target_BUCKET_ID,
+                    Key: Target_Object_KEY,
+                    Body: Target_Object_BODY,
+                    ACL: "public-read"
+                };
+                s3.upload(Parameters,function (err, data)
+                {
+                    if (err) { console.log(err); throw err; }
+                    else {
+                        me.S3_path = data.Location;
+                        me.save();
+                        console.log("updated file path: "+ me.S3_path);
+                    }
+                });
+            });
+            break;
+        case 'mint':
+            fs.readFile(path.join(global.Neptune_ROOT_DIR,'content','mint.uf'),function(err, data){
+                if (err) console.log( err );
+                text = data;
+                var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
+                var Target_Object_KEY = me._id.toString();
+                var Target_Object_BODY = text;
+
+                var Parameters = {
+                    Bucket: Target_BUCKET_ID,
+                    Key: Target_Object_KEY,
+                    Body: Target_Object_BODY,
+                    ACL: "public-read"
+                };
+                s3.upload(Parameters,function (err, data)
+                {
+                    if (err) { console.log(err); throw err; }
+                    else {
+                        me.S3_path = data.Location;
+                        me.save();
+                        console.log("updated file path: "+ me.S3_path);
+                    }
+                });
+            });
+            break;
+        case 'ini':
+            fs.readFile(path.join(global.Neptune_ROOT_DIR,'content','config.ini'),function(err, data){
+                if (err) console.log( err );
+                text = data;
+                var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
+                var Target_Object_KEY = me._id.toString();
+                var Target_Object_BODY = text;
+
+                var Parameters = {
+                    Bucket: Target_BUCKET_ID,
+                    Key: Target_Object_KEY,
+                    Body: Target_Object_BODY,
+                    ACL: "public-read"
+                };
+                s3.upload(Parameters,function (err, data)
+                {
+                    if (err) { console.log(err); throw err; }
+                    else {
+                        me.S3_path = data.Location;
+                        me.save();
+                        console.log("updated file path: "+ me.S3_path);
+                    }
+                });
+            });
+            break;
+    }
+};
+
+fileSchema.methods.createAndUploadEmptyS3File = function createS3File_and_linkToMongoDB()
 {
     var dateFormat  = require('dateformat');
     var now = new Date();
@@ -49,6 +185,7 @@ fileSchema.methods.createAndUploadDefaultS3File = function createS3File_and_link
         }
     });
 };
+
 
 fileSchema.methods.createAndUploadS3File = function createAndUploadS3File(text){
 

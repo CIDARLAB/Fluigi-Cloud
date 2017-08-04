@@ -45,3 +45,5 @@ jspm_packages
 # JAR Files
 .jobs/*
 
+# Preloaded content
+.content/*
