@@ -42,34 +42,66 @@ workspaceSchema.methods.createFile = function createFile(filename, ext)
 workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_and_updateSchema()
 {
     var newfile = new File();
-    newfile.name = 'myLFR.v';
+    newfile.name = 'LFR_example.v';
     newfile.file_extension = '.v';
     newfile.save();
-    newfile.createAndUploadDefaultS3File();
+    newfile.createAndUploadDefaultS3File('lfr');
     this.specify_files.push(newfile._id);
 
-
     var newfile = new File();
-    newfile.name = 'defaultUCF.json';
+    newfile.name = 'UCF_example.json';
     newfile.file_extension = '.json';
     newfile.save();
-    newfile.createAndUploadDefaultS3File();
+    newfile.createAndUploadDefaultS3File('ucf');
     this.specify_files.push(newfile._id);
 
     var newfile = new File();
-    newfile.name = 'myMINT.uf';
+    newfile.name = 'MINT_example.uf';
     newfile.file_extension = '.uf';
     newfile.save();
-    newfile.createAndUploadDefaultS3File();
+    newfile.createAndUploadDefaultS3File('mint');
     this.design_files.push(newfile._id.toString());
 
     var newfile = new File();
-    newfile.name = 'defaultConfig.ini';
+    newfile.name = 'CONFIG_example.ini';
     newfile.file_extension = '.ini';
     newfile.save();
-    newfile.createAndUploadDefaultS3File();
+    newfile.createAndUploadDefaultS3File('ini');
     this.design_files.push(newfile._id);
 
+    this.save();
+};
+
+workspaceSchema.methods.generateEmptyFiles_and_updateSchema = function generateFiles_and_updateSchema()
+{
+    var newfile = new File();
+    newfile.name = 'new_LFR.v';
+    newfile.file_extension = '.v';
+    newfile.save();
+    newfile.createAndUploadEmptyS3File();
+    this.specify_files.push(newfile._id);
+
+
+    var newfile = new File();
+    newfile.name = 'new_UCF.json';
+    newfile.file_extension = '.json';
+    newfile.save();
+    newfile.createAndUploadEmptyS3File();
+    this.specify_files.push(newfile._id);
+
+    var newfile = new File();
+    newfile.name = 'new_MINT.uf';
+    newfile.file_extension = '.uf';
+    newfile.save();
+    newfile.createAndUploadEmptyS3File();
+    this.design_files.push(newfile._id.toString());
+
+    var newfile = new File();
+    newfile.name = 'new_Config.ini';
+    newfile.file_extension = '.ini';
+    newfile.save();
+    newfile.createAndUploadEmptyS3File();
+    this.design_files.push(newfile._id);
 
     this.save();
 };
@@ -109,4 +141,7 @@ module.exports = Workspace;
 // databaseInterface.Create_File(body,function(file_id){
 //     this.specify_files.push(file_id);
 // });
+
+
+
 */
