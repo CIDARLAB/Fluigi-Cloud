@@ -54,6 +54,10 @@ exports.downloadFile = function(req,res){
             //     }
             // });
 
+            res.setHeader('Content-disposition', 'attachment; filename=' + fileName);
+            var filestream = fs.createReadStream(file);
+            filestream.pipe(res);
+
             // var options = {
             //     root: filepath,
             //     dotfiles: 'deny',
@@ -70,12 +74,10 @@ exports.downloadFile = function(req,res){
             //     }
             // });
 
-            //path.dirname(filepath)
-
-            res.zip([
-                { path: filepath, name: fileName }
-                // { path: '/path/to/file2.name', name: 'file2.name' }
-            ]);
+            // res.zip([
+            //     { path: filepath, name: fileName }
+            //     // { path: '/path/to/file2.name', name: 'file2.name' }
+            // ]);
 
         });
     });

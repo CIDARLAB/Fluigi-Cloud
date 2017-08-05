@@ -69,7 +69,12 @@
                 "hideEasing": "linear",
                 "showMethod": "fadeIn",
                 "hideMethod": "fadeOut"
-            }
+            };
+            var editor_specify;
+            var mint_sesh;      //= ace.createEditSession('mint',"ace/mode/mint");
+            var verilog_sesh;   // = ace.createEditSession('verilog',"ace/mode/verilog");
+            var json_sesh ;     // = ace.createEditSession('json',"ace/mode/json");
+            var ini_sesh;       //= ace.createEditSession('ini',"ace/mode/ini");
     </script>
 
     <style>
@@ -151,7 +156,6 @@
                         <div class="panel-heading">
 
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <!--<button type="button" class="btn btn-success" data-bind="click: initEditor"> Start Editor </button>-->
                                         <button type="button" class="btn btn-secondary btn-success" data-bind="click: saveFile"> Save </button>
                                         <button type="button" class="btn btn-secondary btn-info" data-toggle="modal" data-target="#selectConfig"> Compile </button>
                                         <button type="button" class="btn btn-secondary btn-danger" data-bind="click: deleteFile"> Delete </button>
@@ -159,7 +163,6 @@
 
                                     </div>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <!--<button type="button" class="btn btn-success" data-bind="click: initEditor"> Start Editor </button>-->
 
                                         <a href="#new_workspace" class="btn btn-secondary" data-target="#new_workspace" data-toggle="modal"><i class="fa fa-plus-square"></i> New Workspace <span class="fa plus-square-o"></span></a>
                                         <a href="#new_file" class="btn btn-secondary" data-target="#new_file" data-bind="visible: currentWorkSpaceName" data-toggle="modal"><i class="fa fa-plus-square"></i> New File <span class="fa plus-square"></span></a>
@@ -191,7 +194,6 @@
                     {{>terminal}}
                 </div>
                 <script src="/javascripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-
                 {{>newFileModal}}
                 {{>newWorkspace}}
             </div>
@@ -556,7 +558,27 @@
             if ( !( typeof file === 'undefined' ) ) {
                 self.currentFile(file);
                 self.currentFileName(file.name);
-                self.loadFile(file.id, file.ext, file.name)
+                self.loadFile(file.id, file.ext, file.name);
+
+                switch (file.ext)
+                {
+                    case '.v':
+                        self.editorObject = {editor: editor_specify, session: verilog_sesh};
+                        editor_specify.setSession(verilog_sesh);
+                        break;
+                    case '.uf':
+                        self.editorObject = {editor: editor_specify, session: mint_sesh};
+                        editor_specify.setSession(mint_sesh);
+                        break;
+                    case '.json':
+                        self.editorObject = {editor: editor_specify, session: json_sesh};
+                        editor_specify.setSession(json_sesh);
+                        break;
+                    case '.ini':
+                        editor_specify.setSession(ini_sesh);
+                        self.editorObject = {editor: editor_specify, session: ini_sesh};
+                        break;
+                }
             }
         };
 
@@ -571,30 +593,36 @@
             self.loadFile(jobFile.id , jobFile.ext, jobFile.name)
         };
 
-        self.loadFile = function(id, ext, name){
+        self.loadFile = function(id, ext){
             if(id == null){
-                console.error("Link for downloading the file is null");
+                console.error("Link for loading the file is null");
                 return;
             }
             switch(ext) {
                 case ".svg":
-                    $.get('/api/v1/download',{ id:id , name:name , ext:ext }, function(data){
-                        //console.log(data);
+                    //TODO: How to load the SVG ?
+                    $.get('/api/v1/fs',{ id:id }, function(data){
+                        //TODO: Load svg to a div
+                        console.log(data);
                         NProgress.done();
+                        document.getElementById('solution_viewer').innerHTML = data;
                     });
+                    window.open((self.currentJobFile()).link, '_blank');
+                    document.getElementById('solution_viewer').innerHTML = data;
                     break;
                 case ".eps":
-                    $.get('/api/v1/download',{ id:id , name:name , ext:ext }, function(data){
-                        //console.log(data);
-                        NProgress.done();
-                    });
+                    //TODO: How to load the EPS ?
+                    window.open((self.currentJobFile()).link, '_blank');
                     break;
                 default:
+                    //TODO: Load the text file
+                    //self.editorText();
                     NProgress.start();
-                    $.get('/api/v1/fs',{ id:id }, function(data) {
+                    $.get('/api/v1/fs',{ id:id }, function(data){
+                        //TODO: Load this into ace
                         console.log(data);
-                        self.editorObject.session.setValue(data);
                         NProgress.done();
+                        self.editorObject.session.setValue(data);
                     });
             }
         };
@@ -724,7 +752,7 @@
             //TODO: Make the sessions more atomic keeping track of each of the files that being edited.
 
             ////Initializing the editor//////
-            var editor_specify = ace.edit("editor_specify");
+            editor_specify = ace.edit("editor_specify");
             editor_specify.setTheme("ace/theme/crimson_editor");
             editor_specify.setOptions({
                 fontFamily: "monospace",
@@ -732,6 +760,11 @@
             });
             var MainSession = ace.createEditSession('MainSession', "ace/mode/verilog");
             editor_specify.setSession(MainSession);
+
+            mint_sesh       = ace.createEditSession('mint_sesh',"ace/mode/mint");
+            verilog_sesh    = ace.createEditSession('verilog_sesh',"ace/mode/verilog");
+            json_sesh       = ace.createEditSession('json_sesh',"ace/mode/json");
+            ini_sesh        = ace.createEditSession('ini_sesh',"ace/mode/ini");
 
             self.editorObject = {editor: editor_specify, session: MainSession};
         };
@@ -808,6 +841,36 @@
 //    };
 
 
+//    self.loadFile = function(id, ext, name){
+//        if(id == null){
+//            console.error("Link for downloading the file is null");
+//            return;
+//        }
+//        switch(ext) {
+//            case ".svg":
+//                $.get('/api/v1/download',{ id:id , name:name , ext:ext }, function(data){
+//                    //console.log(data);
+//                    //var myWindow = window.open("", name, "width=200,height=100");
+//                    //myWindow.document.write(data);
+//                    //window.location.assign()
+//                    NProgress.done();
+//                });
+//                break;
+//            case ".eps":
+//                $.get('/api/v1/download',{ id:id , name:name , ext:ext }, function(data){
+//                    //console.log(data);
+//                    NProgress.done();
+//                });
+//                break;
+//            default:
+//                NProgress.start();
+//                $.get('/api/v1/fs',{ id:id }, function(data) {
+//                    console.log(data);
+//                    self.editorObject.session.setValue(data);
+//                    NProgress.done();
+//                });
+//        }
+//    };
 
 
 </script>
