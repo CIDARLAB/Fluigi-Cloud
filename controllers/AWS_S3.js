@@ -264,6 +264,12 @@ exports.preFluigiFileTransfer = function(req, res, next)
 
     var Target_Bucket_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
 
+    var outputName = req.body.outputName;
+    // var dateFormat  = require('dateformat');
+    // var now = new Date();
+    // var timeStamp = dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT");
+    // outputName = outputName + '_' + timeStamp;
+
     var mintpath = req.body.sourcefileid;
     var inipath = req.body.configfileid;
     var mintname = req.body.sourcefilename;
@@ -294,7 +300,7 @@ exports.preFluigiFileTransfer = function(req, res, next)
             var max = 10000;
             var min = 1;
             var nameid = Math.floor(Math.random() * (max - min + 1)) + min;
-            var jobname = 'Fluigi_job_' + nameid;
+            var jobname = 'Fluigi_job_' + outputName;
             req.body.jobid = id.toString();
 
             var update = {body:{workspace_id: workspace_id,update: id, update_type: 'add_job'}};

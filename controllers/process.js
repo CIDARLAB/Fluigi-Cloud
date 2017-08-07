@@ -24,6 +24,7 @@ exports.compile = function(req, res)
     var jobdir = req.body.jobdir;
     var mintname = req.body.sourcefilename;
     var ininame = req.body.configfilename;
+   //var outputName = req.body.outputName;
 
     var FLUIGI_BINARY_PATH  = path.join(global.Neptune_ROOT_DIR, "jobs", "Fluigi-jar-with-dependencies.jar");
     var mint_path           = path.join(global.Neptune_ROOT_DIR, jobdir, mintname);
@@ -114,10 +115,15 @@ exports.compile = function(req, res)
 
 exports.translate = function(req, res)
 {
+    // var dateFormat  = require('dateformat');
+    // var now = new Date();
+    // var timeStamp = dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT");
+
     var jobdir = req.body.jobdir;
     var lfrname = req.body.sourcefilename;
     var ucfname = req.body.configfilename;
-    var outputname = 'mint_' + req.body.jobid + '.uf';
+
+    var outputname = req.body.outputName + '.uf'; // + '_' + timeStamp +  '.uf';
 
     var MM_BINARY_PATH  = path.join(global.Neptune_ROOT_DIR, "jobs", "MuShroomMapper-jar-with-dependencies.jar");
     var lfr_path        = path.join(global.Neptune_ROOT_DIR, jobdir, lfrname);

@@ -1,0 +1,5 @@
+fi1
+fi2
+fi3
+Creating Mint file output...
+MM is all done!

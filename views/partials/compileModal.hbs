@@ -3,15 +3,23 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header modal-header-primary">
-                <h4 class="modal-title">Choose the configuration or constrain file to couple with your job: </h4>
+                <h4 class="modal-title">Configuration File</h4>
             </div>
             <div class="modal-body" id="job_select">
-                Choose the configuration file to couple with your job.
-                This should be a User Constrain File (.json) for LFR jobs.
-                This should be a Initialization File (.ini)  for MINT jobs.
-                <br />
-                <br />
+                <p> <b> <u> Choose the configuration file to couple with your job </u> </b> <br>
+                    Select a User Constrain File (.json) for LFR jobs. <br>
+                    Select a Initialization File (.ini)  for MINT jobs. </p>
+                <br/>
+                <label for="configFile">Please choose a configuration file</label>
                 <select class="form-control" id="configFile" data-bind="options: files, value: currentConfigFile, optionsText: 'name' " ></select>
+                <br/>
+                <form>
+                    <div class="form-group">
+                        <label for="deviceNameInput">Device Name:</label>
+                        <input type="email" class="form-control" id="deviceNameInput" aria-describedby="emailHelp" placeholder="microfluidicDevice">
+                        <small id="helpdialog" class="form-text text-muted">Please enter the name of your device as you would like it to will appear in the output.</small>
+                    </div>
+                </form>
 
             </div>
             <div class="modal-footer">
@@ -32,5 +40,8 @@
     }
     .prj_select_dialog
     {
+    }
+    configFile {
+        margin-bottom:5px;
     }
 </style>

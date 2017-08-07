@@ -680,16 +680,17 @@
             window.open((self.currentFile()).link, '_blank');
         };
 
-        self.compileLFR = function(){
+        self.compileLFR = function(outputName){
             console.log("Compiling lfr");
             NProgress.start();
             $.post('/api/v1/mushroommapper', {
-                        sourcefileid: (self.currentFile()).id,
+                        sourcefileid:   (self.currentFile()).id,
                         sourcefilename: (self.currentFile()).name,
-                        configfileid: (self.currentConfigFile()).id,
+                        configfileid:   (self.currentConfigFile()).id,
                         configfilename: (self.currentConfigFile()).name,
-                        workspace:    (self.currentWorkSpace()).id,
-                        user:          localStorage.Email
+                        workspace:      (self.currentWorkSpace()).id,
+                        user:           localStorage.Email,
+                        outputName:     outputName
                     },
                     function(response){
                         //TODO - Connect to fluigicad's console output based on job id.
@@ -700,17 +701,18 @@
 
         };
 
-        self.compileMINT = function(){
+        self.compileMINT = function(outputName){
             console.log("Compiling mint");
             console.log("Compiling lfr");
             NProgress.start();
             $.post('/api/v1/fluigi', {
-                        sourcefileid: (self.currentFile()).id,
+                        sourcefileid:   (self.currentFile()).id,
                         sourcefilename: (self.currentFile()).name,
-                        configfileid: (self.currentConfigFile()).id,
+                        configfileid:   (self.currentConfigFile()).id,
                         configfilename: (self.currentConfigFile()).name,
-                        workspace:    (self.currentWorkSpace()).id,
-                        user:          localStorage.Email
+                        workspace:      (self.currentWorkSpace()).id,
+                        user:           localStorage.Email,
+                        outputName:     outputName
                     },
                     function(response){
                         //TODO - Connect to fluigicad's console output based on job id.
@@ -725,6 +727,9 @@
             //TODO: Send file id that has to be compiled.
             var currentfile = self.currentFile();
             var currentconfigfile = self.currentConfigFile();
+
+            var outputName = ( document.getElementById('deviceNameInput') ).value;
+
             switch (currentfile.ext){
                 case ".uf":
                     console.log("Config file :" + currentconfigfile.ext);
@@ -732,7 +737,7 @@
                         toastr.error("Invalid Configuration File");
                         return;
                     }
-                    self.compileMINT();
+                    self.compileMINT(outputName);
                     break;
                 case ".v":
                     console.log("Config file :" + currentconfigfile.ext);
@@ -740,7 +745,7 @@
                         toastr.error("Invalid Configuration File");
                         return;
                     }
-                    self.compileLFR();
+                    self.compileLFR(outputName);
             }
 
         };
