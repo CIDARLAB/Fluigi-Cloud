@@ -42,56 +42,25 @@ exports.downloadFile = function(req,res){
         fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
         fs.close(fd,function()
         {
-            // res.download(filepath, fileName, function (err) {
-            //     if (err) {
-            //         console.log("File Download Error");
-            //         console.log(err);
-            //         fs.unlink(filepath);
-            //     } else {
-            //         console.log("File Download Success");
-            //         fs.unlink(filepath);
-            //
-            //     }
-            // });
-
-            res.setHeader('Content-disposition', 'attachment; filename=' + fileName);
-            var filestream = fs.createReadStream(file);
-            filestream.pipe(res);
-
-            // var options = {
-            //     root: filepath,
-            //     dotfiles: 'deny',
-            //     headers: {
-            //         'x-timestamp': Date.now(),
-            //         'x-sent': true
-            //     }
-            // };
-            // res.sendFile(fileName, options, function (err) {
-            //     if (err) {
-            //         console.log(err);
-            //     } else {
-            //         console.log('Sent:', fileName);
-            //     }
-            // });
-
-            // res.zip([
-            //     { path: filepath, name: fileName }
-            //     // { path: '/path/to/file2.name', name: 'file2.name' }
-            // ]);
+            res.download(filepath, fileName, function (err) {
+                if (err) {
+                    console.log("File Download Error");
+                    console.log(err);
+                    fs.unlink(filepath);
+                } else {
+                    console.log("File Download Success");
+                    fs.unlink(filepath);
+                }
+            });
 
         });
     });
 
-    //res.setHeader('Content-disposition', 'attachment; filename=data.xlsx');
-    //res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    //res.set("Content-Disposition", "attachment; filename=" + filepath);
-    //res.attachment(filepath);
-    //res.end();
-
 };
 
 
-
+// Deprecated Notes and functions
+// ---------------------------------------
 // body = function getS3Text(key) {
 //     var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
 //     var Target_Object_KEY = key;
@@ -106,5 +75,31 @@ exports.downloadFile = function(req,res){
 //         res.send(data.Body);
 //     });
 // };
-
-
+// res.setHeader('Content-disposition', 'attachment; filename=' + fileName);
+// var filestream = fs.createReadStream(file);
+// filestream.pipe(res);
+// var options = {
+//     root: filepath,
+//     dotfiles: 'deny',
+//     headers: {
+//         'x-timestamp': Date.now(),
+//         'x-sent': true
+//     }
+// };
+// res.sendFile(fileName, options, function (err) {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         console.log('Sent:', fileName);
+//     }
+// });
+//
+// res.zip([
+//     { path: filepath, name: fileName }
+//     // { path: '/path/to/file2.name', name: 'file2.name' }
+// ]);
+//res.setHeader('Content-disposition', 'attachment; filename=data.xlsx');
+//res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+//res.set("Content-Disposition", "attachment; filename=" + filepath);
+//res.attachment(filepath);
+//res.end();

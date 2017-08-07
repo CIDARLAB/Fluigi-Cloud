@@ -602,16 +602,15 @@
             switch(ext) {
                 case ".svg":
                     $.get('/api/v1/download',{ id:id , name:name , ext:ext }, function(data){
-                        //console.log(data);
-                        //var myWindow = window.open("", name, "width=200,height=100");
-                        //myWindow.document.write(data);
-                        //window.location.assign()
+                        var downloadPath = window.location.origin + '/api/v1/download' + '?id=' + id + '&name=' + name + '&ext=' + ext;
+                        window.open(downloadPath,'_blank');
                         NProgress.done();
                     });
                     break;
                 case ".eps":
                     $.get('/api/v1/download',{ id:id , name:name , ext:ext }, function(data){
-                        //console.log(data);
+                        var downloadPath = window.location.origin + '/api/v1/download' + '?id=' + id + '&name=' + name + '&ext=' + ext;
+                        window.open(downloadPath,'_blank');
                         NProgress.done();
                     });
                     break;
@@ -624,42 +623,6 @@
                     });
             }
         };
-
-
-
-//        self.loadFile = function(id, ext){
-//            if(id == null){
-//                console.error("Link for loading the file is null");
-//                return;
-//            }
-//            switch(ext) {
-//                case ".svg":
-//                    //TODO: How to load the SVG ?
-//                    $.get('/api/v1/fs',{ id:id }, function(data){
-//                        //TODO: Load svg to a div
-//                        console.log(data);
-//                        NProgress.done();
-//                        document.getElementById('solution_viewer').innerHTML = data;
-//                    });
-//                    window.open((self.currentJobFile()).link, '_blank');
-//                    document.getElementById('solution_viewer').innerHTML = data;
-//                    break;
-//                case ".eps":
-//                    //TODO: How to load the EPS ?
-//                    window.open((self.currentJobFile()).link, '_blank');
-//                    break;
-//                default:
-//                    //TODO: Load the text file
-//                    //self.editorText();
-//                    NProgress.start();
-//                    $.get('/api/v1/fs',{ id:id }, function(data){
-//                        //TODO: Load this into ace
-//                        console.log(data);
-//                        NProgress.done();
-//                        self.editorObject.session.setValue(data);
-//                    });
-//            }
-//        };
 
         self.createFile = function(){
             //TODO:
@@ -839,72 +802,5 @@
     ko.applyBindings(editorViewModel);
 
     editorViewModel.initPage();
-
-//    self.loadFile = function(id, ext){
-//        if(id == null){
-//            console.error("Link for loading the file is null");
-//            return;
-//        }
-//        switch(ext) {
-//            case ".svg":
-//                //TODO: How to load the SVG ?
-//                $.get('/api/v1/fs',{ id:id }, function(data){
-//                    //TODO: Load svg to a div
-//                    console.log(data);
-//                    NProgress.done();
-//                    document.getElementById('solution_viewer').innerHTML = data;
-//                });
-//                window.open((self.currentJobFile()).link, '_blank');
-//                document.getElementById('solution_viewer').innerHTML = data;
-//                break;
-//            case ".eps":
-//                //TODO: How to load the EPS ?
-//                window.open((self.currentJobFile()).link, '_blank');
-//                break;
-//            default:
-//                //TODO: Load the text file
-//                //self.editorText();
-//                NProgress.start();
-//                $.get('/api/v1/fs',{ id:id }, function(data){
-//                    //TODO: Load this into ace
-//                    console.log(data);
-//                    NProgress.done();
-//                    self.editorObject.session.setValue(data);
-//                });
-//        }
-//    };
-
-
-//    self.loadFile = function(id, ext, name){
-//        if(id == null){
-//            console.error("Link for downloading the file is null");
-//            return;
-//        }
-//        switch(ext) {
-//            case ".svg":
-//                $.get('/api/v1/download',{ id:id , name:name , ext:ext }, function(data){
-//                    //console.log(data);
-//                    //var myWindow = window.open("", name, "width=200,height=100");
-//                    //myWindow.document.write(data);
-//                    //window.location.assign()
-//                    NProgress.done();
-//                });
-//                break;
-//            case ".eps":
-//                $.get('/api/v1/download',{ id:id , name:name , ext:ext }, function(data){
-//                    //console.log(data);
-//                    NProgress.done();
-//                });
-//                break;
-//            default:
-//                NProgress.start();
-//                $.get('/api/v1/fs',{ id:id }, function(data) {
-//                    console.log(data);
-//                    self.editorObject.session.setValue(data);
-//                    NProgress.done();
-//                });
-//        }
-//    };
-//
 
 </script>
