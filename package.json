@@ -15,6 +15,7 @@
     "ejs": "2.5.6",
     "express": "^4.12.3",
     "express-session": "~1.0.0",
+    "express-zip": "^2.0.1",
     "hbs": "~3.1.0",
     "jsonfile": "^2.3.1",
     "lineder": "^0.1.1",
