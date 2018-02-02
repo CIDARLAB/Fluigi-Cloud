@@ -34,7 +34,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/js/bootstrap-tour.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-    <script type="text/javascript" src="../javascripts/svg-pan-zoom.min.js"></script>
+    <script type="text/javascript" src="../javascripts/specifyDesign/svg-pan-zoom.min.js"></script>
 
     <!--Local files-->
 
@@ -69,7 +69,12 @@
                 "hideEasing": "linear",
                 "showMethod": "fadeIn",
                 "hideMethod": "fadeOut"
-            }
+            };
+            var editor_specify;
+            var mint_sesh;      //= ace.createEditSession('mint',"ace/mode/mint");
+            var verilog_sesh;   // = ace.createEditSession('verilog',"ace/mode/verilog");
+            var json_sesh ;     // = ace.createEditSession('json',"ace/mode/json");
+            var ini_sesh;       //= ace.createEditSession('ini',"ace/mode/ini");
     </script>
 
     <style>
@@ -151,7 +156,6 @@
                         <div class="panel-heading">
 
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <!--<button type="button" class="btn btn-success" data-bind="click: initEditor"> Start Editor </button>-->
                                         <button type="button" class="btn btn-secondary btn-success" data-bind="click: saveFile"> Save </button>
                                         <button type="button" class="btn btn-secondary btn-info" data-toggle="modal" data-target="#selectConfig"> Compile </button>
                                         <button type="button" class="btn btn-secondary btn-danger" data-bind="click: deleteFile"> Delete </button>
@@ -159,7 +163,6 @@
 
                                     </div>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <!--<button type="button" class="btn btn-success" data-bind="click: initEditor"> Start Editor </button>-->
 
                                         <a href="#new_workspace" class="btn btn-secondary" data-target="#new_workspace" data-toggle="modal"><i class="fa fa-plus-square"></i> New Workspace <span class="fa plus-square-o"></span></a>
                                         <a href="#new_file" class="btn btn-secondary" data-target="#new_file" data-bind="visible: currentWorkSpaceName" data-toggle="modal"><i class="fa fa-plus-square"></i> New File <span class="fa plus-square"></span></a>
@@ -191,7 +194,6 @@
                     {{>terminal}}
                 </div>
                 <script src="/javascripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-
                 {{>newFileModal}}
                 {{>newWorkspace}}
             </div>
@@ -204,7 +206,7 @@
 <script src="/javascripts/styles/jquery.mousewheel.min.js"></script>
 <link href="/javascripts/styles/jquery.terminal-0.10.12.min.css" rel="stylesheet"/>
 
-    <script type="text/javascript">
+<script type="text/javascript">
         $(document).ready(function() {
             Terminal = $('#terminal').terminal(function(command, term) {
                 if (command !== '') {
@@ -227,7 +229,7 @@
         });
     </script>
 
-    </html>
+</html>
 
     <style type="text/css">
 
@@ -307,7 +309,6 @@
     </style>
 
 <div id="compileModal" >
-
     {{> compileModal }}
 </div>
 
@@ -331,6 +332,13 @@
     //This signals the end of the output
     socket.on('EOP', function(data){
         //TODO: Figure out how to close the monitoring
+        editorViewModel.updateJobs();
+        setTimeout(function() {
+            //self.jobs()[0]
+            editorViewModel.setAsCurrentJob(editorViewModel.currentJob());
+        },1000);
+
+
         console.log(data);
     });
 
@@ -526,18 +534,52 @@
             self.currentWorkSpace(workspace);
             self.currentWorkSpaceName(workspace.name);
             self.updateFiles();
+            setTimeout(function()
+            {
+                console.log("Setting the first file in current workspace");
+                var setfile_index = 0;
+                for (var j = 0; j < (self.files()).length; j++) {
+                    if ( !( typeof (self.files()[j]) === 'undefined' ) && ( j === setfile_index) ) {
+                        self.setAsCurrentFile(self.files()[j]);
+                    }
+                }
+            }, 750);
         };
 
         self.setAsCurrentJob = function(job){
-            self.currentJob(job);
-            self.currentJobName(job.name);
-            self.updateJobFiles();
+            if ( !( typeof job === 'undefined' ) ) {
+                self.currentJob(job);
+                self.currentJobName(job.name);
+                self.updateJobFiles();
+            }
         };
 
         self.setAsCurrentFile = function(file){
-            self.currentFile(file);
-            self.currentFileName(file.name);
-            self.loadFile(file.id , file.ext)
+            if ( !( typeof file === 'undefined' ) ) {
+                self.currentFile(file);
+                self.currentFileName(file.name);
+                self.loadFile(file.id, file.ext, file.name);
+
+                switch (file.ext)
+                {
+                    case '.v':
+                        self.editorObject = {editor: editor_specify, session: verilog_sesh};
+                        editor_specify.setSession(verilog_sesh);
+                        break;
+                    case '.uf':
+                        self.editorObject = {editor: editor_specify, session: mint_sesh};
+                        editor_specify.setSession(mint_sesh);
+                        break;
+                    case '.json':
+                        self.editorObject = {editor: editor_specify, session: json_sesh};
+                        editor_specify.setSession(json_sesh);
+                        break;
+                    case '.ini':
+                        editor_specify.setSession(ini_sesh);
+                        self.editorObject = {editor: editor_specify, session: ini_sesh};
+                        break;
+                }
+            }
         };
 
         self.setAsCurrentJobFile = function(jobFile){
@@ -548,38 +590,36 @@
 
             //TODO: using jobFile.link, pull svg from s3, and then display it!
 
-            self.loadFile(jobFile.id , jobFile.ext)
+            self.loadFile(jobFile.id , jobFile.ext, jobFile.name)
         };
 
-        self.loadFile = function(id, ext){
+
+        self.loadFile = function(id, ext, name){
             if(id == null){
-                console.error("Link for loading the file is null");
+                console.error("Link for downloading the file is null");
                 return;
             }
             switch(ext) {
                 case ".svg":
-                    //TODO: How to load the SVG ?
-                    $.get('/api/v1/fs',{ id:id }, function(data){
-                        //TODO: Load svg to a div
-                        console.log(data);
+                    $.get('/api/v1/download',{ id:id , name:name , ext:ext }, function(data){
+                        var downloadPath = window.location.origin + '/api/v1/download' + '?id=' + id + '&name=' + name + '&ext=' + ext;
+                        window.open(downloadPath,'_blank');
                         NProgress.done();
-                        document.getElementById('solution_viewer').innerHTML = data;
                     });
-                    window.open((self.currentJobFile()).link, '_blank');
                     break;
                 case ".eps":
-                    //TODO: How to load the EPS ?
-                    window.open((self.currentJobFile()).link, '_blank');
+                    $.get('/api/v1/download',{ id:id , name:name , ext:ext }, function(data){
+                        var downloadPath = window.location.origin + '/api/v1/download' + '?id=' + id + '&name=' + name + '&ext=' + ext;
+                        window.open(downloadPath,'_blank');
+                        NProgress.done();
+                    });
                     break;
                 default:
-                    //TODO: Load the text file
-                    //self.editorText();
                     NProgress.start();
-                    $.get('/api/v1/fs',{ id:id }, function(data){
-                        //TODO: Load this into ace
+                    $.get('/api/v1/fs',{ id:id }, function(data) {
                         console.log(data);
-                        NProgress.done();
                         self.editorObject.session.setValue(data);
+                        NProgress.done();
                     });
             }
         };
@@ -653,8 +693,9 @@
                     },
                     function(response){
                         //TODO - Connect to fluigicad's console output based on job id.
+                        console.log("jobid: " + response);
+                        self.setAsCurrentWorkSpace(self.currentWorkSpace());
                         NProgress.done();
-                        console.log(response);
                     });
 
         };
@@ -673,9 +714,10 @@
                     },
                     function(response){
                         //TODO - Connect to fluigicad's console output based on job id.
-                        NProgress.done();
                         console.log("jobid: " + response);
                         socket.emit('monitor', response);
+                        NProgress.done();
+                        //self.setAsCurrentWorkSpace(self.currentWorkSpace());
                     });
         };
 
@@ -686,7 +728,7 @@
             switch (currentfile.ext){
                 case ".uf":
                     console.log("Config file :" + currentconfigfile.ext);
-                    if(!(".ini" === currentconfigfile.ext)){
+                    if(!(".INI" === currentconfigfile.ext || ".ini" === currentconfigfile.ext )){
                         toastr.error("Invalid Configuration File");
                         return;
                     }
@@ -694,7 +736,7 @@
                     break;
                 case ".v":
                     console.log("Config file :" + currentconfigfile.ext);
-                    if(!(".JSON" === currentconfigfile.ext )){
+                    if(!(".JSON" === currentconfigfile.ext || ".json" === currentconfigfile.ext )){
                         toastr.error("Invalid Configuration File");
                         return;
                     }
@@ -707,7 +749,7 @@
             //TODO: Make the sessions more atomic keeping track of each of the files that being edited.
 
             ////Initializing the editor//////
-            var editor_specify = ace.edit("editor_specify");
+            editor_specify = ace.edit("editor_specify");
             editor_specify.setTheme("ace/theme/crimson_editor");
             editor_specify.setOptions({
                 fontFamily: "monospace",
@@ -716,28 +758,42 @@
             var MainSession = ace.createEditSession('MainSession', "ace/mode/verilog");
             editor_specify.setSession(MainSession);
 
-            self.editorObject = {editor: editor_specify, session: MainSession};
+            mint_sesh       = ace.createEditSession('mint_sesh',"ace/mode/mint");
+            verilog_sesh    = ace.createEditSession('verilog_sesh',"ace/mode/verilog");
+            json_sesh       = ace.createEditSession('json_sesh',"ace/mode/json");
+            ini_sesh        = ace.createEditSession('ini_sesh',"ace/mode/ini");
 
+            self.editorObject = {editor: editor_specify, session: MainSession};
         };
 
         self.initPage = function(){
             self.updateWorkSpaces();
             self.updateJobs();
             self.initEditor();
-            setTimeout(function(){
-                var setid = getUrlParameter("id");
-                console.log("ids: " + self.workSpaceIDs());
-                console.log("job_ids: " + self.jobIDs());
-                if(containsObject(setid, self.workSpaceIDs()))
-                {
-                    console.log("Setting the current workspace: " +  setid);
-                    for (var i = 0; i < (self.workSpaces()).length; i++) {
-                        if (((self.workSpaces())[i]).id === setid) {
-                            self.setAsCurrentWorkSpace((self.workSpaces())[i]);
-                        }
+            setTimeout(function()
+            {
+                var setindex_workspace = 0;
+                var setjob_index       = 0;
+                var setfile_index      = 0;
+                console.log("Setting the first workspace");
+                for (var i = 0; i < (self.workSpaces()).length; i++) {
+                    if ( !( typeof (self.workSpaces()[i]) === 'undefined' ) && ( i === setindex_workspace) )  {
+                        self.setAsCurrentWorkSpace((self.workSpaces())[i]);
                     }
                 }
-                self.setAsCurrentJob((self.jobs()[0]));
+                //self.updateFiles();
+                if ( !( typeof (self.jobs()[setjob_index ]) === 'undefined' ) ) {
+                    self.setAsCurrentJob((self.jobs()[setjob_index]));
+                }
+                setTimeout(function()
+                {
+                    console.log("Setting the first file in current workspace");
+                    for (var j = 0; j < (self.files()).length; j++) {
+                        if ( !( typeof (self.files()[j]) === 'undefined' ) && ( j === setfile_index) ) {
+                            self.setAsCurrentFile(self.files()[j]);
+                        }
+                    }
+                }, 1000);
             }, 1000);
         };
     }
@@ -746,4 +802,5 @@
     ko.applyBindings(editorViewModel);
 
     editorViewModel.initPage();
+
 </script>

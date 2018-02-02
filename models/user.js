@@ -25,15 +25,13 @@ userSchema.methods.validPassword = function(password)
 
 userSchema.methods.generateWorkspaces_and_updateSchema = function generateWorkspaces_and_updateSchema(user)
 {
-
     var Workspace   = require('../models/workspace');
 
-    var playgroudworkspace = new Workspace();
-    playgroudworkspace.name = 'Playground';
-    playgroudworkspace.save();
-    playgroudworkspace.generateFiles_and_updateSchema(playgroudworkspace);
-    user.workspaces.push(playgroudworkspace._id);
-
+    var defaultworkspace = new Workspace();
+    defaultworkspace.name = 'Default';
+    defaultworkspace.save();
+    defaultworkspace.generateEmptyFiles_and_updateSchema(defaultworkspace);
+    user.workspaces.push(defaultworkspace._id);
 
     var microfluidicexamples = new Workspace();
     microfluidicexamples.name = "Microfluidic Examples";
@@ -42,7 +40,6 @@ userSchema.methods.generateWorkspaces_and_updateSchema = function generateWorksp
     user.workspaces.push(microfluidicexamples._id);
 
     user.save();
-
 };
 
 userSchema.methods.createJob = function createJob(next)
