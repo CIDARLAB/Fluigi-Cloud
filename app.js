@@ -70,8 +70,7 @@ app.use(function(req, res, next) {
 {
     app.get('/', viewsController.openHomePage);
     app.get('/assembly', isLoggedIn, viewsController.openAssemblyPage);
-    app.get('/build', isLoggedIn, viewsController.openBuildPage);
-    app.get('/help', isLoggedIn, viewsController.openHelpPage);
+    //app.get('/help', isLoggedIn, viewsController.openHelpPage);
     app.get('/control', isLoggedIn, viewsController.openControlPage);
     app.get('/specify', isLoggedIn, viewsController.openSpecifyPage);
     app.get('/design', isLoggedIn, viewsController.openDesignPage);
@@ -149,21 +148,22 @@ app.use(function(req, res, next) {
 
 app.listen(8080, function(){console.log("Starting application")});
 
-/**************** SOCKETIO-REDIS ****************/
-var io = require('socket.io')(3000);
-var redis = require('socket.io-redis');
-io.adapter(redis({ host: process.env['NEPTUNE_REDIS_HOST'], port: process.env['NEPTUNE_REDIS_PORT'] }));
+// /**************** SOCKETIO-REDIS ****************/
+// var io = require('socket.io')(3000);
+// var redis = require('socket.io-redis');
+// io.adapter(redis({ host: process.env['NEPTUNE_REDIS_HOST'], port: process.env['NEPTUNE_REDIS_PORT'] }));
 
-io.sockets.on('connection', function(socket) {
-    console.log('A new socket connection has started');
-    socket.on('all', function(data) {
-        socket.broadcast.emit('message', data);
-    });
+// io.sockets.on('connection', function(socket) {
+//     console.log('A new socket connection has started');
+//     socket.on('all', function(data) {
+//         socket.broadcast.emit('message', data);
+//     });
+//
+//     //On the monitor event, join an ongoing job's channel
+//     //TODO: Need to check if this belongs to the user
+//     socket.on('monitor', function (jobid) {
+//         console.log('job: ' + jobid + ' is now being monitored');
+//         socket.join(jobid);
+//     })
+// });
 
-    //On the monitor event, join an ongoing job's channel
-    //TODO: Need to check if this belongs to the user
-    socket.on('monitor', function (jobid) {
-        console.log('job: ' + jobid + ' is now being monitored');
-        socket.join(jobid);
-    })
-});

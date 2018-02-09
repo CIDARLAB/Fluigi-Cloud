@@ -41,13 +41,14 @@
     <p>Jump to Page</p>
     <ul class="nav " id="links">
         <li>
+            <a href="../profile"><i class="fa fa-user"></i> Dashboard </a>
+        </li>
+        <li>
             <a href="../specify"><i class="fa fa-pencil-square-o  fa-fw"></i> Editor </a>
         </li>
+
         <li>
-            <a href="../build"><i class="fa fa-wrench" aria-hidden="true"></i> Build</a>
-        </li>
-        <li>
-            <a href="../assembly"><i class="fa fa-briefcase" aria-hidden="true"></i> Assembly</a>
+            <a href="../assembly"><i class="fa fa-briefcase" aria-hidden="true"></i> Build</a>
         </li>
         <li>
             <a href="../control"><i class="fa fa-bars" aria-hidden="true"></i> Control</a>
@@ -166,10 +167,9 @@
                                                 <!--</p>-->
                                             </div>
                                             <div class="timeline-body" >
-                                                <p> To begin creating a microfluidic chip, you have multiple options: </p>
-                                                <p> 1) Start from scratch: Begin with the "specify" section of the workflow, where you can describe the functionality you want your microfluidic to achieve by writing an LFR file.</p>
-                                                <p> 2) Already have an LFR file? Or maybe a MINT file? In the "design" section of the workflow, you can use these files to generate a schematic of your device, represented as JSON and SVG files. </p>
-                                                <p> 3) Have a design schematic ready? Move to the "build" section of the workflow to fabricate your device; in this stage you can also munipulate the valves and fluid flow in your chip. </p>
+                                                <p> To begin creating a microfluidic chip, there are multiple options: </p>
+                                                <p> 1) Start from scratch: Begin with the "editor" section of the workflow, where you can describe the functionality you want your microfluidic to achieve by writing an LFR file.</p>
+                                                <p> 3) Have a design schematic ready? Move to the "Build" section of the workflow to fabricate your device; in this stage you can also manipulate the valves and fluid flow in your chip. </p>
                                             </div>
                                         </div>
                                     </li>
@@ -180,11 +180,11 @@
                                         </div>
                                         <div class="timeline-panel" id="specify_box">
                                             <div class="timeline-heading">
-                                                <h4 class="timeline-title" style="font-size: 20px;"> Specify </h4>
+                                                <h4 class="timeline-title" style="font-size: 20px;"> Editor </h4>
                                             </div>
                                             <div class="timeline-body">
-                                                <p> Specify the function of your microfluidic chip through a high level description of liquid flow relations by creating an LFR file at the SPECIFY stage of the workflow. </p>
-                                                <p> This LFR file will then be compiled to a design schematic in the DESIGN stage of the workflow.</p>
+                                                <p> Specify the function of your microfluidic chip through a high level description of liquid flow relations by creating an LFR file </p>
+                                                <p> This LFR file will then be compiled to a design schematic which you can then compile to produce a final design file.</p>
                                             </div>
                                         </div>
                                     </li>
@@ -195,57 +195,30 @@
                                         </div>
                                         <div class="timeline-panel" id="design_box">
                                             <div class="timeline-heading">
-                                                <h4 class="timeline-title" style=" font-size: 20px;"> Design </h4>
+                                                <h4 class="timeline-title" style=" font-size: 20px;"> Build </h4>
                                             </div>
                                             <div class="timeline-body" >
-                                                <p> Generate a design schematic of your microfluidic chip. You can use an LFR file from the SPECIFY section of the workflow to compile a design schematic. </p>
-                                                <p> Alternatively, you can manually define a design schematic by writing a MINT netlist file here. </p>
-                                                <p> Your design schematic will be output as a SVG and JSON file; in the BUILD and VERIFY workflow stage you can use these files to fabricate your chip.</p>
+                                                <p> Fabricate your microfluidic chip, your hardware setup, and your firmware for control.
+                                                    Once this is complete, you will then be able to run your experiments and control.</p>
                                             </div>
                                         </div>
                                     </li>
 
                                     <!-- Build -->
                                     <li class="timeline-inverted">
-                                        <div class="timeline-badge build"><i class="fa fa-wrench" aria-hidden="true" style="color: white;"></i> <!-- class: draws circle; i: adds image to circle -->
+                                        <div class="timeline-badge build"><i class="fa fa-bars" aria-hidden="true" style="color: white;"></i> <!-- class: draws circle; i: adds image to circle -->
                                         </div>
                                         <div class="timeline-panel" id="build_box">
                                             <div class="timeline-heading">
-                                                <h4 class="timeline-title" style="font-size: 20px;"> Build </h4>
-                                            </div>
-                                            <div class="timeline-body">
-                                                <p> Build your setup of the hardware. Specify the precision you require for the servos and syringes, and receive a custom product list for your experiments.</p>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <!--Assembly-->
-                                    <li class="timeline">
-                                        <div class="timeline-badge assembly"><i class="fa fa-briefcase" aria-hidden="true" style="color: white;"></i> <!-- class: draws circle; i: adds image to circle -->
-                                        </div>
-                                        <div class="timeline-panel" id="assembly_box">
-                                            <div class="timeline-heading">
-                                                <h4 class="timeline-title" style="font-size: 20px;"> Assembly </h4>
-                                            </div>
-                                            <div class="timeline-body" >
-                                                <p> Assemble all the hardware including CNC milling out the microfluidic chip, and 3D printing parts. </p>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <!--Control-->
-                                    <li class="timeline-inverted">
-                                        <div class="timeline-badge control"><i class="fa fa-bars" aria-hidden="true" style="color: white;"></i> <!-- class: draws circle; i: adds image to circle -->
-                                        </div>
-                                        <div class="timeline-panel" id="control_box">
-                                            <div class="timeline-heading">
                                                 <h4 class="timeline-title" style="font-size: 20px;"> Control </h4>
                                             </div>
-                                            <div class="timeline-body" >
-                                                <p> Verify the functionality of your device here by controlling your pump and valve infrastructure through the user interface. </p>
+                                            <div class="timeline-body">
+                                                <p> Verify the functionality of your device here by controlling your pump and valve infrastructure through the user interface.</p>
                                             </div>
                                         </div>
                                     </li>
+
+
 
                                     <!-- DONE -->
                                     <li>
@@ -256,10 +229,8 @@
                                                 <h4 class="timeline-title" style=" font-size: 20px;"> Done! </h4>
                                             </div>
                                             <div class="timeline-body" >
-                                                <p> Congratulations! Support other researchers in the field of synthetic biology by sharing your microfluidic design schematic on GitHub!</p>
-                                                <p> Questions, comments, or suggestions? Reach out to us at bu.igemhw2016@gmail.com </p>
-                                                <p> If you would like to support this project, learn more about us on GitHub, visit our webpage at CIDARlab.org, or visit our documentation on the iGEM wiki.</p>
-                                            </div>
+                                                <p> Questions, comments, or suggestions? Reach out to us at cidarlab.org </p>
+                                               </div>
                                         </div>
                                     </li>
 
