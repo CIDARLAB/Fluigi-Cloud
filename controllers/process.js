@@ -16,7 +16,7 @@ var Job         = require('../models/job');
 //var REDIS_HOST = ;
 //var REDIS_PORT = ]process.env['NEPTUNE_REDIS_PORT';
 //console.log("Redis host + port"+REDIS_HOST+  REDIS_PORT);
-//var io_emitter = require('socket.io-emitter')({ host: process.env['NEPTUNE_REDIS_HOST'], port: process.env['NEPTUNE_REDIS_PORT'] });
+var io_emitter = require('socket.io-emitter')({ host: process.env['NEPTUNE_REDIS_HOST'], port: process.env['NEPTUNE_REDIS_PORT'] });
 
 exports.compile = function(req, res)
 {

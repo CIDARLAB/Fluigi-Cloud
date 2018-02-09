@@ -6,8 +6,8 @@ exports.openHomePage = function(req, res) {
     res.render('index', {title: 'Neptune', user:req.user});
 };
 
-exports.openAssemblyPage = function (req, res){
-    res.render('assembly', {title: 'Assembly', user: req.user});
+exports.openBuildPage = function (req, res){
+    res.render('build', {title: 'Build', user: req.user});
 };
 
 exports.openControlPage = function(req, res) {
