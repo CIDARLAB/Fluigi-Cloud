@@ -43,7 +43,7 @@ jspm_packages
 .idea/*
 
 # JAR Files
-.jobs/*
+jobs/*
 
 
 # Temp download folder
@@ -53,3 +53,4 @@ jspm_packages
 # Preloaded content
 .content/*
 
+tmp_*

@@ -1,4 +1,3 @@
-
 var File = require('../models/file');
 var AWS = require('aws-sdk');
 var s3 = new AWS.S3();
@@ -32,7 +31,7 @@ module.exports.downloadFile = function(req, res) {
         res.attachment(data.name);
         s3.getObject({
             Bucket: process.env['NEPTUNE_S3_BUCKET_ID'],
-            Key: fileid                  //data.id
+            Key: fileid //data.id
         }).createReadStream().pipe(res);;
     });
 

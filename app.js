@@ -4,15 +4,15 @@ var app = express();
 var dotenv = require('dotenv');
 dotenv.load();
 
-var mongoose     = require('mongoose');             //MongoDB object modeling tool
-var passport     = require('passport');             //Handles users and login
-var flash        = require('connect-flash');
-var cookieParser = require('cookie-parser');        //Parses cookies
-var bodyParser   = require('body-parser');
-var fs           = require('fs');
-var morgan       = require('morgan');
-var session      = require('express-session');
-var MongoStore   = require('connect-mongo')(session);
+var mongoose = require('mongoose'); //MongoDB object modeling tool
+var passport = require('passport'); //Handles users and login
+var flash = require('connect-flash');
+var cookieParser = require('cookie-parser'); //Parses cookies
+var bodyParser = require('body-parser');
+var fs = require('fs');
+var morgan = require('morgan');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 
 global.Neptune_ROOT_DIR = __dirname;
 
@@ -59,12 +59,12 @@ app.use(function(req, res, next) {
 
 /**************** CONTROLLERS ****************/
 {
-    var viewsController             = require('./controllers/views');
-    var compileController           = require('./controllers/process');
-    var databaseController          = require('./controllers/databaseInterface');
-    var AWS_S3_Controller           = require('./controllers/AWS_S3');
-    var downloadController          = require('./controllers/download');
-    var filesystemController        = require('./controllers/filesystem');
+    var viewsController = require('./controllers/views');
+    var compileController = require('./controllers/process');
+    var databaseController = require('./controllers/databaseInterface');
+    var AWS_S3_Controller = require('./controllers/AWS_S3');
+    var downloadController = require('./controllers/download');
+    var filesystemController = require('./controllers/filesystem');
 }
 
 /*********************   VIEWS   *********************/
@@ -79,20 +79,21 @@ app.use(function(req, res, next) {
     app.get('/signup', viewsController.openSignupPage);
     app.get('/login', viewsController.openLoginPage);
     app.get('/profile', isLoggedIn, viewsController.openProfilePage);
-    app.get('/logout', function(req, res) {req.logout(); res.redirect('/');});
+    app.get('/logout', function(req, res) { req.logout();
+        res.redirect('/'); });
 
     // process the login form
     app.post('/login', passport.authenticate('local-login', {
-        successRedirect : '/profile', // redirect to the secure profile section
-        failureRedirect : '/login', // redirect back to the signup page if there is an error
-        failureFlash : true // allow flash messages
+        successRedirect: '/profile', // redirect to the secure profile section
+        failureRedirect: '/login', // redirect back to the signup page if there is an error
+        failureFlash: true // allow flash messages
     }));
 
     // process the signup form
     app.post('/signup', passport.authenticate('local-signup', {
-        successRedirect : '/profile', // redirect to the secure profile section
-        failureRedirect : '/signup', // redirect back to the signup page if there is an error
-        failureFlash : true // allow flash messages
+        successRedirect: '/profile', // redirect to the secure profile section
+        failureRedirect: '/signup', // redirect back to the signup page if there is an error
+        failureFlash: true // allow flash messages
     }));
 
     // route middleware to ensure user is logged in
@@ -106,10 +107,10 @@ app.use(function(req, res, next) {
 /************** Mongoose DataBase Calls **************/
 {
     app.post('/api/Create_User', databaseController.Create_User);
-    app.post('/api/Update_User',databaseController.Update_User);
-    app.post('/api/Update_User_cs',databaseController.Update_User_cs);
+    app.post('/api/Update_User', databaseController.Update_User);
+    app.post('/api/Update_User_cs', databaseController.Update_User_cs);
     app.post('/api/Query_User', databaseController.Query_User);
-    app.post('/api/Delete_User',databaseController.Delete_User);
+    app.post('/api/Delete_User', databaseController.Delete_User);
 
     app.get('/api/v1/workspaces', databaseController.getWorkspaces);
     app.get('/api/v1/jobs', databaseController.getJobs);
@@ -139,15 +140,15 @@ app.use(function(req, res, next) {
 
 /**************** USHROOM MAPPER & FLUIGI ****************/
 {
-    app.post('/api/v1/mushroommapper',[AWS_S3_Controller.preMMFileTransfer,compileController.translate]);
-    app.post('/api/v1/fluigi',        [AWS_S3_Controller.preFluigiFileTransfer,compileController.compile]);
+    app.post('/api/v1/mushroommapper', [AWS_S3_Controller.preMMFileTransfer, compileController.translate]);
+    app.post('/api/v1/fluigi', [AWS_S3_Controller.preFluigiFileTransfer, compileController.compile]);
 }
 
 /*******************************************************/
 
 /*******************************************************/
 
-app.listen(8080, function(){console.log("Starting application")});
+app.listen(8080, function() { console.log("Starting application") });
 
 /**************** SOCKETIO-REDIS ****************/
 var io = require('socket.io')(3000);
@@ -162,7 +163,7 @@ io.sockets.on('connection', function(socket) {
 
     //On the monitor event, join an ongoing job's channel
     //TODO: Need to check if this belongs to the user
-    socket.on('monitor', function (jobid) {
+    socket.on('monitor', function(jobid) {
         console.log('job: ' + jobid + ' is now being monitored');
         socket.join(jobid);
     })

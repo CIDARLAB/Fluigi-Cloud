@@ -4,23 +4,22 @@ var File = require('../models/file');
 
 var workspaceSchema = new Schema({
     name: String,
-    specify_files:  { type: [String], required: false },
-    design_files:   { type: [String], required: false },
+    specify_files: { type: [String], required: false },
+    design_files: { type: [String], required: false },
     solution_files: { type: [String], required: false },
-    other_files:    { type: [String], required: false },
+    other_files: { type: [String], required: false },
     created_at: Date,
     updated_at: Date
 });
 
-workspaceSchema.methods.createFile = function createFile(filename, ext)
-{
+workspaceSchema.methods.createFile = function createFile(filename, ext) {
 
     var newfile = new File();
     newfile.name = filename;
     newfile.file_extension = ext;
     newfile.save();
     newfile.createAndUploadDefaultS3File();
-    switch (ext){
+    switch (ext) {
         case ".v":
             this.specify_files.push(newfile._id);
             break;
@@ -39,8 +38,7 @@ workspaceSchema.methods.createFile = function createFile(filename, ext)
     this.save();
 };
 
-workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_and_updateSchema()
-{
+workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_and_updateSchema() {
     var newfile = new File();
     newfile.name = 'LFR_example.v';
     newfile.file_extension = '.v';
@@ -72,8 +70,7 @@ workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_
     this.save();
 };
 
-workspaceSchema.methods.generateEmptyFiles_and_updateSchema = function generateFiles_and_updateSchema()
-{
+workspaceSchema.methods.generateEmptyFiles_and_updateSchema = function generateFiles_and_updateSchema() {
     var newfile = new File();
     newfile.name = 'new_LFR.v';
     newfile.file_extension = '.v';
@@ -106,15 +103,14 @@ workspaceSchema.methods.generateEmptyFiles_and_updateSchema = function generateF
     this.save();
 };
 
-workspaceSchema.pre('save', function(next)
-{
-    this.set("_id", mongoose.Types.ObjectId(this._id), {strict: false});
+workspaceSchema.pre('save', function(next) {
+    this.set("_id", mongoose.Types.ObjectId(this._id), { strict: false });
 
     // Save date of creation
-    var currentDate = new Date();       // Get the current date
-    this.updated_at = currentDate;      // Change the updated_at field to current date
+    var currentDate = new Date(); // Get the current date
+    this.updated_at = currentDate; // Change the updated_at field to current date
     if (!this.created_at)
-        this.created_at = currentDate;  // If created_at doesn't exist, add to that field
+        this.created_at = currentDate; // If created_at doesn't exist, add to that field
 
     next();
 });

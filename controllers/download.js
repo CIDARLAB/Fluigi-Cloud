@@ -1,31 +1,31 @@
-var exports     = module.exports;
-var express     = require('express');
-var cmd         = require('node-cmd');
-var path        = require('path');
-var mkdirp      = require('mkdirp');
-var jsonfile    = require('jsonfile');
-var mongoose    = require('mongoose');
-var fs          = require('fs');
-var AWS         = require('aws-sdk');
-var remove      = require('rimraf');
-var User        = require('../models/user');
-var Workspace   = require('../models/workspace');
-var File        = require('../models/file');
-var Job         = require('../models/job');
-var zip         = require('express-zip');
+var exports = module.exports;
+var express = require('express');
+var cmd = require('node-cmd');
+var path = require('path');
+var mkdirp = require('mkdirp');
+var jsonfile = require('jsonfile');
+var mongoose = require('mongoose');
+var fs = require('fs');
+var AWS = require('aws-sdk');
+var remove = require('rimraf');
+var User = require('../models/user');
+var Workspace = require('../models/workspace');
+var File = require('../models/file');
+var Job = require('../models/job');
+var zip = require('express-zip');
 
 AWS.config.update({
     accessKeyId: process.env['NEPTUNE_AWSID'],
     secretAccessKey: process.env['NEPTUNE_AWSKEY']
 });
 
-var s3          = new AWS.S3();
+var s3 = new AWS.S3();
 
-exports.downloadFile = function(req,res){
+exports.downloadFile = function(req, res) {
 
-    var Target_Object_KEY   = req.query.id.toString();
-    var Target_BUCKET_ID    = process.env['NEPTUNE_S3_BUCKET_ID'];
-    var fileName            = req.query.name.toString();
+    var Target_Object_KEY = req.query.id.toString();
+    var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
+    var fileName = req.query.name.toString();
 
     var Parameters = {
         Bucket: Target_BUCKET_ID,
@@ -34,15 +34,14 @@ exports.downloadFile = function(req,res){
         ResponseContentType: 'string/utf-8'
     };
 
-    var filepath = path.join(global.Neptune_ROOT_DIR, "downloads",fileName);
+    var filepath = path.join(global.Neptune_ROOT_DIR, "downloads", fileName);
 
     fs.closeSync(fs.openSync(filepath, 'w'));
-    s3.getObject(Parameters,function(error,data){
+    s3.getObject(Parameters, function(error, data) {
         var fd = fs.openSync(filepath, 'w+');
         fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
-        fs.close(fd,function()
-        {
-            res.download(filepath, fileName, function (err) {
+        fs.close(fd, function() {
+            res.download(filepath, fileName, function(err) {
                 if (err) {
                     console.log("File Download Error");
                     console.log(err);
