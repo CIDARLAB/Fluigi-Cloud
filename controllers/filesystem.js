@@ -8,7 +8,7 @@ module.exports.downloadFile = function(req, res) {
     var fileid = req.query.id;
     // var fileid = "5dc2505f9d8bd6543091b665";
     if (null == fileid) { res.sendStatus(400) }
-    console.log("requesting file id: " + fileid);
+    console.log("XXX requesting file id: " + fileid);
 
     // res.send({ id: data._id, name: data.name, ext: data.file_extension, link: data.S3_path });
     // res.attachment("data.name");

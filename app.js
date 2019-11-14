@@ -64,6 +64,7 @@ app.use(function(req, res, next) {
     var databaseController          = require('./controllers/databaseInterface');
     var AWS_S3_Controller           = require('./controllers/AWS_S3');
     var downloadController          = require('./controllers/download');
+    var filesystemController        = require('./controllers/filesystem');
 }
 
 /*********************   VIEWS   *********************/
@@ -128,8 +129,7 @@ app.use(function(req, res, next) {
 
     app.get('/api/v1/job', databaseController.getJob);
 
-
-    app.get('/api/v1/download',downloadController.downloadFile);
+    app.get('/api/v1/downloadFile', filesystemController.downloadFile);
 }
 
 /************** Redirects **************/
