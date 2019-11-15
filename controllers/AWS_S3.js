@@ -14,6 +14,10 @@ var fs = require('fs');
 //var s3s         = require('s3-streams');
 var AWS = require('aws-sdk');
 var db = require('./databaseInterface');
+var Job = require('../models/job');
+var User = require('../models/user');
+var Workspace = require('../models/workspace');
+
 
 AWS.config.update({
     accessKeyId: process.env['NEPTUNE_AWSID'],
@@ -247,8 +251,6 @@ exports.preMMFileTransfer = function(req, res, next) {
 
 };
 exports.preFluigiFileTransfer = function(req, res, next) {
-    var User = require('../models/user');
-    var Workspace = require('../models/workspace');
 
     var Target_Bucket_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
 
@@ -273,49 +275,63 @@ exports.preFluigiFileTransfer = function(req, res, next) {
         ResponseContentType: 'string/utf-8'
     };
 
-    User.findOne({ 'local.email': email }, function(err, user) {
+    // Created job model, and updates user with id of new object.
+    var newJob = new Job();
+    newJob.name = '';
+    newJob.save();
 
-        if (err) { console.error(err); throw err; }
-        console.log("FOUND THE USER...");
-        user.createJob(function callback(id) {
-            console.log("JOB ID:", id);
-            // user.jobs.push(id.toString());
-            // user.save(function(err) {
-            //     if (err) { console.error(err); return next(err); }
-            // });
-            var jobdir = './jobs/tmp__' + id;
-            var max = 10000;
-            var min = 1;
-            var nameid = Math.floor(Math.random() * (max - min + 1)) + min;
-            var jobname = 'Fluigi_job_' + nameid;
-            req.body.jobid = id.toString();
-
-            var update = { body: { workspace_id: workspace_id, update: id, update_type: 'add_job' } };
-            db.Update_Workspace(update);
-
-            if (!fs.existsSync(jobdir)) {
-                fs.mkdirSync(jobdir);
-            } else {
-                console.log('ERROR: Unique Dir Already Exists!');
+    User.findOneAndUpdate(
+        {   
+            'local.email':email 
+        },
+        {
+            $push: {jobs: newJob._id}
+        },
+        {
+            'new':true
+        },
+        function(err, user) {
+        
+            if (err) { 
+                console.error(err); 
+                throw err; 
             }
+        console.log("FOUND and updated THE USER...");
+    });
 
-            var path1 = path.join(global.Neptune_ROOT_DIR, jobdir, mintname);
-            s3.getObject(Parameters_mint, function(error, data) {
-                var fd = fs.openSync(path1, 'w+');
-                fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
-                fs.closeSync(fd);
+    var jobdir = './jobs/tmp__' + newJob._id;
+    console.log("Directory that is being created:", jobdir);
+    var max = 10000;
+    var min = 1;
+    var nameid = Math.floor(Math.random() * (max - min + 1)) + min;
+    var jobname = 'Fluigi_job_' + nameid;
+    req.body.jobid = newJob._id.toString();
+    req.body.jobdir = jobdir;
 
-                var path2 = path.join(global.Neptune_ROOT_DIR, jobdir, ininame);
-                s3.getObject(Parameters_ini, function(error, data) {
-                    var fd = fs.openSync(path2, 'w+');
-                    fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
-                    fs.closeSync(fd);
+    var update = { body: { workspace_id: workspace_id, update: newJob._id, update_type: 'add_job' } };
+    db.Update_Workspace(update);
 
-                    req.body.jobdir = jobdir;
-                    req.body.jobname = jobname;
-                    next();
-                });
-            });
+    if (!fs.existsSync(jobdir)) {
+        fs.mkdirSync(jobdir);
+    } else {
+        console.log('ERROR: Unique Dir Already Exists!');
+    }
+
+    var path1 = path.join(global.Neptune_ROOT_DIR, jobdir, mintname);
+    s3.getObject(Parameters_mint, function(error, data) {
+        var fd = fs.openSync(path1, 'w+');
+        fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
+        fs.closeSync(fd);
+
+        var path2 = path.join(global.Neptune_ROOT_DIR, jobdir, ininame);
+        s3.getObject(Parameters_ini, function(error, data) {
+            var fd = fs.openSync(path2, 'w+');
+            fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
+            fs.closeSync(fd);
+
+            req.body.jobdir = jobdir;
+            req.body.jobname = jobname;
+            next();
         });
     });
 };
