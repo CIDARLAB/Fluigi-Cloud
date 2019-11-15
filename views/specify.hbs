@@ -106,7 +106,7 @@
                 <div class="sidebar-nav" id="file_trees">
                     <ul class="nav" id="side-menu">
                         <li>
-                            <a href="../"><i class="fa fa-home fa-fw"></i> Home </a>
+                            <a href="/profile"><i class="fa fa-home fa-fw"></i> Home </a>
                         </li>
                         <li id="1">
                             <a><i class="fa fa-external-link-square"></i> Workspaces: <span class="fa plus-square-o"></span></a>
@@ -586,7 +586,12 @@
 
             //TODO: using jobFile.link, pull svg from s3, and then display it!
 
-            self.loadFile(jobFile.id , jobFile.ext, jobFile.name)
+            self.loadFile(jobFile.id , jobFile.ext, jobFile.name);
+            
+            //TODO: This needs to change
+            self.currentFile(jobFile);
+            self.currentFileName(jobFile.name);
+
         };
 
 
