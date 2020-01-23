@@ -19,23 +19,29 @@ workspaceSchema.methods.createFile = function createFile(filename, ext) {
     newfile.file_extension = ext;
     newfile.save();
     newfile.createAndUploadDefaultS3File();
-    switch (ext) {
-        case ".v":
-            this.specify_files.push(newfile._id);
-            break;
-        case ".uf":
-            this.design_files.push(newfile._id);
-            break;
-        case ".ini":
-            this.design_files.push(newfile._id);
-            break;
-        case ".json":
-            this.specify_files.push(newfile._id);
-            break;
-        default:
-            this.other_files.push(newfile._id);
-    }
-    this.save();
+    // this.update({$push:{specify_files: newfile._id}},{'new':true});
+    this.specify_files.push(newfile.id);
+    this.markModified('specify_files');
+    // switch (ext) {
+    //     case ".v":
+    //         this.specify_files.push(newfile._id);
+    //         break;
+    //     case ".uf":
+    //         this.design_files.push(newfile._id);
+    //         break;
+    //     case ".ini":
+    //         this.design_files.push(newfile._id);
+    //         break;
+    //     case ".json":
+    //         this.specify_files.push(newfile._id);
+    //         break;
+    //     default:
+    //         this.other_files.push(newfile._id);
+    // }
+    this.save(function(err){
+        console.log(err);
+    });
+    console.log('Workspace model pushing fileid to file array: ', newfile._id);
 };
 
 workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_and_updateSchema() {

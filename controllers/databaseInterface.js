@@ -360,7 +360,6 @@ exports.getFiles = function(req, res) {
         for (var i = 0; i < data.solution_files.length; i++) {
             retarray.push(data.solution_files[i]);
         }
-        console.log(err);
         res.send(retarray);
     });
 };
