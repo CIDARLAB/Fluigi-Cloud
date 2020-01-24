@@ -223,13 +223,12 @@ exports.preMMFileTransfer = function(req, res, next) {
 
     var newJob = new Job();
 
-    var jobdir = './jobs/tmp__' + newJob._id;
     var date = new Date();
     var nameid = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
     var jobname = 'pyLFR_job_' + nameid;
-
     newJob.name = jobname;
     newJob.save();
+    req.body.jobid = newJob._id.toString();
 
     User.findOneAndUpdate(
         {   
@@ -249,6 +248,8 @@ exports.preMMFileTransfer = function(req, res, next) {
             }
         console.log("FOUND and updated THE USER...");
     });
+
+    var jobdir = './jobs/tmp__' + newJob._id;
 
     var update = { body: { workspace_id: workspace_id, update: newJob._id, update_type: 'add_job' } };
     db.Update_Workspace(update);
@@ -306,7 +307,10 @@ exports.preFluigiFileTransfer = function(req, res, next) {
 
     // Created job model, and updates user with id of new object.
     var newJob = new Job();
-    newJob.name = '';
+    var date = new Date();
+    var nameid = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    var jobname = 'pyLFR_job_' + nameid;
+    newJob.name = jobname;
     newJob.save();
 
     User.findOneAndUpdate(
