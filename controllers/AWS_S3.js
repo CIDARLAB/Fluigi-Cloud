@@ -201,7 +201,11 @@ exports.preMMFileTransfer = function(req, res, next) {
     var Target_Bucket_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
 
     var lfrpath = req.body.sourcefileid;
-    var ucfpath = req.body.configfileid;
+    var configpath = req.body.configfileid;
+    var lfrname = req.body.sourcefilename;
+    var configname = req.body.configfilename;
+    var workspace_id = req.body.workspace;
+    var email = req.body.user;
 
     var Parameters_lfr = {
         Bucket: Target_Bucket_ID,
@@ -211,25 +215,50 @@ exports.preMMFileTransfer = function(req, res, next) {
     };
     var Parameters_ucf = {
         Bucket: Target_Bucket_ID,
-        Key: ucfpath,
+        Key: configpath,
         ResponseContentEncoding: 'utf-8',
         ResponseContentType: 'string/utf-8'
     };
 
 
-    var id = db.Create_Job();
-    var jobdir = './jobs/tmp__' + id;
-    var jobname = 'Fluigi_job_' + id;
-    req.body.jobid = id;
+    var newJob = new Job();
+
+    var jobdir = './jobs/tmp__' + newJob._id;
+    var date = new Date();
+    var nameid = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    var jobname = 'pyLFR_job_' + nameid;
+
+    newJob.name = jobname;
+    newJob.save();
+
+    User.findOneAndUpdate(
+        {   
+            'local.email':email 
+        },
+        {
+            $push: {jobs: newJob._id}
+        },
+        {
+            'new':true
+        },
+        function(err, user) {
+        
+            if (err) { 
+                console.error(err); 
+                throw err; 
+            }
+        console.log("FOUND and updated THE USER...");
+    });
+
+    var update = { body: { workspace_id: workspace_id, update: newJob._id, update_type: 'add_job' } };
+    db.Update_Workspace(update);
 
 
-    if (!fs.existsSync(jobdir))
+    if (!fs.existsSync(jobdir)) {
         fs.mkdirSync(jobdir);
-    else console.log('ERROR: Unique Dir Already Exists!');
-
-    var lfrname = req.body.sourcefilename;
-    var ucfname = req.body.configfilename;
-
+    } else {
+        console.log('ERROR: Unique Dir Already Exists!');
+    }
 
     var path1 = path.join(global.Neptune_ROOT_DIR, jobdir, lfrname);
     s3.getObject(Parameters_lfr, function(error, data) {
@@ -237,7 +266,7 @@ exports.preMMFileTransfer = function(req, res, next) {
         fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
         fs.closeSync(fd);
 
-        var path2 = path.join(global.Neptune_ROOT_DIR, jobdir, ucfname);
+        var path2 = path.join(global.Neptune_ROOT_DIR, jobdir, configname);
         s3.getObject(Parameters_ucf, function(error, data) {
             var fd = fs.openSync(path2, 'w+');
             fs.writeSync(fd, data.Body, 0, data.Body.length, 0);
