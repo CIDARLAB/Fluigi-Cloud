@@ -46,14 +46,14 @@ require('./controllers/passport.js')(passport); // pass passport for configurati
 
 
 //Express app itself
-app.use(express.static(path.join(__dirname, 'public')));
-app.set('view engine', 'hbs');
-var hbs = require('hbs');
-hbs.registerPartials(__dirname + '/views/partials');
+app.use(express.static(path.join(__dirname, 'dist')));
+// app.set('view engine', 'hbs');
+// var hbs = require('hbs');
+// hbs.registerPartials(__dirname + '/views/partials');
 
 app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Origin", "http://localhost:8081");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept","Access-Control-Allow-Credentials","true");
     next();
 });
 
@@ -69,7 +69,7 @@ app.use(function(req, res, next) {
 
 /*********************   VIEWS   *********************/
 {
-    app.get('/', viewsController.openHomePage);
+    // app.get('/', viewsController.openHomePage);
     app.get('/assembly', isLoggedIn, viewsController.openAssemblyPage);
     app.get('/build', isLoggedIn, viewsController.openBuildPage);
     app.get('/help', isLoggedIn, viewsController.openHelpPage);
@@ -77,7 +77,7 @@ app.use(function(req, res, next) {
     app.get('/specify', isLoggedIn, viewsController.openSpecifyPage);
     app.get('/design', isLoggedIn, viewsController.openDesignPage);
     app.get('/signup', viewsController.openSignupPage);
-    app.get('/login', viewsController.openLoginPage);
+    // app.get('/login', viewsController.openLoginPage);
     app.get('/profile', isLoggedIn, viewsController.openProfilePage);
     app.get('/logout', function(req, res) { req.logout();
         res.redirect('/'); });
@@ -95,6 +95,28 @@ app.use(function(req, res, next) {
         failureRedirect: '/signup', // redirect back to the signup page if there is an error
         failureFlash: true // allow flash messages
     }));
+
+
+    app.post('/api/v2/login', (req, res, next)=>{
+        passport.authenticate('local-login', (err, user, info)=>{
+            if(err){
+                return next(err);
+            }
+
+            req.login(user, err => {
+                res.send({ "message":"Logged In !","user":user._id}, 200)
+            });
+
+        })(req, res, next);
+    });
+
+    app.get("/api/v2/logout", function(req, res) {
+        req.logout();
+      
+        console.log("logged out")
+      
+        return res.send();
+      });
 
     // route middleware to ensure user is logged in
     function isLoggedIn(req, res, next) {
@@ -168,3 +190,5 @@ io.sockets.on('connection', function(socket) {
         socket.join(jobid);
     })
 });
+
+
