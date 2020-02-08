@@ -5,6 +5,9 @@ var s3 = new AWS.S3();
 
 module.exports.downloadFile = function(req, res) {
     var fileid = req.query.id;
+    if (fileid == null || fileid == undefined || fileid === ''){
+        res.sendStatus(500);
+    }
     // var fileid = "5dc2505f9d8bd6543091b665";
     if (null == fileid) { res.sendStatus(400) }
     console.log("XXX requesting file id: " + fileid);

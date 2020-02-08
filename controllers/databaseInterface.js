@@ -164,7 +164,16 @@ exports.getWorkspace = function(req, res) {
     Workspace.findById(id, function(err, workspace) {
         if (err) throw err;
         console.log(workspace);
-        res.send({ name: workspace.name, id: workspace._id });
+        res.send({ 
+            name: workspace.name, 
+            _id: workspace._id.toString(),
+            specify_files: workspace.specify_files,
+            design_files: workspace.design_files,
+            other_files: workspace.other_files,
+            created_at: workspace.created_at,
+            updated_at: workspace.updated_at
+        });
+        // res.send(workspace);
     })
 };
 
@@ -272,11 +281,21 @@ exports.Update_Workspace = function(req, res) {
 };
 
 exports.Delete_Workspace = function(req, res) {
+    let userid = req.user._id;
     var workspace_id = req.body.id;
     var Workspace = require('../models/workspace');
     Workspace.findByIdAndRemove(workspace_id, function(err) {
         if (err) throw err;
         console.log('Workspace with id %s deleted!', workspace_id);
+        User.findById(userid, function(err, user){
+            if (err) throw err;
+            const index = user.workspaces.indexOf(workspace_id);
+            if (index > -1) {
+                user.workspaces.splice(index, 1);
+            }
+            user.save()
+            res.sendStatus(200);
+        });
     });
 };
 
@@ -406,7 +425,7 @@ exports.getFile = function(req, res) {
             console.log("Cannot find data with given fileid: " + fileid);
             return;
         }
-        res.send({ id: data._id, name: data.name, ext: data.file_extension, link: data.S3_path });
+        res.send({ id: data._id, name: data.name, ext: data.file_extension, link: data.S3_path, updated_at: data.updated_at });
     });
 
 };

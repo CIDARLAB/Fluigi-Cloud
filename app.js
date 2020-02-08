@@ -138,6 +138,7 @@ app.use(function(req, res, next) {
     app.get('/api/v1/jobs', databaseController.getJobs);
     app.get('/api/v1/workspace', databaseController.getWorkspace);
     app.post('/api/v1/workspace', databaseController.createWorkspace);
+    app.delete('/api/v1/workspace', databaseController.Delete_Workspace)
 
     app.get('/api/v1/files', databaseController.getFiles);
     app.get('/api/v1/jobfiles', databaseController.getJobFiles);

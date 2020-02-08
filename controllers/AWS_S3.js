@@ -373,7 +373,7 @@ exports.preFluigiFileTransfer = function(req, res, next) {
 exports.getS3Text = function(req, res) {
 
     var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
-    var Target_Object_KEY = req.query.id.toString();
+    var Target_Object_KEY = req.query.id;
     var Parameters = {
         Bucket: Target_BUCKET_ID,
         Key: Target_Object_KEY,
