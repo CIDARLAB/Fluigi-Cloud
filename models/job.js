@@ -27,15 +27,15 @@ jobSchema.methods.prune = function createFile(length) {
     this.save();
 };
 
-jobSchema.methods.createFile = function createFile(filename, ext, text) {
+jobSchema.methods.createFile = async function createFile(filename, ext, text) {
     var newfile = new File();
     newfile.name = filename;
     newfile.file_extension = ext;
-    newfile.save();
     newfile.createAndUploadS3File(text);
+    await newfile.save();
     this.files.push(newfile._id);
     console.log('Job model pushing file id to self array: ', newfile._id);
-    this.save();
+    await this.save();
 };
 
 jobSchema.methods.addJobToUser = function addJobToUser(user_id) {

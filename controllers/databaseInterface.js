@@ -413,7 +413,10 @@ exports.getJobFiles = function(req, res) {
 
 exports.getFile = function(req, res) {
     var fileid = req.query.id;
-    if (null == fileid) { res.sendStatus(400) }
+    if (null == fileid || undefined == fileid || '' === fileid) { 
+        res.sendStatus(500); 
+        return 
+    }
     console.log("requesting file id: " + fileid);
     File.findById(fileid, function(err, data) {
         if (err) {
@@ -607,6 +610,12 @@ exports.getJob = function(req, res) {
     Job.findById(id, function(err, job) {
         if (err) throw err;
         console.log(job);
-        res.send({ name: job.name, id: job._id });
-    })
+        res.send({ 
+            name: job.name,
+            id: job._id,
+            created_at: job.created_at,
+            updated_at: job.updated_at,
+            files: job.files
+        });
+    });
 };

@@ -82,14 +82,14 @@ exports.compile = function(req, res) {
 
             next();
         });
-        Job.findById(jobid, function(err, data) {
+        Job.findById(jobid, async function(err, data) {
 
             if (err) { res.sendStatus(500); throw err; }
 
             // Todo: Figure out why N*N file id's are being pushed to the job model, rather than just N.
             for (var i = 0; i < files_array.length; i++) {
                 console.log("filename: " + files_array[i].name);
-                data.createFile(files_array[i].name, files_array[i].ext, files_array[i].content);
+                await data.createFile(files_array[i].name, files_array[i].ext, files_array[i].content);
             }
             data.prune(files_array.length);
             data.name = req.body.jobname;
