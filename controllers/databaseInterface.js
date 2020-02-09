@@ -145,6 +145,20 @@ exports.Delete_User = function(req, res) {
     });
 };
 
+
+exports.getUser = function(req, res){
+    User.findById(req.user._id, function(err, user) {
+        if (err) throw err;
+        res.send({
+            email: user.local.email,
+            created_at: user.local.created_at,
+            updated_at: user.local.updated_at,
+            workspaces: user.workspaces,
+            jobs: user.jobs
+        });
+    });
+};
+
 exports.getWorkspaces = function(req, res) {
     User.findById(req.user._id, function(err, user) {
         if (err) throw err;

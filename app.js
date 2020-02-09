@@ -97,27 +97,6 @@ app.use(function(req, res, next) {
     }));
 
 
-    app.post('/api/v2/login', (req, res, next)=>{
-        passport.authenticate('local-login', (err, user, info)=>{
-            if(err){
-                return next(err);
-            }
-
-            req.login(user, err => {
-                res.send({ "message":"Logged In !","user":user._id}, 200)
-            });
-
-        })(req, res, next);
-    });
-
-    app.get("/api/v2/logout", function(req, res) {
-        req.logout();
-      
-        console.log("logged out")
-      
-        return res.send();
-      });
-
     // route middleware to ensure user is logged in
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())
@@ -155,6 +134,34 @@ app.use(function(req, res, next) {
 
     app.get('/api/v1/downloadFile', filesystemController.downloadFile);
 }
+
+
+/************** API V2 **************/
+
+app.post('/api/v2/login', (req, res, next)=>{
+    passport.authenticate('local-login', (err, user, info)=>{
+        if(err){
+            return next(err);
+        }
+
+        req.login(user, err => {
+            res.send({ "message":"Logged In !","user":user._id}, 200)
+        });
+
+    })(req, res, next);
+});
+
+app.get("/api/v2/logout", function(req, res) {
+    req.logout();
+  
+    console.log("logged out")
+  
+    return res.send();
+  });
+
+app.get('/api/v2/user', databaseController.getUser);
+
+
 
 /************** Redirects **************/
 {
