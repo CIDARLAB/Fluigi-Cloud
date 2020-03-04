@@ -162,6 +162,26 @@ app.get("/api/v2/logout", function(req, res) {
 app.get('/api/v2/user', databaseController.getUser);
 
 
+app.post('/api/v2/register', (req, res, next)=>{
+    passport.authenticate('local-signup', (err, user, info)=>{
+        if(err){
+            return next(err);
+        }
+
+        req.login(user, err => {
+            if (user == false){
+                res.status(406).send({"message":"User already exists"});
+                return;
+            }
+            if (err){
+                return next(err);
+            }
+            res.send({ "message":"Registered","user":user._id}, 200);
+        });
+
+    })(req, res, next);
+});
+
 
 /************** Redirects **************/
 {
