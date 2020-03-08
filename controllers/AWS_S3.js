@@ -3,29 +3,22 @@
  */
 
 var exports = module.exports;
-var express = require('express');
-var cmd = require('node-cmd');
-var path = require('path');
-var mkdirp = require('mkdirp');
-//var homeDir     = require('home-dir');
-var jsonfile = require('jsonfile');
-var mongoose = require('mongoose');
-var fs = require('fs');
+const path = require('path');
+const fs = require('fs');
 //var s3s         = require('s3-streams');
-var AWS = require('aws-sdk');
-var db = require('./databaseInterface');
-var Job = require('../models/job');
-var User = require('../models/user');
-var Workspace = require('../models/workspace');
+const AWS = require('aws-sdk');
+const db = require('./databaseInterface');
+const Job = require('../models/job');
+const User = require('../models/user');
 
 
 AWS.config.update({
     accessKeyId: process.env['NEPTUNE_AWSID'],
     secretAccessKey: process.env['NEPTUNE_AWSKEY']
 });
-var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
+const Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
 
-var s3 = new AWS.S3();
+const s3 = new AWS.S3();
 
 /*
  Amazon Web Services Management Exports

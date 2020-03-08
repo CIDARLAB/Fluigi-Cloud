@@ -52,5 +52,5 @@ jobs/*
 
 # Preloaded content
 .content/*
-
+dist/*
 tmp_*

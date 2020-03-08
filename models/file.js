@@ -167,7 +167,7 @@ fileSchema.methods.createAndUploadEmptyS3File = function createS3File_and_linkTo
 };
 
 
-fileSchema.methods.createAndUploadS3File = function createAndUploadS3File(text) {
+fileSchema.methods.createAndUploadS3File = async function createAndUploadS3File(text) {
 
     var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
     var Target_Object_KEY = this._id.toString();

@@ -21,22 +21,24 @@ userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.local.password);
 };
 
-userSchema.methods.generateWorkspaces_and_updateSchema = function generateWorkspaces_and_updateSchema(user) {
+userSchema.methods.generateWorkspaces_and_updateSchema = async function generateWorkspaces_and_updateSchema(user) {
     var Workspace = require('../models/workspace');
 
     var defaultworkspace = new Workspace();
     defaultworkspace.name = 'Default';
-    defaultworkspace.save();
+    await defaultworkspace.save();
     defaultworkspace.generateEmptyFiles_and_updateSchema(defaultworkspace);
     user.workspaces.push(defaultworkspace._id);
 
     var microfluidicexamples = new Workspace();
     microfluidicexamples.name = "Microfluidic Examples";
-    microfluidicexamples.save();
+    await microfluidicexamples.save();
     microfluidicexamples.generateFiles_and_updateSchema(microfluidicexamples);
     user.workspaces.push(microfluidicexamples._id);
 
-    user.save();
+    await user.save().catch(err => {
+        console.error("Error generating workspaces and updating the schema:", err);
+    });
 };
 
 userSchema.methods.createJob = function createJob(next) {

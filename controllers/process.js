@@ -94,7 +94,10 @@ exports.compile = function(req, res) {
             data.prune(files_array.length);
             data.name = req.body.jobname;
             //data.files.push();
-            data.save();
+            await data.save()
+                .catch(err => {
+                    console.error("Error saving the solution files info:", err);
+                });
 
             //Delete the directory
             remove(jobdir, function() {

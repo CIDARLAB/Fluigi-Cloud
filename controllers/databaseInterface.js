@@ -35,20 +35,39 @@ exports.Create_User = function(req, res) {
     });
 
     var id_temp;
-    newUser.save(function(err, success) {
-        id_temp = success.id;
-        if (err) throw err;
-        console.log('-- New User Created --');
-        console.log('Username: %s', username);
-        console.log('Password: %s', password);
-        console.log('UniqueId: %s', success.id);
-        console.log('----------------------');
+    // newUser.save(function(err, success) {
+    //     id_temp = success.id;
+    //     if (err) throw err;
+    //     console.log('-- New User Created --');
+    //     console.log('Username: %s', username);
+    //     console.log('Password: %s', password);
+    //     console.log('UniqueId: %s', success.id);
+    //     console.log('----------------------');
 
-        var User = require('../models/user');
-        //User.findById(success.id);
-        // newUser.methods.generateWorkspaces_and_updateSchema(id_temp);
-    });
-    res.send(id_temp);
+    //     var User = require('../models/user');
+    //     //User.findById(success.id);
+    //     // newUser.methods.generateWorkspaces_and_updateSchema(id_temp);
+    // });
+
+    newUser.save()
+        .then( success => {
+            id_temp = success.id;
+            console.log('-- New User Created --');
+            console.log('Username: %s', username);
+            console.log('Password: %s', password);
+            console.log('UniqueId: %s', success.id);
+            console.log('----------------------');
+    
+            // var User = require('../models/user');
+            //User.findById(success.id);
+            // newUser.methods.generateWorkspaces_and_updateSchema(id_temp);
+            res.send(id_temp);
+
+        })
+        .catch(err => {
+            console.error("Error saving the new user:", err);
+            throw err;
+        });
 };
 
 exports.Update_User = function(req, res) {

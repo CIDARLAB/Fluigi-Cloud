@@ -100,7 +100,10 @@ module.exports = function(passport) {
                                     return done(err);
                             });
 
-                            newUser.generateWorkspaces_and_updateSchema(newUser);
+                            newUser.generateWorkspaces_and_updateSchema(newUser)
+                                .catch(err => {
+                                    console.error("Error Generating the new user workspaces", err);
+                                });
                             return done(null, newUser);
                         }
 

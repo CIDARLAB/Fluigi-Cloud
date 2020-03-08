@@ -1,4 +1,5 @@
-var express = require("express");
+const express = require("express");
+const AWS = require('aws-sdk');
 const path = require('path');
 const history = require('connect-history-api-fallback');
 var app = express();
@@ -10,7 +11,6 @@ var passport = require('passport'); //Handles users and login
 var flash = require('connect-flash');
 var cookieParser = require('cookie-parser'); //Parses cookies
 var bodyParser = require('body-parser');
-var fs = require('fs');
 var morgan = require('morgan');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
@@ -18,7 +18,13 @@ var MongoStore = require('connect-mongo')(session);
 global.Neptune_ROOT_DIR = __dirname;
 
 var configDB = process.env['NEPTUNE_MONGOURL'];
-mongoose.connect(configDB); // connect to our database
+mongoose.connect(configDB, { useNewUrlParser: true,useUnifiedTopology: true, useFindAndModify: false })
+    .then(respose => {
+        console.log("Connection to MongoDB successful");
+    })
+    .catch(error => {
+        console.error("Error in connecting to MongoDB:", error);
+    }); // connect to our database
 
 // set up our cookies and html information for login
 app.use(morgan('dev')); // log every request to the console
@@ -34,7 +40,9 @@ app.use(session({
         url: configDB,
         ttl: 7 * 24 * 60 * 60 // = 7 days
     }),
-    secret: process.env['NEPTUNE_SESSIONSECRET']
+    secret: process.env['NEPTUNE_SESSIONSECRET'],
+    resave: true,
+    saveUninitialized: true
 }));
 
 app.use(passport.initialize());
@@ -58,9 +66,6 @@ app.use(history());
 
 // 2nd call for redirected requests
 app.use(staticFileMiddleware);
-// app.set('view engine', 'hbs');
-// var hbs = require('hbs');
-// hbs.registerPartials(__dirname + '/views/partials');
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "http://localhost:8081");
@@ -80,7 +85,7 @@ app.use(function(req, res, next) {
 
 /*********************   VIEWS   *********************/
 {
-    app.get('/*', function(req, res) {
+    app.get('/', function(req, res) {
         res.sendFile(path.join(__dirname, 'dist/index.html'), function(err) {
           if (err) {
             res.status(500).send(err)
@@ -116,7 +121,6 @@ app.use(function(req, res, next) {
 
 /************** Mongoose DataBase Calls **************/
 {
-    app.post('/api/Create_User', databaseController.Create_User);
     app.post('/api/Update_User', databaseController.Update_User);
     app.post('/api/Update_User_cs', databaseController.Update_User_cs);
     app.post('/api/Query_User', databaseController.Query_User);
@@ -214,6 +218,10 @@ var io = require('socket.io')(3000);
 var redis = require('socket.io-redis');
 io.adapter(redis({ host: process.env['NEPTUNE_REDIS_HOST'], port: process.env['NEPTUNE_REDIS_PORT'] }));
 
+io.of('/').adapter.on('error', function(err){
+    console.error("Error connecting to REDIS:", err);
+});
+
 io.sockets.on('connection', function(socket) {
     console.log('A new socket connection has started');
     socket.on('all', function(data) {
@@ -228,4 +236,25 @@ io.sockets.on('connection', function(socket) {
     })
 });
 
+/*******************************************************/
 
+/**************** CHECKS IF S3 BUCKET EXISTS ***********/
+
+AWS.config.update({
+    accessKeyId: process.env['NEPTUNE_AWSID'],
+    secretAccessKey: process.env['NEPTUNE_AWSKEY']
+});
+var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
+
+var s3 = new AWS.S3();
+s3.headBucket({ Bucket: Target_BUCKET_ID}).promise()
+    .then(() => {
+        console.log("S3 File System bucket exists");
+    })
+    .catch((error => {
+        if (error.statusCode === 404 || error.statusCode === 400) {
+            console.error("S3 File System bucket does not exist !");
+        }
+    }));
+
+/*******************************************************/

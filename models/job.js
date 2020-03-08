@@ -31,11 +31,17 @@ jobSchema.methods.createFile = async function createFile(filename, ext, text) {
     var newfile = new File();
     newfile.name = filename;
     newfile.file_extension = ext;
-    newfile.createAndUploadS3File(text);
-    await newfile.save();
+    await newfile.createAndUploadS3File(text)
+        .catch(err => {
+            console.error("Error creating and saving the s3 file:", err);
+            throw err;
+        });
     this.files.push(newfile._id);
     console.log('Job model pushing file id to self array: ', newfile._id);
-    await this.save();
+    await this.save()
+        .catch(err => {
+            console.error("Error updating the job after creating the file:", err);
+        });
 };
 
 jobSchema.methods.addJobToUser = function addJobToUser(user_id) {
