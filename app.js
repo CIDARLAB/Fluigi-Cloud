@@ -1,5 +1,6 @@
 var express = require("express");
-var path = require('path');
+const path = require('path');
+const history = require('connect-history-api-fallback');
 var app = express();
 var dotenv = require('dotenv');
 dotenv.load();
@@ -46,7 +47,17 @@ require('./controllers/passport.js')(passport); // pass passport for configurati
 
 
 //Express app itself
-app.use(express.static(path.join(__dirname, 'dist')));
+// Middleware for serving '/dist' directory
+const staticFileMiddleware = express.static('dist');
+
+// 1st call for unredirected requests 
+app.use(staticFileMiddleware);
+
+// Support history api 
+app.use(history());
+
+// 2nd call for redirected requests
+app.use(staticFileMiddleware);
 // app.set('view engine', 'hbs');
 // var hbs = require('hbs');
 // hbs.registerPartials(__dirname + '/views/partials');
@@ -69,16 +80,14 @@ app.use(function(req, res, next) {
 
 /*********************   VIEWS   *********************/
 {
-    // app.get('/', viewsController.openHomePage);
-    app.get('/assembly', isLoggedIn, viewsController.openAssemblyPage);
-    app.get('/build', isLoggedIn, viewsController.openBuildPage);
-    app.get('/help', isLoggedIn, viewsController.openHelpPage);
-    app.get('/control', isLoggedIn, viewsController.openControlPage);
-    app.get('/specify', isLoggedIn, viewsController.openSpecifyPage);
-    app.get('/design', isLoggedIn, viewsController.openDesignPage);
-    app.get('/signup', viewsController.openSignupPage);
-    // app.get('/login', viewsController.openLoginPage);
-    app.get('/profile', isLoggedIn, viewsController.openProfilePage);
+    app.get('/*', function(req, res) {
+        res.sendFile(path.join(__dirname, 'dist/index.html'), function(err) {
+          if (err) {
+            res.status(500).send(err)
+          }
+        })
+    });
+
     app.get('/logout', function(req, res) { req.logout();
         res.redirect('/'); });
 
