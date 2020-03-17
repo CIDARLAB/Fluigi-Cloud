@@ -2,13 +2,8 @@
  * Created by kestas on 3/24/2017.
  */
 
-var cmd = require('node-cmd');
-var exports = module.exports;
-var express = require('express');
 var fs = require('fs');
-const readline = require('readline');
 const path = require('path');
-var dir = require('node-dir');
 var AWS_S3 = require('./AWS_S3');
 var remove = require('rimraf');
 var Job = require('../models/job');
@@ -17,8 +12,24 @@ var Job = require('../models/job');
 //var REDIS_PORT = ]process.env['NEPTUNE_REDIS_PORT';
 //console.log("Redis host + port"+REDIS_HOST+  REDIS_PORT);
 var io_emitter = require('socket.io-emitter')({ host: process.env['NEPTUNE_REDIS_HOST'], port: process.env['NEPTUNE_REDIS_PORT'] });
+ 
+const getAllFiles = function(dirPath, arrayOfFiles) {
+  files = fs.readdirSync(dirPath)
+ 
+  arrayOfFiles = arrayOfFiles || []
+ 
+  files.forEach(function(file) {
+    if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+      arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles)
+    } else {
+      arrayOfFiles.push(path.join(dirPath,file))
+    }
+  })
+ 
+  return arrayOfFiles
+}
 
-exports.compile = function(req, res) {
+module.exports.compile = function(req, res) {
     var jobid = req.body.jobid;
     console.log("JOB ID:", jobid);
     var jobdir = req.body.jobdir;
@@ -71,25 +82,21 @@ exports.compile = function(req, res) {
 
         var files_array = [];
 
-        dir.readFiles(longpath, function(err, content, filename, next) {
-            if (err) throw err;
+        getAllFiles(longpath, files_array);
+        console.log("Files list:")
+        console.log(files_array);
 
-            files_array.push({
-                name: path.basename(filename),
-                content: content,
-                ext: path.extname(filename)
-            });
-
-            next();
-        });
         Job.findById(jobid, async function(err, data) {
 
             if (err) { res.sendStatus(500); throw err; }
 
             // Todo: Figure out why N*N file id's are being pushed to the job model, rather than just N.
             for (var i = 0; i < files_array.length; i++) {
-                console.log("filename: " + files_array[i].name);
-                await data.createFile(files_array[i].name, files_array[i].ext, files_array[i].content);
+                console.log("filename: " + files_array[i]);
+                var filename = path.basename(files_array[i])
+                var extension = path.extname(files_array[i])
+                const fileContent = fs.readFileSync(files_array[i]);
+                await data.createFile(filename, extension, fileContent);
             }
             data.prune(files_array.length);
             data.name = req.body.jobname;
@@ -106,13 +113,12 @@ exports.compile = function(req, res) {
             });
 
         });
-        //res.sendStatus(200);
     });
     res.status(200).send(jobid);
 };
 
 
-exports.translate = function(req, res) {
+module.exports.translate = function(req, res) {
     var jobid = req.body.jobid;
     console.log("JOB ID:", jobid);
     var jobdir = req.body.jobdir;
@@ -165,30 +171,28 @@ exports.translate = function(req, res) {
 
         var files_array = [];
 
-        dir.readFiles(longpath, function(err, content, filename, next) {
-            if (err) throw err;
-
-            files_array.push({
-                name: path.basename(filename),
-                content: content,
-                ext: path.extname(filename)
-            });
-
-            next();
-        });
+        getAllFiles(longpath, files_array);
+        console.log("Files list: TEST")
+        console.log(files_array);
         Job.findById(jobid, async function(err, data) {
 
             if (err) { res.sendStatus(500); throw err; }
 
             // Todo: Figure out why N*N file id's are being pushed to the job model, rather than just N.
             for (var i = 0; i < files_array.length; i++) {
-                console.log("filename: " + files_array[i].name);
-                await data.createFile(files_array[i].name, files_array[i].ext, files_array[i].content);
+                console.log("filename: " + files_array[i]);
+                var filename = path.basename(files_array[i])
+                var extension = path.extname(files_array[i])
+                const fileContent = fs.readFileSync(files_array[i]);
+                await data.createFile(filename, extension, fileContent);
             }
             data.prune(files_array.length);
             data.name = req.body.jobname;
             //data.files.push();
-            data.save();
+            await data.save()
+                .catch(err => {
+                    console.error("Error saving the solution files info:", err);
+                });
 
             //Delete the directory
             remove(jobdir, function() {
@@ -197,11 +201,7 @@ exports.translate = function(req, res) {
             });
 
         });
-        //res.sendStatus(200);
     });
     res.status(200).send(jobid);
 
 };
-
-
-
