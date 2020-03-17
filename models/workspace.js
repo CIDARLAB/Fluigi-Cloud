@@ -46,8 +46,8 @@ workspaceSchema.methods.createFile = function createFile(filename, ext) {
 
 workspaceSchema.methods.generateFiles_and_updateSchema = function generateFiles_and_updateSchema() {
     var newfile = new File();
-    newfile.name = 'LFR_example.v';
-    newfile.file_extension = '.v';
+    newfile.name = 'LFR_example.lfr';
+    newfile.file_extension = '.lfr';
     newfile.save();
     newfile.createAndUploadDefaultS3File('lfr');
     this.specify_files.push(newfile._id);

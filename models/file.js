@@ -28,7 +28,7 @@ fileSchema.methods.createAndUploadDefaultS3File = function createS3File_and_link
     var me = this;
 
     if (type === 'lfr') {
-        fs.readFile(path.join(global.Neptune_ROOT_DIR, 'content', 'lfr.v'), function (err, data) {
+        fs.readFile(path.join(global.Neptune_ROOT_DIR, 'content', 'sample.lfr'), function (err, data) {
             if (err) console.log(err);
             text = data;
             var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
@@ -72,7 +72,7 @@ fileSchema.methods.createAndUploadDefaultS3File = function createS3File_and_link
             });
         });
     } else if (type === 'mint') {
-        fs.readFile(path.join(global.Neptune_ROOT_DIR, 'content', 'mint.uf'), function (err, data) {
+        fs.readFile(path.join(global.Neptune_ROOT_DIR, 'content', 'sample.uf'), function (err, data) {
             if (err) console.log(err);
             text = data;
             var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
