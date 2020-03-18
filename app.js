@@ -75,11 +75,9 @@ app.use(function(req, res, next) {
 
 /**************** CONTROLLERS ****************/
 {
-    var viewsController = require('./controllers/views');
     var compileController = require('./controllers/process');
     var databaseController = require('./controllers/databaseInterface');
     var AWS_S3_Controller = require('./controllers/AWS_S3');
-    var downloadController = require('./controllers/download');
     var filesystemController = require('./controllers/filesystem');
 }
 
@@ -148,7 +146,11 @@ app.use(function(req, res, next) {
     app.get('/api/v1/downloadFile', filesystemController.downloadFile);
 }
 
-
+/**************** USHROOM MAPPER & FLUIGI ****************/
+{
+    app.post('/api/v1/mushroommapper', [AWS_S3_Controller.preMMFileTransfer, compileController.translate]);
+    app.post('/api/v1/fluigi', [AWS_S3_Controller.preFluigiFileTransfer, compileController.compile]);
+}
 /************** API V2 **************/
 
 app.post('/api/v2/login', (req, res, next)=>{
@@ -195,16 +197,29 @@ app.post('/api/v2/register', (req, res, next)=>{
     })(req, res, next);
 });
 
-
-/************** Redirects **************/
 {
-    app.post('/api/redirectToSpecify', AWS_S3_Controller.redirectToSpecify);
-}
+    app.get('/api/v2/user', function(req, res){ res.send(200); });
+    app.post('/api/v2/user', function(req, res){ res.send(200); });
 
-/**************** USHROOM MAPPER & FLUIGI ****************/
-{
-    app.post('/api/v1/mushroommapper', [AWS_S3_Controller.preMMFileTransfer, compileController.translate]);
-    app.post('/api/v1/fluigi', [AWS_S3_Controller.preFluigiFileTransfer, compileController.compile]);
+    app.get('/api/v2/workspace', function(req, res){ res.send(200); });
+    app.post('/api/v2/workspace', function(req, res){ res.send(200); });
+    app.delete('/api/v2/workspace', function(req, res){ res.send(200); });
+
+    app.get('/api/v2/job', function(req, res){ res.send(404); });
+
+    app.get('/api/v2/file', function(req, res){ res.send(200); });
+    app.post('/api/v2/file', function(req, res){ res.send(200); });
+    app.put('/api/v2/file', function(req, res){ res.send(200); });
+    app.delete('/api/v2/file', function(req, res){ res.send(200); });
+
+    app.get('/api/v2/file/fs', function(req, res){ res.send(200); });
+    app.post('/api/v2/file/fs', function(req, res){ res.send(200); });
+    app.post('/api/v2/file/copy', function(req, res){ res.send(200); });
+    app.get('/api/v2/workspace/zipfs', function(req, res){ res.send(200); });
+    app.get('/api/v2/job/zipfs', function(req, res){ res.send(200); });
+
+    app.post('/api/v2/compile/lfr', [AWS_S3_Controller.preMMFileTransfer, compileController.translate]);
+    app.post('/api/v2/compile/mint', [AWS_S3_Controller.preFluigiFileTransfer, compileController.compile]);
 }
 
 /*******************************************************/
