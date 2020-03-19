@@ -1,23 +1,30 @@
-var express = require("express");
-var path = require('path');
+const express = require("express");
+const AWS = require('aws-sdk');
+const path = require('path');
+const history = require('connect-history-api-fallback');
 var app = express();
 var dotenv = require('dotenv');
 dotenv.load();
 
-var mongoose     = require('mongoose');             //MongoDB object modeling tool
-var passport     = require('passport');             //Handles users and login
-var flash        = require('connect-flash');
-var cookieParser = require('cookie-parser');        //Parses cookies
-var bodyParser   = require('body-parser');
-var fs           = require('fs');
-var morgan       = require('morgan');
-var session      = require('express-session');
-var MongoStore   = require('connect-mongo')(session);
+var mongoose = require('mongoose'); //MongoDB object modeling tool
+var passport = require('passport'); //Handles users and login
+var flash = require('connect-flash');
+var cookieParser = require('cookie-parser'); //Parses cookies
+var bodyParser = require('body-parser');
+var morgan = require('morgan');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 
 global.Neptune_ROOT_DIR = __dirname;
 
 var configDB = process.env['NEPTUNE_MONGOURL'];
-mongoose.connect(configDB); // connect to our database
+mongoose.connect(configDB, { useNewUrlParser: true,useUnifiedTopology: true, useFindAndModify: false })
+    .then(respose => {
+        console.log("Connection to MongoDB successful");
+    })
+    .catch(error => {
+        console.error("Error in connecting to MongoDB:", error);
+    }); // connect to our database
 
 // set up our cookies and html information for login
 app.use(morgan('dev')); // log every request to the console
@@ -33,7 +40,9 @@ app.use(session({
         url: configDB,
         ttl: 7 * 24 * 60 * 60 // = 7 days
     }),
-    secret: process.env['NEPTUNE_SESSIONSECRET']
+    secret: process.env['NEPTUNE_SESSIONSECRET'],
+    resave: true,
+    saveUninitialized: true
 }));
 
 app.use(passport.initialize());
@@ -46,53 +55,59 @@ require('./controllers/passport.js')(passport); // pass passport for configurati
 
 
 //Express app itself
-app.use(express.static(path.join(__dirname, 'public')));
-app.set('view engine', 'hbs');
-var hbs = require('hbs');
-hbs.registerPartials(__dirname + '/views/partials');
+// Middleware for serving '/dist' directory
+const staticFileMiddleware = express.static('dist');
+
+// 1st call for unredirected requests 
+app.use(staticFileMiddleware);
+
+// Support history api 
+app.use(history());
+
+// 2nd call for redirected requests
+app.use(staticFileMiddleware);
 
 app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Origin", "http://localhost:8081");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept","Access-Control-Allow-Credentials","true");
     next();
 });
 
 /**************** CONTROLLERS ****************/
 {
-    var viewsController             = require('./controllers/views');
-    var compileController           = require('./controllers/process');
-    var databaseController          = require('./controllers/databaseInterface');
-    var AWS_S3_Controller           = require('./controllers/AWS_S3');
-    var downloadController          = require('./controllers/download');
+    var compileController = require('./controllers/process');
+    var databaseController = require('./controllers/databaseInterface');
+    var AWS_S3_Controller = require('./controllers/AWS_S3');
+    var filesystemController = require('./controllers/filesystem');
 }
 
 /*********************   VIEWS   *********************/
 {
-    app.get('/', viewsController.openHomePage);
-    app.get('/assembly', isLoggedIn, viewsController.openAssemblyPage);
-    app.get('/build', isLoggedIn, viewsController.openBuildPage);
-    app.get('/help', isLoggedIn, viewsController.openHelpPage);
-    app.get('/control', isLoggedIn, viewsController.openControlPage);
-    app.get('/specify', isLoggedIn, viewsController.openSpecifyPage);
-    app.get('/design', isLoggedIn, viewsController.openDesignPage);
-    app.get('/signup', viewsController.openSignupPage);
-    app.get('/login', viewsController.openLoginPage);
-    app.get('/profile', isLoggedIn, viewsController.openProfilePage);
-    app.get('/logout', function(req, res) {req.logout(); res.redirect('/');});
+    app.get('/', function(req, res) {
+        res.sendFile(path.join(__dirname, 'dist/index.html'), function(err) {
+          if (err) {
+            res.status(500).send(err)
+          }
+        })
+    });
+
+    app.get('/logout', function(req, res) { req.logout();
+        res.redirect('/'); });
 
     // process the login form
     app.post('/login', passport.authenticate('local-login', {
-        successRedirect : '/profile', // redirect to the secure profile section
-        failureRedirect : '/login', // redirect back to the signup page if there is an error
-        failureFlash : true // allow flash messages
+        successRedirect: '/profile', // redirect to the secure profile section
+        failureRedirect: '/login', // redirect back to the signup page if there is an error
+        failureFlash: true // allow flash messages
     }));
 
     // process the signup form
     app.post('/signup', passport.authenticate('local-signup', {
-        successRedirect : '/profile', // redirect to the secure profile section
-        failureRedirect : '/signup', // redirect back to the signup page if there is an error
-        failureFlash : true // allow flash messages
+        successRedirect: '/profile', // redirect to the secure profile section
+        failureRedirect: '/signup', // redirect back to the signup page if there is an error
+        failureFlash: true // allow flash messages
     }));
+
 
     // route middleware to ensure user is logged in
     function isLoggedIn(req, res, next) {
@@ -104,16 +119,16 @@ app.use(function(req, res, next) {
 
 /************** Mongoose DataBase Calls **************/
 {
-    app.post('/api/Create_User', databaseController.Create_User);
-    app.post('/api/Update_User',databaseController.Update_User);
-    app.post('/api/Update_User_cs',databaseController.Update_User_cs);
+    app.post('/api/Update_User', databaseController.Update_User);
+    app.post('/api/Update_User_cs', databaseController.Update_User_cs);
     app.post('/api/Query_User', databaseController.Query_User);
-    app.post('/api/Delete_User',databaseController.Delete_User);
+    app.post('/api/Delete_User', databaseController.Delete_User);
 
     app.get('/api/v1/workspaces', databaseController.getWorkspaces);
     app.get('/api/v1/jobs', databaseController.getJobs);
     app.get('/api/v1/workspace', databaseController.getWorkspace);
     app.post('/api/v1/workspace', databaseController.createWorkspace);
+    app.delete('/api/v1/workspace', databaseController.Delete_Workspace)
 
     app.get('/api/v1/files', databaseController.getFiles);
     app.get('/api/v1/jobfiles', databaseController.getJobFiles);
@@ -128,31 +143,99 @@ app.use(function(req, res, next) {
 
     app.get('/api/v1/job', databaseController.getJob);
 
-
-    app.get('/api/v1/download',downloadController.downloadFile);
-}
-
-/************** Redirects **************/
-{
-    app.post('/api/redirectToSpecify', AWS_S3_Controller.redirectToSpecify);
+    app.get('/api/v1/downloadFile', filesystemController.downloadFile);
 }
 
 /**************** USHROOM MAPPER & FLUIGI ****************/
 {
-    app.post('/api/v1/mushroommapper',[AWS_S3_Controller.preMMFileTransfer,compileController.translate]);
-    app.post('/api/v1/fluigi',        [AWS_S3_Controller.preFluigiFileTransfer,compileController.compile]);
+    app.post('/api/v1/mushroommapper', [AWS_S3_Controller.preMMFileTransfer, compileController.translate]);
+    app.post('/api/v1/fluigi', [AWS_S3_Controller.preFluigiFileTransfer, compileController.compile]);
+}
+/************** API V2 **************/
+
+app.post('/api/v2/login', (req, res, next)=>{
+    passport.authenticate('local-login', (err, user, info)=>{
+        if(err){
+            return next(err);
+        }
+
+        req.login(user, err => {
+            res.send({ "message":"Logged In !","user":user._id}, 200)
+        });
+
+    })(req, res, next);
+});
+
+app.get("/api/v2/logout", function(req, res) {
+    req.logout();
+  
+    console.log("logged out")
+  
+    return res.send();
+  });
+
+app.get('/api/v2/user', databaseController.getUser);
+
+
+app.post('/api/v2/register', (req, res, next)=>{
+    passport.authenticate('local-signup', (err, user, info)=>{
+        if(err){
+            return next(err);
+        }
+
+        req.login(user, err => {
+            if (user == false){
+                res.status(406).send({"message":"User already exists"});
+                return;
+            }
+            if (err){
+                return next(err);
+            }
+            res.send({ "message":"Registered","user":user._id}, 200);
+        });
+
+    })(req, res, next);
+});
+
+{
+    app.get('/api/v2/user', function(req, res){ res.send(200); });
+    app.post('/api/v2/user', function(req, res){ res.send(200); });
+
+    app.get('/api/v2/workspace', function(req, res){ res.send(200); });
+    app.post('/api/v2/workspace', function(req, res){ res.send(200); });
+    app.delete('/api/v2/workspace', function(req, res){ res.send(200); });
+
+    app.get('/api/v2/job', function(req, res){ res.send(404); });
+
+    app.get('/api/v2/file', function(req, res){ res.send(200); });
+    app.post('/api/v2/file', function(req, res){ res.send(200); });
+    app.put('/api/v2/file', function(req, res){ res.send(200); });
+    app.delete('/api/v2/file', function(req, res){ res.send(200); });
+
+    app.get('/api/v2/file/fs', function(req, res){ res.send(200); });
+    app.post('/api/v2/file/fs', function(req, res){ res.send(200); });
+    app.post('/api/v2/file/copy', function(req, res){ res.send(200); });
+    app.get('/api/v2/workspace/zipfs', function(req, res){ res.send(200); });
+    app.get('/api/v2/job/zipfs', function(req, res){ res.send(200); });
+
+    app.post('/api/v2/compile/lfr', [AWS_S3_Controller.preMMFileTransfer, compileController.translate]);
+    app.post('/api/v2/compile/mint', [AWS_S3_Controller.preFluigiFileTransfer, compileController.compile]);
 }
 
 /*******************************************************/
 
 /*******************************************************/
 
-app.listen(8080, function(){console.log("Starting application")});
+app.listen(8080, function() { console.log("Starting application") });
 
 /**************** SOCKETIO-REDIS ****************/
 var io = require('socket.io')(3000);
 var redis = require('socket.io-redis');
 io.adapter(redis({ host: process.env['NEPTUNE_REDIS_HOST'], port: process.env['NEPTUNE_REDIS_PORT'] }));
+
+io.of('/').adapter.on('error', function(err){
+    console.error("Error connecting to REDIS:", err);
+});
 
 io.sockets.on('connection', function(socket) {
     console.log('A new socket connection has started');
@@ -162,8 +245,31 @@ io.sockets.on('connection', function(socket) {
 
     //On the monitor event, join an ongoing job's channel
     //TODO: Need to check if this belongs to the user
-    socket.on('monitor', function (jobid) {
+    socket.on('monitor', function(jobid) {
         console.log('job: ' + jobid + ' is now being monitored');
         socket.join(jobid);
     })
 });
+
+/*******************************************************/
+
+/**************** CHECKS IF S3 BUCKET EXISTS ***********/
+
+AWS.config.update({
+    accessKeyId: process.env['NEPTUNE_AWSID'],
+    secretAccessKey: process.env['NEPTUNE_AWSKEY']
+});
+var Target_BUCKET_ID = process.env['NEPTUNE_S3_BUCKET_ID'];
+
+var s3 = new AWS.S3();
+s3.headBucket({ Bucket: Target_BUCKET_ID}).promise()
+    .then(() => {
+        console.log("S3 File System bucket exists");
+    })
+    .catch((error => {
+        if (error.statusCode === 404 || error.statusCode === 400) {
+            console.error("S3 File System bucket does not exist !");
+        }
+    }));
+
+/*******************************************************/

@@ -106,7 +106,7 @@
                 <div class="sidebar-nav" id="file_trees">
                     <ul class="nav" id="side-menu">
                         <li>
-                            <a href="../"><i class="fa fa-home fa-fw"></i> Home </a>
+                            <a href="/profile"><i class="fa fa-home fa-fw"></i> Home </a>
                         </li>
                         <li id="1">
                             <a><i class="fa fa-external-link-square"></i> Workspaces: <span class="fa plus-square-o"></span></a>
@@ -325,7 +325,6 @@
     var socket =  io("http://" + window.location.hostname + ':3000'); //This is gonna connects it to the server
 
     socket.on('stdout', function (data) {
-       console.log(data.toString());
        Terminal.echo(data.toString());
     });
 
@@ -337,9 +336,6 @@
             //self.jobs()[0]
             editorViewModel.setAsCurrentJob(editorViewModel.currentJob());
         },1000);
-
-
-        console.log(data);
     });
 
     function getUrlParameter(name) {
@@ -452,7 +448,7 @@
                     self.workSpaceIDs.push(response[i]);
                 }
                 console.log(self.workSpaceIDs());
-            })
+            });
         };
 
         self.updateJobs = function(){
@@ -464,7 +460,7 @@
                     self.addJob(response[i]);
                     self.jobIDs.push(response[i]);
                 }
-                console.log(self.jobIDs());
+                console.log("Jobs Found:", self.jobIDs());
             })
         };
 
@@ -590,7 +586,12 @@
 
             //TODO: using jobFile.link, pull svg from s3, and then display it!
 
-            self.loadFile(jobFile.id , jobFile.ext, jobFile.name)
+            self.loadFile(jobFile.id , jobFile.ext, jobFile.name);
+            
+            //TODO: This needs to change
+            self.currentFile(jobFile);
+            self.currentFileName(jobFile.name);
+
         };
 
 
@@ -677,7 +678,9 @@
         };
 
         self.downloadFile = function(){
-            window.open((self.currentFile()).link, '_blank');
+            var fileurl = new URL("/api/v1/downloadFile?id=" + (self.currentFile()).id, document.baseURI);
+            console.log('currentfile: ',self.currentFile.toString());
+            window.open(fileurl, '_blank');
         };
 
         self.compileLFR = function(){
