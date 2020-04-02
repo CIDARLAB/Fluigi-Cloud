@@ -305,6 +305,7 @@ exports.preFluigiFileTransfer = function(req, res, next) {
     var jobname = 'pyLFR_job_' + nameid;
     newJob.name = jobname;
     newJob.save();
+    req.body.jobid = newJob._id.toString();
 
     User.findOneAndUpdate(
         {   
@@ -327,12 +328,6 @@ exports.preFluigiFileTransfer = function(req, res, next) {
 
     var jobdir = './jobs/tmp__' + newJob._id;
     console.log("Directory that is being created:", jobdir);
-    var max = 10000;
-    var min = 1;
-    var nameid = Math.floor(Math.random() * (max - min + 1)) + min;
-    var jobname = 'Fluigi_job_' + nameid;
-    req.body.jobid = newJob._id.toString();
-    req.body.jobdir = jobdir;
 
     var update = { body: { workspace_id: workspace_id, update: newJob._id, update_type: 'add_job' } };
     db.Update_Workspace(update);

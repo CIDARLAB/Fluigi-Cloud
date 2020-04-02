@@ -8,9 +8,6 @@ var AWS_S3 = require('./AWS_S3');
 var remove = require('rimraf');
 var Job = require('../models/job');
 
-//var REDIS_HOST = ;
-//var REDIS_PORT = ]process.env['NEPTUNE_REDIS_PORT';
-//console.log("Redis host + port"+REDIS_HOST+  REDIS_PORT);
 var io_emitter = require('socket.io-emitter')({ host: process.env['NEPTUNE_REDIS_HOST'], port: process.env['NEPTUNE_REDIS_PORT'] });
  
 const getAllFiles = function(dirPath, arrayOfFiles) {
@@ -50,6 +47,7 @@ module.exports.compile = function(req, res) {
     console.log('INI PATH: %s', ini_path);
     console.log('OUT PATH: %s', out_path);
 
+    console.log("java -jar ",FLUIGI_BINARY_PATH," ",mint_path," -i ",ini_path," -o sej");
     var par_terminal = require('child_process').spawn(
         'java', ['-jar', FLUIGI_BINARY_PATH, mint_path, '-i', ini_path, '-o', 'sej'], { cwd: cwd }
     );
@@ -59,14 +57,15 @@ module.exports.compile = function(req, res) {
             if (err) throw err;
         });
         io_emitter.to(jobid).emit('stdout', data.toString());
-        // console.log(data.toString());
+        console.log(data.toString());
     });
 
     par_terminal.stderr.on("data", function(data) {
         fs.appendFile(logpath, data.toString(), function(err) {
             if (err) throw err;
         });
-        // console.log(data.toString());
+        io_emitter.to(jobid).emit('stdout', data.toString());
+        console.log(data.toString());
     });
 
     par_terminal.on('close', function(data) {
@@ -77,7 +76,7 @@ module.exports.compile = function(req, res) {
         // On closing read all the files and then start doing stuff
     });
 
-    par_terminal.on('exit', function(data) {
+    par_terminal.on('exit', async function(data) {
         var longpath = out_path;
 
         var files_array = [];
@@ -156,6 +155,8 @@ module.exports.translate = function(req, res) {
         fs.appendFile(logpath, data.toString(), function(err) {
             if (err) throw err;
         });
+        io_emitter.to(jobid).emit('stdout', data.toString());
+
         // console.log(data.toString());
     });
 
