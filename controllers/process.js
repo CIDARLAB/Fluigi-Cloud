@@ -26,6 +26,20 @@ const getAllFiles = function(dirPath, arrayOfFiles) {
   return arrayOfFiles
 }
 
+const createAllFileObjects = function(files_array, data){
+    return new Promise( async function (resolve, reject){
+            for (var i = 0; i < files_array.length; i++) {
+                console.log("filename: " + files_array[i]);
+                var filename = path.basename(files_array[i])
+                var extension = path.extname(files_array[i])
+                const fileContent = fs.readFileSync(files_array[i]);
+                await data.createFile(filename, extension, fileContent);
+            }
+            resolve()
+        }
+    )
+}
+
 module.exports.compile = function(req, res) {
     var jobid = req.body.jobid;
     console.log("JOB ID:", jobid);
@@ -90,27 +104,18 @@ module.exports.compile = function(req, res) {
             if (err) { res.sendStatus(500); throw err; }
 
             // Todo: Figure out why N*N file id's are being pushed to the job model, rather than just N.
-            for (var i = 0; i < files_array.length; i++) {
-                console.log("filename: " + files_array[i]);
-                var filename = path.basename(files_array[i])
-                var extension = path.extname(files_array[i])
-                const fileContent = fs.readFileSync(files_array[i]);
-                await data.createFile(filename, extension, fileContent);
-            }
-            data.prune(files_array.length);
-            data.name = req.body.jobname;
-            //data.files.push();
-            await data.save()
-                .catch(err => {
-                    console.error("Error saving the solution files info:", err);
-                });
-
-            //Delete the directory
-            remove(jobdir, function() {
-                console.log("Removed the directory: " + jobdir);
-                console.log("Fluigi is complete !");
+            createAllFileObjects(files_array, data).then(()=> {
+                process.nextTick(async function(){
+                    //Delete the directory
+                    remove(jobdir, function() {
+                        console.log("Removed the directory: " + jobdir);
+                        console.log("Fluigi is complete !");
+                    });
+                })
+    
+            }).catch(err => {
+                console.error("Error saving the solution files info:", err);
             });
-
         });
     });
     res.status(200).send(jobid);
@@ -180,27 +185,18 @@ module.exports.translate = function(req, res) {
             if (err) { res.sendStatus(500); throw err; }
 
             // Todo: Figure out why N*N file id's are being pushed to the job model, rather than just N.
-            for (var i = 0; i < files_array.length; i++) {
-                console.log("filename: " + files_array[i]);
-                var filename = path.basename(files_array[i])
-                var extension = path.extname(files_array[i])
-                const fileContent = fs.readFileSync(files_array[i]);
-                await data.createFile(filename, extension, fileContent);
-            }
-            data.prune(files_array.length);
-            data.name = req.body.jobname;
-            //data.files.push();
-            await data.save()
-                .catch(err => {
-                    console.error("Error saving the solution files info:", err);
-                });
-
-            //Delete the directory
-            remove(jobdir, function() {
-                console.log("Removed the directory: " + jobdir);
-                console.log("pyLFR is complete !");
+            createAllFileObjects(files_array, data).then(()=> {
+                process.nextTick(async function(){
+                    //Delete the directory
+                    remove(jobdir, function() {
+                        console.log("Removed the directory: " + jobdir);
+                        console.log("pyLFR is complete !");
+                    });
+                })
+    
+            }).catch(err => {
+                console.error("Error saving the solution files info:", err);
             });
-
         });
     });
     res.status(200).send(jobid);
