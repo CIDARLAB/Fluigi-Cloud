@@ -63,7 +63,7 @@ module.exports.compile = function(req, res) {
 
     console.log("java -jar ",FLUIGI_BINARY_PATH," ",mint_path," -i ",ini_path," -o sej");
     var par_terminal = require('child_process').spawn(
-        'java', ['-jar', FLUIGI_BINARY_PATH, mint_path, '-i', ini_path, '-o', 'sej'], { cwd: cwd }
+        'java', ['-Xmx', '5G', '-jar', FLUIGI_BINARY_PATH, mint_path, '-i', ini_path, '-o', 'sej'], { cwd: cwd }
     );
 
     par_terminal.stdout.on('data', function(data) {
