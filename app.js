@@ -37,13 +37,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // session required for passport
 app.use(session({
     store: new MongoStore({
-        url: configDB,
-        ttl: 7 * 24 * 60 * 60 // = 7 days
+        mongooseConnection: mongoose.connection,
+        ttl: 7 * 24 * 60 * 60
     }),
     secret: process.env['NEPTUNE_SESSIONSECRET'],
     resave: true,
     saveUninitialized: true
-}));
+}))
 
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions

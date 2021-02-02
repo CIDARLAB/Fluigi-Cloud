@@ -62,9 +62,14 @@ module.exports.compile = function(req, res) {
     console.log('OUT PATH: %s', out_path);
 
     console.log("java -jar ",FLUIGI_BINARY_PATH," ",mint_path," -i ",ini_path," -o sej");
+    // var par_terminal = require('child_process').spawn(
+    //     'java', [ '-jar', FLUIGI_BINARY_PATH, mint_path, '-i', ini_path, '-o', 'sej'], { cwd: cwd }
+    // );
+
     var par_terminal = require('child_process').spawn(
-        'java', ['-Xmx', '5G', '-jar', FLUIGI_BINARY_PATH, mint_path, '-i', ini_path, '-o', 'sej'], { cwd: cwd }
+        "fluigi", [ mint_path, '--out', out_path], { cwd: cwd }
     );
+
 
     par_terminal.stdout.on('data', function(data) {
         fs.appendFile(logpath, data.toString(), function(err) {
@@ -131,7 +136,8 @@ module.exports.translate = function(req, res) {
     var lfrname = req.body.sourcefilename;
     var ucfname = req.body.configfilename;
 
-    var PYLFR_BINARY_PATH = path.join(global.Neptune_ROOT_DIR, "jobs", "pyLFR", "cmdline");
+    // var PYLFR_BINARY_PATH = path.join(global.Neptune_ROOT_DIR, "jobs", "pyLFR", "cmdline");
+
     var lfr_path = path.join(global.Neptune_ROOT_DIR, jobdir, lfrname);
     var ucf_path = path.join(global.Neptune_ROOT_DIR, jobdir, ucfname);
     var out_path = path.join(global.Neptune_ROOT_DIR, jobdir, "output");
@@ -145,7 +151,7 @@ module.exports.translate = function(req, res) {
     console.log('OUT PATH: %s', out_path);
 
     var par_terminal = require('child_process').spawn(
-        PYLFR_BINARY_PATH, [ lfr_path, '--outpath', out_path], { cwd: cwd }
+        "lfr-compile", [ lfr_path, '--out', out_path], { cwd: cwd }
     );
 
     par_terminal.stdout.on('data', function(data) {
