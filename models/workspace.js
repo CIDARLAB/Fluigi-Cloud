@@ -12,11 +12,11 @@ var workspaceSchema = new Schema({
     updated_at: Date,
 });
 
-workspaceSchema.methods.createFile = function createFile(filename, ext) {
+workspaceSchema.methods.createFile = async function createFile(filename, ext) {
     var newfile = new File();
     newfile.name = filename;
     newfile.file_extension = ext;
-    newfile.save();
+    await newfile.save();
     newfile.createAndUploadDefaultS3File();
     // this.update({$push:{specify_files: newfile._id}},{'new':true});
     this.specify_files.push(newfile.id);
@@ -47,7 +47,7 @@ workspaceSchema.methods.generateFiles_and_updateSchema = async function generate
     var newfile = new File();
     newfile.name = "LFR_example.lfr";
     newfile.file_extension = ".lfr";
-    newfile.save();
+    await newfile.save();
     newfile.createAndUploadDefaultS3File("lfr");
     this.specify_files.push(newfile._id);
 
