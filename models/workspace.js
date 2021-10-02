@@ -37,7 +37,7 @@ workspaceSchema.methods.createFile = async function createFile(filename, ext) {
     //     default:
     //         this.other_files.push(newfile._id);
     // }
-    this.save(function (err) {
+    await this.save(function (err) {
         console.log(err);
     });
     console.log("Workspace model pushing fileid to file array: ", newfile._id);
@@ -77,8 +77,8 @@ workspaceSchema.methods.generateFiles_and_updateSchema = async function generate
 
 workspaceSchema.methods.generateEmptyFiles_and_updateSchema = async function generateFiles_and_updateSchema() {
     var newfile = new File();
-    newfile.name = "new_LFR.v";
-    newfile.file_extension = ".v";
+    newfile.name = "new_LFR.lfr";
+    newfile.file_extension = ".lfr";
     await newfile.save();
     newfile.createAndUploadEmptyS3File();
     this.specify_files.push(newfile._id);
@@ -91,8 +91,8 @@ workspaceSchema.methods.generateEmptyFiles_and_updateSchema = async function gen
     this.specify_files.push(newfile._id);
 
     var newfile = new File();
-    newfile.name = "new_MINT.uf";
-    newfile.file_extension = ".uf";
+    newfile.name = "new_MINT.mint";
+    newfile.file_extension = ".mint";
     await newfile.save();
     newfile.createAndUploadEmptyS3File();
     this.design_files.push(newfile._id.toString());

@@ -160,7 +160,7 @@ module.exports.translate = function (req, res) {
 
     var par_terminal = require("child_process").spawn(
         "lfr-compile",
-        [lfr_path, "--out", out_path],
+        [lfr_path, "--out", out_path, "--no-gen"],
         { cwd: cwd }
     );
 

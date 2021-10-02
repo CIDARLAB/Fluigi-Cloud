@@ -3,6 +3,8 @@
     "version": "0.0.1",
     "description": "Neptune on the cloud",
     "dependencies": {
+        "@sentry/node": "^6.1.0",
+        "@sentry/tracing": "^6.1.0",
         "aws-sdk": "^2.635.0",
         "bcrypt-nodejs": "latest",
         "body-parser": "^1.19.0",
